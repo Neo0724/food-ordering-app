@@ -1,0 +1,16 @@
+spring:
+  datasource:
+    url: jdbc:sqlite:canteen.db
+    driver-class-name: org.sqlite.JDBC
+    username: sa
+    password: ''
+  jpa:
+    hibernate:
+      ddl-auto: update
+    database-platform: org.hibernate.community.dialect.SQLiteDialect
+    show-sql: true
+
+logging:
+  level:
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
