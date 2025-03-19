@@ -10,4 +10,8 @@ public interface InventoryService {
     List<ItemVO> getList();
 
     void addNewItem(ItemDTO item);
+
+    void modifyItem(ItemDTO item);
+
+    void deleteItem(Integer sizeId);
 }

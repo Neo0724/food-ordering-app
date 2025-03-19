@@ -29,4 +29,17 @@ public class InventoryController {
         inventoryService.addNewItem(item);
         return  ResultCode.success();
     }
+
+    @PutMapping
+    public ResultCode modifyItem(@RequestBody ItemDTO item) {
+        inventoryService.modifyItem(item);
+        return ResultCode.success();
+    }
+
+    @DeleteMapping
+    public ResultCode deleteItem(@RequestParam Integer sizeId) {
+        log.info("Size id is : {}" , sizeId);
+        inventoryService.deleteItem(sizeId);
+        return ResultCode.success();
+    }
 }

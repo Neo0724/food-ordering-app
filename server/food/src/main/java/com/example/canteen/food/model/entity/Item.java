@@ -28,6 +28,8 @@ public class Item {
     @Column(name = "item_description")
     private String itemDescription;  // Changed to String to represent text description
 
+    private String ingredient;
+
     // One-to-Many relationship: One Item can have many Variants
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JsonManagedReference

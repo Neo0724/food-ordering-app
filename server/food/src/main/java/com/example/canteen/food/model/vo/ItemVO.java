@@ -18,6 +18,8 @@ public class ItemVO {
     private String itemName;
 
     private Integer description;
+    
+    private String ingredient;
 
     private List<VariantVO> list;
 

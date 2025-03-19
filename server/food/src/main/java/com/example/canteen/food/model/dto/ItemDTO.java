@@ -11,10 +11,16 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ItemDTO {
+    private Integer itemId;
 
     private String itemName;
 
     private String itemDescription;
 
+    private String ingredient; 
+
     private List<VariantDTO> list;
 }
+
+
+

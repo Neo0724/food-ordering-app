@@ -24,10 +24,10 @@ public class Variant {
     private String size;
     private BigDecimal price;
     private Integer onSale;
+    private Integer quantity;
 
-    // Many-to-One relationship: Many Variants belong to one Item
     @ManyToOne
-    @JoinColumn(name = "itemId")
+    @JoinColumn(name = "item_id")
     @JsonBackReference
-    private Item item;  // Make sure this points to your entity class 'Item'
+    private Item item; 
 }

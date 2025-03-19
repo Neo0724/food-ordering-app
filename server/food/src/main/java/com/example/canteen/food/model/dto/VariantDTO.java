@@ -14,4 +14,5 @@ public class VariantDTO {
     private String size;
     private BigDecimal price;
     private Integer onSale;
+    private Integer quantity;
 }
