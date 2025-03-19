@@ -2,6 +2,7 @@ package com.example.canteen.food.controller;
 
 import com.example.canteen.food.common.ResultCode;
 import com.example.canteen.food.model.dto.ItemDTO;
+import com.example.canteen.food.model.entity.Item;
 import com.example.canteen.food.model.vo.ItemVO;
 import com.example.canteen.food.service.InventoryService;
 import lombok.extern.slf4j.Slf4j;
@@ -25,8 +26,10 @@ public class InventoryController {
     }
 
     @PostMapping
-    public ResultCode addNewItem(@RequestBody ItemDTO item) {
-        inventoryService.addNewItem(item);
+    public ResultCode addNewItem(@RequestBody List<ItemDTO> item) {
+        for (ItemDTO itemDTO : item) {
+            inventoryService.addNewItem(itemDTO);
+        }
         return  ResultCode.success();
     }
 

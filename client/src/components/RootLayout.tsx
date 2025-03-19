@@ -6,7 +6,7 @@ import {useAuthContext} from '../context/AuthProvider';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import FoodDetailsPage from './FoodDetailsPage';
-import FoodPage from './FoodPage';
+import FoodPage, { Food } from './FoodPage';
 import {FoodType} from '../sampleData/food';
 import CartPage from './CartPage';
 
@@ -21,9 +21,9 @@ export type RootStackParamList = {
 };
 
 export type FoodStackParamList = {
-  FoodPage: undefined;
+  FoodListPage: undefined;
   FoodDetailPage: {
-    food: FoodType;
+    food: Food;
   };
 };
 
@@ -34,7 +34,7 @@ export type ButtomTabParamList = {
 function FoodStackList() {
   return (
     <FoodStack.Navigator id="FoodStack">
-      <FoodStack.Screen name="FoodPage" component={FoodPage} />
+      <FoodStack.Screen name="FoodListPage" component={FoodPage} />
       <FoodStack.Screen name="FoodDetailPage" component={FoodDetailsPage} />
     </FoodStack.Navigator>
   );

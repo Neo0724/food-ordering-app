@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -17,7 +19,7 @@ public class ItemVO {
 
     private String itemName;
 
-    private Integer description;
+    private String itemDescription;
     
     private String ingredient;
 

@@ -11,6 +11,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @Builder
 public class VariantDTO {
+    private Integer sizeId;
     private String size;
     private BigDecimal price;
     private Integer onSale;

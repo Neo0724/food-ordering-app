@@ -14,7 +14,7 @@ export default function FoodDetailsPage({
   navigation,
 }: FoodDetailPageProps) {
   const food = route.params.food;
-  const [selectedSize, setSelectedSize] = useState<string>('S');
+  const [selectedSize, setSelectedSize] = useState<number>(0);
   const [quantity, setQuantity] = useState<number>(1);
   const {addToCart} = useCardContext();
   const [exceedQuantity, setExceedQuantity] = useState<boolean>(false);
@@ -28,6 +28,11 @@ export default function FoodDetailsPage({
       return () => clearTimeout(exceedQuantityTimeout);
     }
   }, [exceedQuantity]);
+  
+  const quantityMap = new Map();
+  food.list.forEach(variant => {
+    quantityMap.set(variant.sizeId, variant.quantity);
+  })
 
   return (
     <View>
@@ -36,36 +41,40 @@ export default function FoodDetailsPage({
         className="w-full h-[20em]"
       />
       <View className="m-5 gap-3">
-        <Text className="text-4xl">{food.name}</Text>
-        <Text>{food.description}</Text>
-        <Text>{food.calories}</Text>
-        <Text>{food.ingredients}</Text>
-        <View className="gap-5 flex-row">
-          {Object.keys(food.sizeWithPrice).map(variant => (
-            <TouchableOpacity
-              key={variant + food.sizeWithPrice[variant].toString()}
-              className={`border p-2 rounded-md flex-1 ${
-                variant === selectedSize && 'bg-blue-500'
-              }`}
-              onPress={() => setSelectedSize(variant)}>
-              <Text>Size: {variant}</Text>
-              <Text>Price: {food.sizeWithPrice[variant]}</Text>
-            </TouchableOpacity>
-          ))}
+        <Text className="text-4xl">{food.itemName}</Text>
+        <Text>{food.itemDescription}</Text>
+        <Text>{food.ingredient}</Text>
+        <View className="justify-between gap-5 flex-row">
+        {food.list.map( variant => (
+          <TouchableOpacity className={`border p-2 ${selectedSize === variant.sizeId && "bg-blue-500"}`}
+          onPress={() => setSelectedSize(variant.sizeId)}>
+            <Text>Size:  {variant.size}</Text>
+            {/* <Text>Left:  {variant.quantity}</Text> */}
+            <Text>Price: {variant.price}</Text>
+           </TouchableOpacity>
+        )
+        )}
         </View>
-        <Text>Left {food.quantity}</Text>
-        <View className="flex-row gap-3">
+    
+        <View className="flex-row gap-3 items-center">
           <Text>Quantity: </Text>
           <TouchableOpacity
-            className="bg-red-400 w-10 h-8 items-center justify-center"
+            className="bg-blue-400 w-10 h-8 items-center justify-center"
             onPress={() => setQuantity(prev => (prev === 1 ? prev : prev - 1))}>
             <Text className="text-white font-bold">-</Text>
           </TouchableOpacity>
           <Text>{quantity}</Text>
           <TouchableOpacity
             className="bg-blue-400 w-10 h-8 items-center justify-center"
-            onPress={() =>
-              setQuantity(prev => (prev >= food.quantity ? prev : prev + 1))
+            onPress={() =>{
+            setQuantity(prev => {
+              const exceeded = prev >= quantityMap.get(selectedSize);
+              if(exceeded) {
+                setExceedQuantity(true)
+              }
+              return exceeded ? prev : prev + 1
+            })
+            }
             }>
             <Text className="text-white font-bold">+</Text>
           </TouchableOpacity>

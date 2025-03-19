@@ -12,27 +12,69 @@ import {
 import {sampleFoods} from '../sampleData/food';
 import {FoodStackParamList} from './RootLayout';
 import {FoodType} from '../sampleData/food';
+import useSWR from 'swr';
+import axios from 'axios';
+
+type Variant = {
+  sizeId: number
+  size: string;
+  price: number;
+  onSale: number;
+  quantity: number;
+}
+
+export type Food = {
+  itemId: number; 
+  itemName: string;
+  itemDescription: string;
+  ingredient: string;
+  list: Variant[];
+}
 
 export default function FoodPage() {
   const navigation =
     useNavigation<NativeStackNavigationProp<FoodStackParamList>>();
-  const [foods, setFoods] = useState<FoodType[] | undefined>(sampleFoods);
+
+    const fetcher = async (url :string) => {
+      console.log(url);
+      
+
+    
+        const response = await axios.get(url);
+
+        if(response.data.code === 1 && response.data.msg === 'success') {
+          console.log(response.data.data);
+        
+          return response.data.data;
+        } 
+  
+    }
+
+    //Change port number
+    const {data: allFoods, isLoading, error} = useSWR<Food[]>("http://192.168.0.169:8080/inventorys", fetcher);
+
+    if (isLoading) return <Text>Loading...</Text>;
+    if (error || !allFoods) return <Text>Error loading data.</Text>;
+
   return (
     <View>
       <FlatList
-        data={foods}
+        data={allFoods}
         numColumns={2}
         style={styles.parentContainer}
-        keyExtractor={food => food.id}
+        keyExtractor={food => food.itemId.toString()}
+        columnWrapperStyle={{justifyContent: 'space-between', marginBottom: 10}} // Space between columns and rows
         renderItem={({item: food}) => (
           <TouchableOpacity
             style={styles.foodContainer}
             onPress={() => navigation.navigate('FoodDetailPage', {food})}>
-            <Image
-              source={require('../../assets/img/friedchicken.jpeg')}
-              className="h-[80%]"
-            />
-            <Text className="mt-auto">{food.name}</Text>
+            <View style={styles.innerContent}>
+              <Image
+                source={require('../../assets/img/friedchicken.jpeg')}
+                className="flex self-center w-[85%] mt-4"
+              />
+              <Text className="font-semibold text-xl">{food.itemName}</Text>
+            </View>
           </TouchableOpacity>
         )}
       />
@@ -43,13 +85,18 @@ export default function FoodPage() {
 const styles = StyleSheet.create({
   parentContainer: {
     borderWidth: 1,
-    margin: 7,
-    gap: 20,
+    backgroundColor: 'lightgray',
+
   },
   foodContainer: {
-    borderWidth: 1,
-    borderColor: 'red',
+    height: 275,
     width: '50%',
-    height: 300,
+    padding: 7,
+  },
+
+  innerContent: {
+    backgroundColor: 'white', 
+    flex: 1,
+    borderRadius: 10,
   },
 });

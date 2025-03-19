@@ -7,10 +7,14 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+import jakarta.validation.constraints.NotNull;
+
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class ItemDTO {
+
     private Integer itemId;
 
     private String itemName;
