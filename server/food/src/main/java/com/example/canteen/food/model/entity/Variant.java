@@ -19,6 +19,7 @@ public class Variant {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "size_id")
     private Integer sizeId;
 
     private String size;
