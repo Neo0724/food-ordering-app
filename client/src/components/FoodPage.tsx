@@ -14,7 +14,7 @@ import useSWR from 'swr';
 import axios from 'axios';
 import Config from 'react-native-config';
 
-type Variant = {
+export type Variant = {
   sizeId: number;
   size: string;
   price: number;
@@ -35,26 +35,25 @@ export default function FoodPage() {
     useNavigation<NativeStackNavigationProp<FoodStackParamList>>();
 
   const fetcher = async (url: string) => {
-    console.log(url);
-
     const response = await axios.get(url);
 
     if (response.data.code === 1 && response.data.msg === 'success') {
-      console.log(response.data.data);
-
       return response.data.data;
     }
   };
 
-  //Change port number
   const {
     data: allFoods,
     isLoading,
     error,
   } = useSWR<Food[]>(`http://${Config.BACKEND_URL}/inventorys`, fetcher);
 
-  if (isLoading) return <Text>Loading...</Text>;
-  if (error || !allFoods) return <Text>Error loading data.</Text>;
+  if (isLoading) {
+    return <Text>Loading...</Text>;
+  }
+  if (error || !allFoods) {
+    return <Text>Error loading data.</Text>;
+  }
 
   return (
     <View>
