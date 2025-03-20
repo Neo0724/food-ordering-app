@@ -1,8 +1,6 @@
 package com.example.canteen.food.model.entity;
 
 import com.example.canteen.food.model.dto.enums.CartStatus;
-import com.example.canteen.food.model.entity.Item;
-import com.example.canteen.food.model.entity.Variant;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -22,12 +20,12 @@ public class Cart {
     @Column(name = "cart_id")
     private Integer cartId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "item_id", nullable = false, foreignKey = @ForeignKey(name = "FK_CART_ITEM"))
+    @ManyToOne
+    @JoinColumn(name = "fk_cart_item", nullable = false)
     private Item item;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "size_id", nullable = false, foreignKey = @ForeignKey(name = "FK_CART_VARIANT"))
+    
+    @ManyToOne
+    @JoinColumn(name = "fk_cart_variant", nullable = false)
     private Variant variant;
 
     @Column(name = "user_id", nullable = false)

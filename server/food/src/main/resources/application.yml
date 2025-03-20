@@ -4,13 +4,14 @@ spring:
     driver-class-name: org.sqlite.JDBC
     username: sa
     password: ''
+    hikari:
+      connection-init-sql: PRAGMA foreign_keys = ON  # Enable foreign keys for every connection
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: update  # Drops and recreates tables on startup (good for testing)
     properties:
       hibernate:
-        dialect: org.hibernate.community.dialect.SQLiteDialect
-        connection.foreign_keys: true  # Ensure this is here
+        dialect: org.hibernate.community.dialect.SQLiteDialect  # Correct dialect for SQLite
 
 logging:
   level:

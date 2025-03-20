@@ -1,5 +1,7 @@
 package com.example.canteen.food.controller;
 
+import com.example.canteen.food.model.dto.ModifyQuantityDTO;
+import com.example.canteen.food.model.vo.CartVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,6 +19,8 @@ import com.example.canteen.food.service.CartService;
 
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/products")
 @Slf4j
@@ -25,18 +29,12 @@ public class CartController {
         @Autowired
         private CartService cartService;
 
-//        {
-//
-//                "cartId": 1,
-//                "itemId": 102,
-//                "userId": 2,
-//                "sizeId": 1,
-//                "quantity": 10
-//        }
+
 
         @GetMapping
-        public ResultCode getCartList() {
-                return null;
+        public ResultCode getCartList(@RequestParam Integer userId) {
+                List<CartVO> cartVO =  cartService.getCartList(userId);
+                return ResultCode.success(cartVO);
         }
 
         @PostMapping
@@ -46,8 +44,8 @@ public class CartController {
         }
 
         @PutMapping
-        public ResultCode modifyQuantity (@RequestBody Integer itemQuantity, @RequestBody Integer cartId) {
-                cartService.modifyQuantity(itemQuantity, cartId);
+        public ResultCode modifyQuantity (@RequestBody ModifyQuantityDTO modifyQuantityDTO) {
+                cartService.modifyQuantity(modifyQuantityDTO);
                 return ResultCode.success();
         }
 

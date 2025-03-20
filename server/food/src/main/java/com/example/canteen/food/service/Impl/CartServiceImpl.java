@@ -1,11 +1,15 @@
 package com.example.canteen.food.service.Impl;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
+import com.example.canteen.food.model.dto.ModifyQuantityDTO;
 import com.example.canteen.food.model.dto.enums.CartStatus;
 import com.example.canteen.food.model.entity.Item;
 import com.example.canteen.food.model.entity.Variant;
+import com.example.canteen.food.model.vo.CartVO;
 import com.example.canteen.food.repository.ItemRepository;
 import com.example.canteen.food.repository.VariantRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,19 +35,20 @@ public class CartServiceImpl implements CartService {
     @Autowired
     private VariantRepository variantRepository;
 
+    public List<CartVO> getCartList(Integer userId) {
+        return cartRepository.findCartsByUserId(userId);
+    }
     @Override
     public void addToCart(CartDTO cartDTO) {
 
-        if (!itemRepository.existsById(cartDTO.getItemId())) {
-            throw new NoSuchElementException("Item not found with id: " + cartDTO.getItemId());
-        }
 
-        // Validate if the variant exists
-        if (!variantRepository.existsById(cartDTO.getSizeId())) {
-            throw new NoSuchElementException("Size not found with sizeId: " + cartDTO.getSizeId());
-        }
+             itemRepository.findById(cartDTO.getItemId())
+                    .orElseThrow(() -> new IllegalArgumentException("Item with ID " + cartDTO.getItemId() + " not found"));
+             variantRepository.findById(cartDTO.getSizeId())
+                    .orElseThrow(() -> new IllegalArgumentException("Variant with ID " + cartDTO.getSizeId() + " not found"));
 
         Cart cart = new Cart();
+
 
         Item item = new Item();
         item.setItemId(cartDTO.getItemId());
@@ -64,13 +69,13 @@ public class CartServiceImpl implements CartService {
 
 
     @Override
-    public void modifyQuantity(Integer itemQuantity, Integer cartId) {
+    public void modifyQuantity( ModifyQuantityDTO modifyQuantityDTO) {
 
     
-    Cart cart = cartRepository.findById(cartId)
-    .orElseThrow(() -> new NoSuchElementException("Cart not found with id: " + cartId));
+    Cart cart = cartRepository.findById(modifyQuantityDTO.getCartId())
+    .orElseThrow(() -> new NoSuchElementException("Cart not found with id: " + modifyQuantityDTO.getCartId()));
 
-    cart.setQuantity(itemQuantity);
+    cart.setQuantity(modifyQuantityDTO.getItemQuantity());
 
     cartRepository.save(cart);
     }
