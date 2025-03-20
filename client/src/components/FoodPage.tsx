@@ -1,6 +1,6 @@
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import React, {useState} from 'react';
+import React from 'react';
 import {
   FlatList,
   Image,
@@ -9,52 +9,52 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {sampleFoods} from '../sampleData/food';
 import {FoodStackParamList} from './RootLayout';
-import {FoodType} from '../sampleData/food';
 import useSWR from 'swr';
 import axios from 'axios';
+import Config from 'react-native-config';
 
 type Variant = {
-  sizeId: number
+  sizeId: number;
   size: string;
   price: number;
   onSale: number;
   quantity: number;
-}
+};
 
 export type Food = {
-  itemId: number; 
+  itemId: number;
   itemName: string;
   itemDescription: string;
   ingredient: string;
   list: Variant[];
-}
+};
 
 export default function FoodPage() {
   const navigation =
     useNavigation<NativeStackNavigationProp<FoodStackParamList>>();
 
-    const fetcher = async (url :string) => {
-      console.log(url);
-      
+  const fetcher = async (url: string) => {
+    console.log(url);
 
-    
-        const response = await axios.get(url);
+    const response = await axios.get(url);
 
-        if(response.data.code === 1 && response.data.msg === 'success') {
-          console.log(response.data.data);
-        
-          return response.data.data;
-        } 
-  
+    if (response.data.code === 1 && response.data.msg === 'success') {
+      console.log(response.data.data);
+
+      return response.data.data;
     }
+  };
 
-    //Change port number
-    const {data: allFoods, isLoading, error} = useSWR<Food[]>("http://192.168.0.169:8080/inventorys", fetcher);
+  //Change port number
+  const {
+    data: allFoods,
+    isLoading,
+    error,
+  } = useSWR<Food[]>(`http://${Config.BACKEND_URL}/inventorys`, fetcher);
 
-    if (isLoading) return <Text>Loading...</Text>;
-    if (error || !allFoods) return <Text>Error loading data.</Text>;
+  if (isLoading) return <Text>Loading...</Text>;
+  if (error || !allFoods) return <Text>Error loading data.</Text>;
 
   return (
     <View>
@@ -86,7 +86,6 @@ const styles = StyleSheet.create({
   parentContainer: {
     borderWidth: 1,
     backgroundColor: 'lightgray',
-
   },
   foodContainer: {
     height: 275,
@@ -95,7 +94,7 @@ const styles = StyleSheet.create({
   },
 
   innerContent: {
-    backgroundColor: 'white', 
+    backgroundColor: 'white',
     flex: 1,
     borderRadius: 10,
   },
