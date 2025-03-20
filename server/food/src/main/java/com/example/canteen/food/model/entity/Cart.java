@@ -1,10 +1,14 @@
 package com.example.canteen.food.model.entity;
 
-import jakarta.persistence.*;
-import lombok.*;
-import java.time.LocalDateTime;
-
 import com.example.canteen.food.model.dto.enums.CartStatus;
+import com.example.canteen.food.model.entity.Item;
+import com.example.canteen.food.model.entity.Variant;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "cart")
@@ -18,18 +22,12 @@ public class Cart {
     @Column(name = "cart_id")
     private Integer cartId;
 
-    @Column(name = "item_id", nullable = false, insertable = false, updatable = false)
-    private Integer itemId;
-
-    @ManyToOne
-    @JoinColumn(name = "item_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "item_id", nullable = false, foreignKey = @ForeignKey(name = "FK_CART_ITEM"))
     private Item item;
 
-    @Column(name = "size_id", insertable = false, updatable = false)
-    private Integer sizeId;
-
-    @ManyToOne
-    @JoinColumn(name = "size_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "size_id", nullable = false, foreignKey = @ForeignKey(name = "FK_CART_VARIANT"))
     private Variant variant;
 
     @Column(name = "user_id", nullable = false)
@@ -48,4 +46,3 @@ public class Cart {
     @Column(name = "update_time")
     private LocalDateTime updateTime;
 }
-

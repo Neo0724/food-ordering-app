@@ -25,6 +25,15 @@ public class CartController {
         @Autowired
         private CartService cartService;
 
+//        {
+//
+//                "cartId": 1,
+//                "itemId": 102,
+//                "userId": 2,
+//                "sizeId": 1,
+//                "quantity": 10
+//        }
+
         @GetMapping
         public ResultCode getCartList() {
                 return null;

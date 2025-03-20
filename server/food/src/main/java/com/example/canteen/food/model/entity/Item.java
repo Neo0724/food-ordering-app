@@ -30,8 +30,7 @@ public class Item {
 
     private String ingredient;
 
-    // One-to-Many relationship: One Item can have many Variants
-    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JsonManagedReference
+    //so this two means if i retireve the list it wil auto join the column where item_id = same
+    @OneToMany(mappedBy = "item", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Variant> list;
 }
