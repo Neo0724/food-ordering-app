@@ -21,7 +21,6 @@ public class Variant {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "size_id")
     private Integer sizeId;
-
     private String size;
     private BigDecimal price;
     private Integer onSale;
@@ -29,6 +28,6 @@ public class Variant {
 
     @ManyToOne
     @JoinColumn(name = "item_id")
-    @JsonBackReference
-    private Item item; 
+    private Item item;
+
 }

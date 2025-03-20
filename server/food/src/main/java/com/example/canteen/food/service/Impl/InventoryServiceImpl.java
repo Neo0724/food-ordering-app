@@ -36,7 +36,7 @@ public class InventoryServiceImpl implements InventoryService {
     @Override
     public List<ItemVO> getList() {
     // Retrieve all Items from the database
-    List<Item> items = itemRepository.findAll();
+    List<Item> items = itemRepository.findAllWithVariants();
 
     // Convert each Item to ItemVO and return the list
     return items.stream().map(item -> {
@@ -50,6 +50,7 @@ public class InventoryServiceImpl implements InventoryService {
         itemVO.setList(item.getList().stream().map(variant -> {
             VariantVO variantVO = new VariantVO();
             variantVO.setSizeId(variant.getSizeId());
+            variantVO.setItemId(variant.getItem().getItemId());
             variantVO.setSize(variant.getSize());
             variantVO.setPrice(variant.getPrice());
             variantVO.setOnSale(variant.getOnSale());
@@ -123,13 +124,6 @@ public void modifyItem(ItemDTO itemDTO) {
             updatedVariants.add(newVariant);
         }
     }
-
-    // List<Variant> variantsToRemove = item.getList().stream()
-    //         .filter(variant -> updatedVariants.stream()
-    //                 .noneMatch(updatedVariant -> updatedVariant.getSize().equals(variant.getSize())))
-    //         .collect(Collectors.toList());
-
-    // variantRepository.deleteAll(variantsToRemove); 
 
     item.setList(updatedVariants);
 

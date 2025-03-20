@@ -1,4 +1,4 @@
-
+[
   {
     "itemName": "Fried Chicken",
     "itemDescription": "Crispy, golden-brown fried chicken with juicy meat.",
@@ -8,8 +8,7 @@
       {"size": "Large", "price": 8.99, "onSale": 1, "quantity": 80},
       {"size": "Family", "price": 12.99, "onSale": 0, "quantity": 50}
     ]
-  }
-
+  },
   {
     "itemName": "Beef Burger",
     "itemDescription": "Grilled beef patty with fresh lettuce, tomato, and cheese.",
@@ -18,8 +17,7 @@
       {"size": "Single", "price": 6.99, "onSale": 1, "quantity": 120},
       {"size": "Double", "price": 9.99, "onSale": 0, "quantity": 70}
     ]
-  }
-
+  },
   {
     "itemName": "Spaghetti Bolognese",
     "itemDescription": "Classic Italian pasta with rich meat sauce.",
@@ -28,8 +26,7 @@
       {"size": "Small", "price": 7.99, "onSale": 0, "quantity": 60},
       {"size": "Large", "price": 12.99, "onSale": 1, "quantity": 30}
     ]
-  }
-  
+  },
   {
     "itemName": "Nasi Lemak",
     "itemDescription": "Traditional Malaysian rice dish with sambal, anchovies, and egg.",
@@ -90,4 +87,4 @@
       {"size": "Regular", "price": 6.49, "onSale": 1, "quantity": 100}
     ]
   }
-
+]
