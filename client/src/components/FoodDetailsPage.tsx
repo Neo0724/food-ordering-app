@@ -1,8 +1,9 @@
-import {Button, Image, Text, TouchableOpacity, View} from 'react-native';
+import {Alert, Button, Image, Text, TouchableOpacity, View} from 'react-native';
 import {FoodStackParamList} from './RootLayout';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {useEffect, useState} from 'react';
 import {useCardContext} from '../context/CartProvider';
+import {Variant} from './FoodPage';
 
 type FoodDetailPageProps = NativeStackScreenProps<
   FoodStackParamList,
@@ -14,10 +15,31 @@ export default function FoodDetailsPage({
   navigation,
 }: FoodDetailPageProps) {
   const food = route.params.food;
-  const [selectedSize, setSelectedSize] = useState<number>(0);
-  const [quantity, setQuantity] = useState<number>(1);
+  const [selectedSize, setSelectedSize] = useState<number>(-1);
+  const [selectedQuantity, setSelectedQuantity] = useState<number>(1);
   const {addToCart} = useCardContext();
   const [exceedQuantity, setExceedQuantity] = useState<boolean>(false);
+
+  // Variant map for faster lookup
+  const variantMap = new Map(
+    food.list.map(variant => [variant.sizeId, variant]),
+  );
+
+  const handleAddToCart = () => {
+    if (selectedSize === -1) {
+      Alert.alert('Invalid option', 'Please select one variant');
+      return;
+    }
+    addToCart(
+      {
+        itemId: food.itemId,
+        itemName: food.itemName,
+        selectedQuantity,
+        selectedVariant: variantMap.get(selectedSize) as Variant,
+      },
+      setExceedQuantity,
+    );
+  };
 
   useEffect(() => {
     if (exceedQuantity) {
@@ -28,11 +50,6 @@ export default function FoodDetailsPage({
       return () => clearTimeout(exceedQuantityTimeout);
     }
   }, [exceedQuantity]);
-
-  const quantityMap = new Map();
-  food.list.forEach(variant => {
-    quantityMap.set(variant.sizeId, variant.quantity);
-  });
 
   return (
     <View>
@@ -52,7 +69,8 @@ export default function FoodDetailsPage({
                 selectedSize === variant.sizeId && 'bg-blue-500'
               }`}
               onPress={() => {
-                setQuantity(1);
+                exceedQuantity && setExceedQuantity(false);
+                setSelectedQuantity(1);
                 setSelectedSize(variant.sizeId);
               }}>
               <Text>Size: {variant.size}</Text>
@@ -67,7 +85,7 @@ export default function FoodDetailsPage({
           <TouchableOpacity
             className="bg-blue-400 w-10 h-8 items-center justify-center"
             onPress={() =>
-              setQuantity(prev => {
+              setSelectedQuantity(prev => {
                 // Reset the exceed quantity message
                 exceedQuantity && setExceedQuantity(false);
                 return prev === 1 ? prev : prev - 1;
@@ -75,14 +93,15 @@ export default function FoodDetailsPage({
             }>
             <Text className="text-white font-bold">-</Text>
           </TouchableOpacity>
-          <Text>{quantity}</Text>
+          <Text>{selectedQuantity}</Text>
           <TouchableOpacity
             className="bg-blue-400 w-10 h-8 items-center justify-center"
             onPress={() => {
-              setQuantity(prev => {
+              setSelectedQuantity(prev => {
                 // Reset the exceed quantity message
                 exceedQuantity && setExceedQuantity(false);
-                const exceeded = prev >= quantityMap.get(selectedSize);
+                const exceeded =
+                  prev >= (variantMap.get(selectedSize)?.quantity ?? 0);
                 if (exceeded) {
                   setExceedQuantity(true);
                 }
@@ -92,22 +111,7 @@ export default function FoodDetailsPage({
             <Text className="text-white font-bold">+</Text>
           </TouchableOpacity>
         </View>
-        <Button
-          title="Add to cart"
-          onPress={() =>
-            addToCart(
-              {
-                id: food.id,
-                quantity,
-                size: selectedSize,
-                price: food.sizeWithPrice[selectedSize],
-                availableQuantity: food.quantity,
-                name: food.name,
-              },
-              setExceedQuantity,
-            )
-          }
-        />
+        <Button title="Add to cart" onPress={handleAddToCart} />
         {exceedQuantity && (
           <Text className="font-bold text-red-500 text-center">
             You have reached the maximum quantity
