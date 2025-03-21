@@ -29,22 +29,20 @@ public class CartController {
         @Autowired
         private CartService cartService;
 
-
-
         @GetMapping
         public ResultCode getCartList(@RequestParam Integer userId) {
-                List<CartVO> cartVO =  cartService.getCartList(userId);
+                List<CartVO> cartVO = cartService.getCartList(userId);
                 return ResultCode.success(cartVO);
         }
 
         @PostMapping
-        public ResultCode addToCart(@RequestBody CartDTO cartDTO ) {
+        public ResultCode addToCart(@RequestBody CartDTO cartDTO) {
                 cartService.addToCart(cartDTO);
                 return ResultCode.success();
         }
 
         @PutMapping
-        public ResultCode modifyQuantity (@RequestBody ModifyQuantityDTO modifyQuantityDTO) {
+        public ResultCode modifyQuantity(@RequestBody ModifyQuantityDTO modifyQuantityDTO) {
                 cartService.modifyQuantity(modifyQuantityDTO);
                 return ResultCode.success();
         }
@@ -54,6 +52,5 @@ public class CartController {
                 cartService.deleteCart(cartId);
                 return ResultCode.success();
         }
-
 
 }

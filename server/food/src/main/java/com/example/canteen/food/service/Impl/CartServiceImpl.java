@@ -25,7 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 public class CartServiceImpl implements CartService {
-    
+
     @Autowired
     private CartRepository cartRepository;
 
@@ -38,17 +38,18 @@ public class CartServiceImpl implements CartService {
     public List<CartVO> getCartList(Integer userId) {
         return cartRepository.findCartsByUserId(userId);
     }
+
     @Override
     public void addToCart(CartDTO cartDTO) {
 
-
-             itemRepository.findById(cartDTO.getItemId())
-                    .orElseThrow(() -> new IllegalArgumentException("Item with ID " + cartDTO.getItemId() + " not found"));
-             variantRepository.findById(cartDTO.getSizeId())
-                    .orElseThrow(() -> new IllegalArgumentException("Variant with ID " + cartDTO.getSizeId() + " not found"));
+        // itemRepository.findById(cartDTO.getItemId())
+        // .orElseThrow(() -> new IllegalArgumentException("Item with ID " +
+        // cartDTO.getItemId() + " not found"));
+        // variantRepository.findById(cartDTO.getSizeId())
+        // .orElseThrow(() -> new IllegalArgumentException("Variant with ID " +
+        // cartDTO.getSizeId() + " not found"));
 
         Cart cart = new Cart();
-
 
         Item item = new Item();
         item.setItemId(cartDTO.getItemId());
@@ -67,30 +68,21 @@ public class CartServiceImpl implements CartService {
         cartRepository.save(cart);
     }
 
-
     @Override
-    public void modifyQuantity( ModifyQuantityDTO modifyQuantityDTO) {
+    public void modifyQuantity(ModifyQuantityDTO modifyQuantityDTO) {
 
-    
-    Cart cart = cartRepository.findById(modifyQuantityDTO.getCartId())
-    .orElseThrow(() -> new NoSuchElementException("Cart not found with id: " + modifyQuantityDTO.getCartId()));
+        Cart cart = cartRepository.findById(modifyQuantityDTO.getCartId())
+                .orElseThrow(
+                        () -> new NoSuchElementException("Cart not found with id: " + modifyQuantityDTO.getCartId()));
 
-    cart.setQuantity(modifyQuantityDTO.getItemQuantity());
+        cart.setQuantity(modifyQuantityDTO.getItemQuantity());
 
-    cartRepository.save(cart);
+        cartRepository.save(cart);
     }
 
     @Override
     public void deleteCart(Integer cartId) {
-       cartRepository.deleteById(cartId);
+        cartRepository.deleteById(cartId);
     }
 
-    
-
-
-    
-
-
-    
-    
 }
