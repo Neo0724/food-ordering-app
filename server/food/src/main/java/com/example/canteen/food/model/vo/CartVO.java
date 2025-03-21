@@ -20,10 +20,9 @@ public class CartVO {
     private String itemName;
     private Integer sizeId;
     private Integer quantity;
+    private Integer availableQuantity;
     private CartStatus status;
     private LocalDateTime createTime;
     private LocalDateTime updateTime;
     private BigDecimal price;
 }
-
-

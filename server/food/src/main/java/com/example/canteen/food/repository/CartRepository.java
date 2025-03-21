@@ -20,6 +20,7 @@ public interface CartRepository extends JpaRepository<Cart, Integer> {
             "c.item.itemName, " +
             "c.variant.sizeId, " +
             "c.quantity, " +
+            "v.quantity as availableQuantity, " +
             "c.status, " +
             "c.createTime, " +
             "c.updateTime, " +
