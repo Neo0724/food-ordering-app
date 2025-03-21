@@ -1,6 +1,7 @@
 package com.example.canteen.food.model.dto;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import com.example.canteen.food.model.dto.enums.CartStatus;
 
@@ -22,4 +23,6 @@ public class CartDTO {
     private CartStatus status;
     private LocalDateTime createTime;
     private LocalDateTime updateTime;
+
+    private UUID orderId;
 }

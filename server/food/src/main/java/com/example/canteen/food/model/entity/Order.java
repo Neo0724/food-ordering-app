@@ -1,6 +1,7 @@
 package com.example.canteen.food.model.entity;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -9,6 +10,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,13 +19,13 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Table (name = "orders")
 
 public class Order {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "order_id")
-    private Integer orderId;
+    @Column(name = "order_id", columnDefinition = "BINARY(16)")
+    private UUID orderId;
 
     @ManyToOne
     @JoinColumn(name = "cart_id")
@@ -47,5 +49,5 @@ public class Order {
     private LocalDateTime createTime;
 
     @Column(name = "update_time")
-    private LocalDateTime updateime;    
+    private LocalDateTime updateTime;    
 }
