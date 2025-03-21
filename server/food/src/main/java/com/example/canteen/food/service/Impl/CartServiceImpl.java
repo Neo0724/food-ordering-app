@@ -3,6 +3,7 @@ package com.example.canteen.food.service.Impl;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import com.example.canteen.food.model.dto.ModifyQuantityDTO;
@@ -89,48 +90,44 @@ public class CartServiceImpl implements CartService {
     public void deleteCart(Integer cartId) {
         cartRepository.deleteById(cartId);
     }
-    @Override
+    // Cart cart = cartRepository.findById(dto.getCartId())
+    //         .orElseThrow(() -> new IllegalArgumentException("Cart not found with ID: " + dto.getCartId()));
+    // order.setCart(cart);
+
+    // Item item = itemRepository.findById(dto.getItemId())
+    //         .orElseThrow(() -> new IllegalArgumentException("Item not found with ID: " + dto.getItemId()));
+    // order.setItem(item);
+
+    // Variant variant = variantRepository.findById(dto.getSizeId())
+    //         .orElseThrow(() -> new IllegalArgumentException("Variant not found with ID: " + dto.getSizeId()));
+    // order.setVariant(variant);
     public void placeOrder(List<CartDTO> cartDTOs) {
+        UUID uuid = UUID.randomUUID();
+        cartDTOs.forEach(x -> x.setOrderId(uuid));
+    
         List<Order> orders = cartDTOs.stream().map(dto -> {
             Order order = new Order();
     
-            // Cart cart = cartRepository.findById(dto.getCartId())
-            //         .orElseThrow(() -> new IllegalArgumentException("Cart not found with ID: " + dto.getCartId()));
-            // order.setCart(cart);
-
-            // Item item = itemRepository.findById(dto.getItemId())
-            //         .orElseThrow(() -> new IllegalArgumentException("Item not found with ID: " + dto.getItemId()));
-            // order.setItem(item);
+            Cart cart = cartRepository.findById(dto.getCartId()).orElse(null);
+            order.setCart(cart);
     
-            // Variant variant = variantRepository.findById(dto.getSizeId())
-            //         .orElseThrow(() -> new IllegalArgumentException("Variant not found with ID: " + dto.getSizeId()));
-            // order.setVariant(variant);
-            // / Fetch and Set Cart
-        Cart cart = cartRepository.findById(dto.getCartId()).orElse(null);
-        order.setCart(cart);
-
-        // Fetch and Set Item
-        Item item = itemRepository.findById(dto.getItemId()).orElse(null);
-        order.setItem(item);
-
-        // Fetch and Set Variant (Size)
-        Variant variant = variantRepository.findById(dto.getSizeId()).orElse(null);
-        order.setVariant(variant);
+            Item item = itemRepository.findById(dto.getItemId()).orElse(null);
+            order.setItem(item);
     
+            Variant variant = variantRepository.findById(dto.getSizeId()).orElse(null);
+            order.setVariant(variant);
+    
+            order.setOrderId(dto.getOrderId()); 
             order.setUserId(dto.getUserId());
             order.setStatus(dto.getStatus().name());
             order.setQuantity(dto.getQuantity());
-            order.setCreateTime(dto.getCreateTime());
-            order.setUpdateime(dto.getUpdateTime());
+            order.setCreateTime(LocalDateTime.now());
+            order.setUpdateTime(LocalDateTime.now());
     
             return order;
         }).collect(Collectors.toList());
     
-        // Save all Orders
         orderRepository.saveAll(orders);
-        
     }
-
-    
 
 }
