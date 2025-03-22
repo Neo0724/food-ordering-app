@@ -2,7 +2,7 @@ import {StyleSheet} from 'react-native';
 
 export const ButtonStyle = StyleSheet.create({
   generalButton: {
-    width: 350,
+    width: '100%',
     textAlign: 'center',
     justifyContent: 'center',
     alignItems: 'center',
