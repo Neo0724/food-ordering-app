@@ -15,19 +15,19 @@ public interface CartRepository extends JpaRepository<Cart, Integer> {
     @Query("SELECT new com.example.canteen.food.model.vo.CartVO( " +
             "c.userId, " +
             "c.cartId, " +
-            "c.item.itemId, " +
-            "c.variant.size, " +
-            "c.item.itemName, " +
-            "c.variant.sizeId, " +
+            "c.itemId, " +
+            "v.size, " +
+            "i.itemName, " +
+            "c.sizeId, " +
             "c.quantity, " +
-            "v.quantity as availableQuantity, " +
+            "v.quantity, " +
             "c.status, " +
             "c.createTime, " +
             "c.updateTime, " +
-            "c.variant.price) " +
+            "v.price) " +
             "FROM Cart c " +
-            "JOIN c.item i " +
-            "JOIN c.variant v " +
+            "JOIN Item i ON c.itemId = i.itemId " +
+            "JOIN Variant v ON c.sizeId = v.sizeId " +
             "WHERE c.userId = :userId")
     List<CartVO> findCartsByUserId(@Param("userId") Integer userId);
 }

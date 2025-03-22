@@ -3,6 +3,7 @@ package com.example.canteen.food.service;
 import com.example.canteen.food.model.dto.CartDTO;
 import com.example.canteen.food.model.dto.ModifyQuantityDTO;
 import com.example.canteen.food.model.vo.CartVO;
+import com.example.canteen.food.model.vo.Order.OrderVO;
 
 import java.util.List;
 

@@ -3,14 +3,7 @@ package com.example.canteen.food.model.entity;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,35 +12,33 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table (name = "orders")
-
+@Table(name = "orders")
+@IdClass(OrderId.class)
 public class Order {
 
     @Id
     @Column(name = "order_id", columnDefinition = "BINARY(16)")
     private UUID orderId;
 
-    @ManyToOne
-    @JoinColumn(name = "cart_id")
-    private Cart cart;
+    @Id
+    @Column(name = "cart_id")
+    private Integer cartId;
 
-    @ManyToOne
-    @JoinColumn(name = "item_id")
-    private Item item;
+    @Column(name = "item_id", nullable = false)
+    private Integer itemId;
 
-    @ManyToOne
-    @JoinColumn(name = "size_id")
-    private Variant variant;
+    @Column(name = "size_id", nullable = false)
+    private Integer sizeId;
 
     private Integer userId;
 
     private String status;
 
     private Integer quantity;
-    
+
     @Column(name = "create_time")
     private LocalDateTime createTime;
 
     @Column(name = "update_time")
-    private LocalDateTime updateTime;    
+    private LocalDateTime updateTime;
 }

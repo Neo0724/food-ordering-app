@@ -20,14 +20,12 @@ public class Cart {
     @Column(name = "cart_id")
     private Integer cartId;
 
-    @ManyToOne
-    @JoinColumn(name = "item_id", nullable = false)
-    private Item item;
+    @Column(name = "item_id", nullable = false)
+    private Integer itemId;
 
-    @ManyToOne
-    @JoinColumn(name = "size_id", nullable = false)
-    private Variant variant;
-
+    @Column(name = "size_id", nullable = false)
+    private Integer sizeId;
+    
     @Column(name = "user_id", nullable = false)
     private Integer userId;
 

@@ -57,14 +57,8 @@ public class CartServiceImpl implements CartService {
 
         Cart cart = new Cart();
 
-        Item item = new Item();
-        item.setItemId(cartDTO.getItemId());
-        cart.setItem(item);
-
-        Variant variant = new Variant();
-        variant.setSizeId(cartDTO.getSizeId());
-        cart.setVariant(variant);
-
+        cart.setItemId(cartDTO.getItemId());
+        cart.setSizeId(cartDTO.getSizeId());
         cart.setUserId(cartDTO.getUserId());
         cart.setQuantity(cartDTO.getQuantity());
         cart.setStatus(CartStatus.ACTIVE);
@@ -108,15 +102,9 @@ public class CartServiceImpl implements CartService {
         List<Order> orders = cartDTOs.stream().map(dto -> {
             Order order = new Order();
     
-            Cart cart = cartRepository.findById(dto.getCartId()).orElse(null);
-            order.setCart(cart);
-    
-            Item item = itemRepository.findById(dto.getItemId()).orElse(null);
-            order.setItem(item);
-    
-            Variant variant = variantRepository.findById(dto.getSizeId()).orElse(null);
-            order.setVariant(variant);
-    
+          order.setItemId(dto.getItemId());
+          order.setSizeId(dto.getSizeId());
+          order.setCartId(dto.getCartId());
             order.setOrderId(dto.getOrderId()); 
             order.setUserId(dto.getUserId());
             order.setStatus(dto.getStatus().name());
@@ -129,5 +117,6 @@ public class CartServiceImpl implements CartService {
     
         orderRepository.saveAll(orders);
     }
+    
 
 }
