@@ -1,7 +1,7 @@
 import React, {useEffect, useMemo, useState} from 'react';
 import {View, Text, TouchableOpacity, Button, StyleSheet} from 'react-native';
 import {RetrievedFoodCartType, useCardContext} from '../context/CartProvider';
-import debounce from '../custom-hook/debounce';
+import debounce from '../../utils/debounce';
 
 type EachCartItemProp = {
   food: RetrievedFoodCartType;
