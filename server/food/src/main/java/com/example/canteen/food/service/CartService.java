@@ -14,7 +14,7 @@ public interface CartService {
 
     void deleteCart(Integer cartId);
 
-    List<CartVO> getCartList(Integer userId);
+    List<CartVO> getCartList(String userId);
 
     void placeOrder(List<CartDTO> cartDTOs);
 }

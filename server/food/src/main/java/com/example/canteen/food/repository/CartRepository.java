@@ -28,6 +28,7 @@ public interface CartRepository extends JpaRepository<Cart, Integer> {
             "FROM Cart c " +
             "JOIN c.item i " +
             "JOIN c.variant v " +
-            "WHERE c.userId = :userId")
-    List<CartVO> findCartsByUserId(@Param("userId") Integer userId);
+            "WHERE c.userId = :userId " +
+            "ORDER BY c.createTime DESC")
+    List<CartVO> findCartsByUserId(@Param("userId") String userId);
 }

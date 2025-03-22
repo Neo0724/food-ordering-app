@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CartVO {
-    private Integer userId;
+    private String userId;
     private Integer cartId;
     private Integer itemId;
     private String size;

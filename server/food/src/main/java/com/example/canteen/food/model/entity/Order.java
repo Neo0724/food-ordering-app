@@ -19,7 +19,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table (name = "orders")
+@Table(name = "orders")
 
 public class Order {
 
@@ -39,15 +39,15 @@ public class Order {
     @JoinColumn(name = "size_id")
     private Variant variant;
 
-    private Integer userId;
+    private String userId;
 
     private String status;
 
     private Integer quantity;
-    
+
     @Column(name = "create_time")
     private LocalDateTime createTime;
 
     @Column(name = "update_time")
-    private LocalDateTime updateTime;    
+    private LocalDateTime updateTime;
 }
