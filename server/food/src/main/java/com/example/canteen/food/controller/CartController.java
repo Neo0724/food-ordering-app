@@ -30,7 +30,7 @@ public class CartController {
         private CartService cartService;
 
         @GetMapping
-        public ResultCode getCartList(@RequestParam Integer userId) {
+        public ResultCode getCartList(@RequestParam String userId) {
                 List<CartVO> cartVO = cartService.getCartList(userId);
                 return ResultCode.success(cartVO);
         }
@@ -52,6 +52,5 @@ public class CartController {
                 cartService.deleteCart(cartId);
                 return ResultCode.success();
         }
-
 
 }

@@ -13,7 +13,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "orders")
+<<<<<<< HEAD
 @IdClass(OrderId.class)
+=======
+
+>>>>>>> 6cddcafce020e3019f4719bde2d720e3759e2150
 public class Order {
 
     @Id
@@ -30,7 +34,7 @@ public class Order {
     @Column(name = "size_id", nullable = false)
     private Integer sizeId;
 
-    private Integer userId;
+    private String userId;
 
     private String status;
 
@@ -41,4 +45,8 @@ public class Order {
 
     @Column(name = "update_time")
     private LocalDateTime updateTime;
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 6cddcafce020e3019f4719bde2d720e3759e2150

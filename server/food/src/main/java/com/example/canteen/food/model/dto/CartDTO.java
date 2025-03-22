@@ -17,7 +17,7 @@ public class CartDTO {
 
     private Integer cartId;
     private Integer itemId;
-    private Integer userId;
+    private String userId;
     private Integer sizeId;
     private Integer quantity;
     private CartStatus status;

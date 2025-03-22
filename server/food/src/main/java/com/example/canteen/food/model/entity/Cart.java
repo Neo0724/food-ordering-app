@@ -27,7 +27,7 @@ public class Cart {
     private Integer sizeId;
     
     @Column(name = "user_id", nullable = false)
-    private Integer userId;
+    private String userId;
 
     @Column(name = "quantity", nullable = false)
     private Integer quantity;

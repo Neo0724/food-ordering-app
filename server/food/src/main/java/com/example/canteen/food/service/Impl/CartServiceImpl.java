@@ -41,7 +41,7 @@ public class CartServiceImpl implements CartService {
     @Autowired
     private OrderRepository orderRepository;
 
-    public List<CartVO> getCartList(Integer userId) {
+    public List<CartVO> getCartList(String userId) {
         return cartRepository.findCartsByUserId(userId);
     }
 
@@ -76,6 +76,7 @@ public class CartServiceImpl implements CartService {
                         () -> new NoSuchElementException("Cart not found with id: " + modifyQuantityDTO.getCartId()));
 
         cart.setQuantity(modifyQuantityDTO.getItemQuantity());
+        log.info("Current cart quantity: " + modifyQuantityDTO.getItemQuantity().toString());
 
         cartRepository.save(cart);
     }
@@ -85,36 +86,53 @@ public class CartServiceImpl implements CartService {
         cartRepository.deleteById(cartId);
     }
     // Cart cart = cartRepository.findById(dto.getCartId())
-    //         .orElseThrow(() -> new IllegalArgumentException("Cart not found with ID: " + dto.getCartId()));
+    // .orElseThrow(() -> new IllegalArgumentException("Cart not found with ID: " +
+    // dto.getCartId()));
     // order.setCart(cart);
 
     // Item item = itemRepository.findById(dto.getItemId())
-    //         .orElseThrow(() -> new IllegalArgumentException("Item not found with ID: " + dto.getItemId()));
+    // .orElseThrow(() -> new IllegalArgumentException("Item not found with ID: " +
+    // dto.getItemId()));
     // order.setItem(item);
 
     // Variant variant = variantRepository.findById(dto.getSizeId())
-    //         .orElseThrow(() -> new IllegalArgumentException("Variant not found with ID: " + dto.getSizeId()));
+    // .orElseThrow(() -> new IllegalArgumentException("Variant not found with ID: "
+    // + dto.getSizeId()));
     // order.setVariant(variant);
     public void placeOrder(List<CartDTO> cartDTOs) {
         UUID uuid = UUID.randomUUID();
         cartDTOs.forEach(x -> x.setOrderId(uuid));
-    
+
         List<Order> orders = cartDTOs.stream().map(dto -> {
             Order order = new Order();
+<<<<<<< HEAD
     
           order.setItemId(dto.getItemId());
           order.setSizeId(dto.getSizeId());
           order.setCartId(dto.getCartId());
             order.setOrderId(dto.getOrderId()); 
+=======
+
+            Cart cart = cartRepository.findById(dto.getCartId()).orElse(null);
+            order.setCart(cart);
+
+            Item item = itemRepository.findById(dto.getItemId()).orElse(null);
+            order.setItem(item);
+
+            Variant variant = variantRepository.findById(dto.getSizeId()).orElse(null);
+            order.setVariant(variant);
+
+            order.setOrderId(dto.getOrderId());
+>>>>>>> 6cddcafce020e3019f4719bde2d720e3759e2150
             order.setUserId(dto.getUserId());
             order.setStatus(dto.getStatus().name());
             order.setQuantity(dto.getQuantity());
             order.setCreateTime(LocalDateTime.now());
             order.setUpdateTime(LocalDateTime.now());
-    
+
             return order;
         }).collect(Collectors.toList());
-    
+
         orderRepository.saveAll(orders);
     }
     

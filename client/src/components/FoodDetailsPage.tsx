@@ -17,7 +17,8 @@ export default function FoodDetailsPage({
   const food = route.params.food;
   const [selectedSize, setSelectedSize] = useState<number>(-1);
   const [selectedQuantity, setSelectedQuantity] = useState<number>(1);
-  const {addToCart} = useCardContext();
+  const {addToCartMutation, updateCartQuantityMutation, foodsInCart} =
+    useCardContext();
   const [exceedQuantity, setExceedQuantity] = useState<boolean>(false);
 
   // Variant map for faster lookup
@@ -30,15 +31,29 @@ export default function FoodDetailsPage({
       Alert.alert('Invalid option', 'Please select one variant');
       return;
     }
-    addToCart(
-      {
-        itemId: food.itemId,
-        itemName: food.itemName,
-        selectedQuantity,
-        selectedVariant: variantMap.get(selectedSize) as Variant,
-      },
-      setExceedQuantity,
+
+    const foodExistsInCart = foodsInCart?.find(
+      foodInCart =>
+        foodInCart.itemId === food.itemId &&
+        foodInCart.sizeId === variantMap.get(selectedSize)?.sizeId,
     );
+
+    /* Food already in cart, hence update the quantity */
+    if (foodExistsInCart) {
+      updateCartQuantityMutation.mutate({
+        cartId: foodExistsInCart.cartId,
+        newQuantity: foodExistsInCart.quantity + selectedQuantity,
+        prevQuantity: foodExistsInCart.quantity,
+        unitPrice: foodExistsInCart.price,
+      });
+    } else {
+      /* Food not in cart, hence add the food into the cart */
+      addToCartMutation.mutate({
+        itemId: food.itemId,
+        selectedQuantity: selectedQuantity,
+        selectedVariant: variantMap.get(selectedSize) as Variant,
+      });
+    }
   };
 
   useEffect(() => {

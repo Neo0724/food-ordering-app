@@ -1,61 +1,117 @@
-import React, {useEffect, useState} from 'react';
-import {View, Text, TouchableOpacity, Button} from 'react-native';
-import {FoodCartType, useCardContext} from '../context/CartProvider';
-import useQuantityDebounce from '../custom-hook/quantityDebounce';
+import React, {useEffect, useMemo, useState} from 'react';
+import {View, Text, TouchableOpacity, Button, StyleSheet} from 'react-native';
+import {RetrievedFoodCartType, useCardContext} from '../context/CartProvider';
+import debounce from '../custom-hook/debounce';
 
 type EachCartItemProp = {
-  food: FoodCartType;
+  food: RetrievedFoodCartType;
 };
 
 export default function EachCartItemPage({food}: EachCartItemProp) {
-  const {removeFromCart, updateQuantity} = useCardContext();
+  const {removeFromCartMutation, updateCartQuantityMutation, setTotalPrice} =
+    useCardContext();
   const [exceedQuantity, setExceedQuantity] = useState<boolean>(false);
-  const debouncedQuantity = useQuantityDebounce(food.selectedQuantity, 1500);
+  const [selectedQuantity, setSelectedQuantity] = useState<number>(
+    food.quantity,
+  );
+
+  useEffect(() => {
+    setSelectedQuantity(food.quantity);
+  }, [food.quantity]);
+
+  const debounceQuantityUpdate = useMemo(
+    () =>
+      debounce(
+        (params: {
+          cartId: number;
+          unitPrice: number;
+          prevQuantity: number;
+          newQuantity: number;
+        }) => {
+          updateCartQuantityMutation.mutate(params);
+        },
+        450,
+      ),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
+  );
+
+  useEffect(() => {
+    if (exceedQuantity) {
+      const errorTimeout = setTimeout(() => {
+        setExceedQuantity(false);
+      }, 2500);
+
+      return () => clearTimeout(errorTimeout);
+    }
+  }, [exceedQuantity]);
 
   return (
-    <View
-      key={food.selectedVariant.sizeId}
-      className="pb-5 gap-3 border-b-2 border-b-gray-300">
+    <View key={food.sizeId} className="pb-5 gap-3 border-b-2 border-b-gray-300">
       <View className="flex-row justify-between">
         <Text className="text-2xl">{food.itemName}</Text>
-        <Text className="font-bold text-xl">
-          RM {food.selectedVariant.price}
-        </Text>
+        <Text className="font-bold text-xl">RM {food.price}</Text>
       </View>
-      <Text className="text-xl">Size: {food.selectedVariant.size}</Text>
+      <Text className="text-xl">Size: {food.size}</Text>
       <View className="flex-row gap-3">
         <Text>Quantity:</Text>
         <TouchableOpacity
-          className="w-7 bg-red-400 h-7 items-center justify-center"
-          onPress={() =>
-            updateQuantity(
-              food.itemId,
-              'DECREMENT',
-              food.selectedVariant.sizeId,
-              setExceedQuantity,
-            )
-          }>
-          <Text className="text-white font-bold">-</Text>
+          style={styles.plusMinusButton}
+          onPress={() => {
+            /* Reset error message when user start changing quantity */
+            setExceedQuantity(false);
+            if (selectedQuantity === 1) {
+              setExceedQuantity(true);
+              return;
+            }
+            setTotalPrice(prev => Math.abs(prev - food.price));
+            setSelectedQuantity(prev => {
+              debounceQuantityUpdate({
+                cartId: food.cartId,
+                newQuantity: prev - 1,
+                prevQuantity: prev,
+                unitPrice: food.price,
+              });
+
+              return prev - 1;
+            });
+          }}>
+          <Text style={styles.plusMinusText}>-</Text>
         </TouchableOpacity>
-        <Text>{food.selectedQuantity}</Text>
+        <Text>{selectedQuantity}</Text>
         <TouchableOpacity
-          className="w-7 bg-blue-400 h-7 items-center justify-center"
-          onPress={() =>
-            updateQuantity(
-              food.itemId,
-              'INCREMENT',
-              food.selectedVariant.sizeId,
-              setExceedQuantity,
-            )
-          }>
-          <Text text-white font-bold>
-            +
-          </Text>
+          style={styles.plusMinusButton}
+          onPress={() => {
+            /* Reset error message when user start changing quantity */
+            setExceedQuantity(false);
+            if (selectedQuantity + 1 > food.availableQuantity) {
+              setExceedQuantity(true);
+              return;
+            }
+            setTotalPrice(prev => prev + food.price);
+            setSelectedQuantity(prev => {
+              debounceQuantityUpdate({
+                cartId: food.cartId,
+                newQuantity: prev + 1,
+                prevQuantity: prev,
+                unitPrice: food.price,
+              });
+
+              return prev + 1;
+            });
+          }}>
+          <Text style={styles.plusMinusText}>+</Text>
         </TouchableOpacity>
       </View>
       <Button
         title="Remove"
-        onPress={() => removeFromCart(food.itemId, food.selectedVariant.sizeId)}
+        onPress={() =>
+          removeFromCartMutation.mutate({
+            cartId: food.cartId,
+            prevQuantity: food.quantity,
+            unitPrice: food.price,
+          })
+        }
       />
       {/* Error message then user selects over the max quantity */}
       {exceedQuantity && (
@@ -63,7 +119,22 @@ export default function EachCartItemPage({food}: EachCartItemProp) {
           You have reached the maximum quantity
         </Text>
       )}
-      <Text>{debouncedQuantity}</Text>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  plusMinusButton: {
+    borderRadius: 10,
+    width: 23,
+    height: 23,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'lightblue',
+  },
+  plusMinusText: {
+    fontWeight: 'bold',
+    fontSize: 15,
+    textAlign: 'center',
+  },
+});
