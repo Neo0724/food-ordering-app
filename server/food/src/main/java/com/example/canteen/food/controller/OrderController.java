@@ -15,6 +15,8 @@ import com.example.canteen.food.service.CartService;
 import com.example.canteen.food.service.OrderService;
 
 import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -31,7 +33,7 @@ public class OrderController {
     private OrderService orderService;
 
     @GetMapping
-    public ResultCode getOrderList(@RequestParam Integer userId) {
+    public ResultCode getOrderList(@RequestParam String userId) {
         log.info("User id : {}", userId);
         List<OrderVO> orderVO = orderService.getOrderList(userId);
         return ResultCode.success(orderVO);
@@ -41,6 +43,12 @@ public class OrderController {
     @PostMapping
     public ResultCode placeOrder(@RequestBody List<CartDTO> cartDTOs ) {
         cartService.placeOrder(cartDTOs);
+        return ResultCode.success();
+    }
+
+    @DeleteMapping
+    public ResultCode deleteOrder(@RequestParam String orderId) {
+        orderService.deleteOrder(orderId);
         return ResultCode.success();
     }
 }

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -32,6 +33,10 @@ public interface OrderRepository extends JpaRepository<Order, OrderId> {
     "JOIN Item i ON o.itemId = i.itemId " +
     "JOIN Variant v ON o.sizeId = v.sizeId " +
     "WHERE o.userId = :userId")
-List<ItemPerOrder> findOrderItem(@Param("userId") Integer userId);
+List<ItemPerOrder> findOrderItem(@Param("userId") String userId);
+
+    @Modifying
+    @Query("DELETE FROM Order o WHERE o.orderId = :orderId")    
+    void deleteByOrderId(String orderId);
 }
 

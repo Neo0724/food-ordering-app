@@ -24,5 +24,5 @@ public class CartDTO {
     private LocalDateTime createTime;
     private LocalDateTime updateTime;
 
-    private UUID orderId;
+    private String orderId;
 }

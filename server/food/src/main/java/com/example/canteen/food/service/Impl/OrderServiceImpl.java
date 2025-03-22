@@ -13,29 +13,33 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.example.canteen.food.model.dto.enums.CartStatus;
 import com.example.canteen.food.model.vo.Order.ItemPerOrder;
 import com.example.canteen.food.model.vo.Order.OrderVO;
 import com.example.canteen.food.repository.OrderRepository;
 import com.example.canteen.food.service.OrderService;
 
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 @Transactional
 @Service
+@Slf4j
 public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private OrderRepository orderRepository;
 
     @Override
-    public List<OrderVO> getOrderList(Integer userId) {
+    public List<OrderVO> getOrderList(String userId) {
         
         // Map to group items by orderId
-        Map<UUID, List<ItemPerOrder>> map = new HashMap<UUID, List<ItemPerOrder>>();
+        Map<String, List<ItemPerOrder>> map = new HashMap<String, List<ItemPerOrder>>();
 
 
         // Fetch all items related to the user from the repository
         orderRepository.findOrderItem(userId).forEach(order -> {
-            UUID orderId = order.getOrderId();
+            log.info("order: {} " , order);
+            String orderId = order.getOrderId();
             ItemPerOrder item = new ItemPerOrder(
                     orderId,
                     order.getCartId(),
@@ -58,12 +62,19 @@ public class OrderServiceImpl implements OrderService {
         return map.entrySet().stream()
                 .map(entry -> {
                     List<ItemPerOrder> items = entry.getValue();
-                    UUID orderId = entry.getKey();
-                    String status = items.get(0).getStatus();
+                    String orderId = entry.getKey();
+                    CartStatus status = items.get(0).getStatus();
                     return new OrderVO(items, orderId, status);
                 })
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public void deleteOrder(String orderId) {
+        orderRepository.deleteByOrderId(orderId);
+    }
+
+    
     
     
     

@@ -100,32 +100,18 @@ public class CartServiceImpl implements CartService {
     // + dto.getSizeId()));
     // order.setVariant(variant);
     public void placeOrder(List<CartDTO> cartDTOs) {
-        UUID uuid = UUID.randomUUID();
+        String uuid = UUID.randomUUID().toString();
         cartDTOs.forEach(x -> x.setOrderId(uuid));
 
         List<Order> orders = cartDTOs.stream().map(dto -> {
             Order order = new Order();
-<<<<<<< HEAD
     
           order.setItemId(dto.getItemId());
           order.setSizeId(dto.getSizeId());
           order.setCartId(dto.getCartId());
             order.setOrderId(dto.getOrderId()); 
-=======
-
-            Cart cart = cartRepository.findById(dto.getCartId()).orElse(null);
-            order.setCart(cart);
-
-            Item item = itemRepository.findById(dto.getItemId()).orElse(null);
-            order.setItem(item);
-
-            Variant variant = variantRepository.findById(dto.getSizeId()).orElse(null);
-            order.setVariant(variant);
-
-            order.setOrderId(dto.getOrderId());
->>>>>>> 6cddcafce020e3019f4719bde2d720e3759e2150
             order.setUserId(dto.getUserId());
-            order.setStatus(dto.getStatus().name());
+            order.setStatus(CartStatus.ORDERED);
             order.setQuantity(dto.getQuantity());
             order.setCreateTime(LocalDateTime.now());
             order.setUpdateTime(LocalDateTime.now());
