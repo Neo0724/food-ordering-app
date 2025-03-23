@@ -10,9 +10,7 @@ import {
   View,
 } from 'react-native';
 import {FoodStackParamList} from './RootLayout';
-import useSWR from 'swr';
-import axios from 'axios';
-import Config from 'react-native-config';
+import useFood from '../custom-hook/useFood';
 
 export type Variant = {
   sizeId: number;
@@ -34,19 +32,8 @@ export default function FoodPage() {
   const navigation =
     useNavigation<NativeStackNavigationProp<FoodStackParamList>>();
 
-  const fetcher = async (url: string) => {
-    const response = await axios.get(url);
-
-    if (response.data.code === 1 && response.data.msg === 'success') {
-      return response.data.data;
-    }
-  };
-
-  const {
-    data: allFoods,
-    isLoading,
-    error,
-  } = useSWR<Food[]>(`http://${Config.BACKEND_URL}/inventorys`, fetcher);
+  /* Custom hook to fetch all foods */
+  const {allFoods, isLoading, error} = useFood();
 
   if (isLoading) {
     return <Text>Loading...</Text>;
@@ -55,35 +42,50 @@ export default function FoodPage() {
     return <Text>Error loading data.</Text>;
   }
 
+  if (!isLoading && !error && allFoods.length === 0) {
+    return <Text>No foods found.</Text>;
+  }
+
   return (
     <View>
-      <FlatList
-        data={allFoods}
-        numColumns={2}
-        style={styles.parentContainer}
-        keyExtractor={food => food.itemId.toString()}
-        columnWrapperStyle={{justifyContent: 'space-between', marginBottom: 10}} // Space between columns and rows
-        renderItem={({item: food}) => (
-          <TouchableOpacity
-            style={styles.foodContainer}
-            onPress={() => navigation.navigate('FoodDetailPage', {food})}>
-            <View style={styles.innerContent}>
-              <Image
-                source={require('../../assets/img/friedchicken.jpeg')}
-                className="flex self-center w-[85%] mt-4"
-              />
-              <Text className="font-semibold text-xl">{food.itemName}</Text>
-            </View>
-          </TouchableOpacity>
-        )}
-      />
+      {isLoading && <Text>Loading...</Text>}
+      {error && <Text>Error loading data.</Text>}
+      {!isLoading && !error && allFoods.length === 0 && (
+        <Text>No foods found.</Text>
+      )}
+      {!isLoading && !error && allFoods.length > 0 && (
+        <FlatList
+          data={allFoods}
+          numColumns={2}
+          style={styles.parentContainer}
+          keyExtractor={food => food.itemId.toString()}
+          columnWrapperStyle={{
+            justifyContent: 'space-between',
+            marginBottom: 10,
+          }} // Space between columns and rows
+          renderItem={({item: food}) => (
+            <TouchableOpacity
+              style={styles.foodContainer}
+              onPress={() => navigation.navigate('FoodDetailPage', {food})}>
+              <View style={styles.innerContent}>
+                <Image
+                  source={require('../../assets/img/friedchicken.jpeg')}
+                  className="flex self-center w-[85%] mt-4"
+                />
+                <Text className="font-semibold text-xl ml-3 mt-1">
+                  {food.itemName}
+                </Text>
+              </View>
+            </TouchableOpacity>
+          )}
+        />
+      )}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   parentContainer: {
-    borderWidth: 1,
     backgroundColor: 'lightgray',
   },
   foodContainer: {

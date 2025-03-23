@@ -4,6 +4,7 @@ import './global.css';
 import {AuthProvider} from './src/context/AuthProvider';
 import {CartProvider} from './src/context/CartProvider';
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
+import {OrderProvider} from './src/context/OrderProvider';
 
 export default function App() {
   const queryClient = new QueryClient();
@@ -11,11 +12,13 @@ export default function App() {
   return (
     <AuthProvider>
       <QueryClientProvider client={queryClient}>
-        <CartProvider>
-          <NavigationContainer>
-            <RootLayout />
-          </NavigationContainer>
-        </CartProvider>
+        <OrderProvider>
+          <CartProvider>
+            <NavigationContainer>
+              <RootLayout />
+            </NavigationContainer>
+          </CartProvider>
+        </OrderProvider>
       </QueryClientProvider>
     </AuthProvider>
   );

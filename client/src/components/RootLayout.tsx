@@ -5,10 +5,10 @@ import HomePage from './HomePage';
 import {useAuthContext} from '../context/AuthProvider';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import FoodDetailsPage from './FoodDetailsPage';
-import FoodPage, { Food } from './FoodPage';
-import {FoodType} from '../sampleData/food';
+import FoodDetailsPage from './EachFoodPage';
+import FoodPage, {Food} from './FoodPage';
 import CartPage from './CartPage';
+import OrderPage from './OrderPage';
 
 const Tab = createBottomTabNavigator();
 const RootStack = createNativeStackNavigator<RootStackParamList, 'RootStack'>();
@@ -25,6 +25,7 @@ export type FoodStackParamList = {
   FoodDetailPage: {
     food: Food;
   };
+  OrderPage: undefined;
 };
 
 export type ButtomTabParamList = {
@@ -48,23 +49,60 @@ export default function RootLayout() {
       <Tab.Navigator
         initialRouteName="HomePage"
         screenOptions={({route}) => ({
-          tabBarActiveTintColor: 'tomato',
-          tabBarInactiveTintColor: 'gray',
+          tabBarActiveTintColor: '#FF6B6B',
+          tabBarInactiveTintColor: '#4A5568',
+          tabBarStyle: {
+            height: 60,
+            paddingVertical: 8,
+            backgroundColor: '#FFFFFF',
+            borderTopWidth: 1,
+            borderTopColor: '#E2E8F0',
+          },
+          tabBarLabelStyle: {
+            fontSize: 12,
+            fontWeight: '500',
+          },
+          headerStyle: {
+            backgroundColor: '#FFFFFF',
+            elevation: 0,
+            shadowOpacity: 0,
+            borderBottomWidth: 1,
+            borderBottomColor: '#E2E8F0',
+          },
+          headerTitleStyle: {
+            fontSize: 18,
+            fontWeight: '600',
+            color: '#2D3748',
+          },
         })}>
         <Tab.Screen
           name="HomePage"
           component={HomePage}
-          options={{title: 'Home'}}
+          options={{
+            title: 'Home',
+          }}
         />
         <Tab.Screen
           name="FoodPage"
           component={FoodStackList}
-          options={{title: 'Foods', headerShown: false}}
+          options={{
+            title: 'Menu',
+            headerShown: false,
+          }}
         />
         <Tab.Screen
           name="CartPage"
           component={CartPage}
-          options={{title: 'Carts'}}
+          options={{
+            title: 'Cart',
+          }}
+        />
+        <Tab.Screen
+          name="OrderPage"
+          component={OrderPage}
+          options={{
+            title: 'Orders',
+          }}
         />
       </Tab.Navigator>
     );

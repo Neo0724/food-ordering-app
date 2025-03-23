@@ -9,6 +9,7 @@ import {
   useQuery,
   useQueryClient,
 } from '@tanstack/react-query';
+import {STATUS} from '../constant/constant';
 
 type UpdateCartQuantityType = {
   cartId: number;
@@ -18,6 +19,21 @@ type UpdateCartQuantityType = {
 };
 
 type RemoveFromCartType = Omit<UpdateCartQuantityType, 'newQuantity'>;
+
+export type RetrievedFoodCartType = {
+  userId: string;
+  cartId: number;
+  itemId: number;
+  size: string;
+  itemName: string;
+  sizeId: number;
+  quantity: number;
+  availableQuantity: number;
+  status: (typeof STATUS)[number];
+  createTime: string;
+  updateTime: string;
+  price: number;
+};
 
 type CardContextType = {
   foodsInCart: RetrievedFoodCartType[] | undefined;
@@ -38,21 +54,6 @@ type CardContextType = {
   >;
   setTotalPrice: React.Dispatch<SetStateAction<number>>;
   totalPrice: number;
-};
-
-export type RetrievedFoodCartType = {
-  userId: number;
-  cartId: number;
-  itemId: number;
-  size: string;
-  itemName: string;
-  sizeId: number;
-  quantity: number;
-  availableQuantity: number;
-  status: string;
-  createdTime: string;
-  updatedTime: string;
-  price: number;
 };
 
 export type NewFoodToAddType = Omit<

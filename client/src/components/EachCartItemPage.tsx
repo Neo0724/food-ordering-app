@@ -2,6 +2,8 @@ import React, {useEffect, useMemo, useState} from 'react';
 import {View, Text, TouchableOpacity, Button, StyleSheet} from 'react-native';
 import {RetrievedFoodCartType, useCardContext} from '../context/CartProvider';
 import debounce from '../../utils/debounce';
+import {ShadowStyle} from '../../styles/ShadowStyle';
+import {ButtonStyle} from '../../styles/ButtonStyles';
 
 type EachCartItemProp = {
   food: RetrievedFoodCartType;
@@ -47,7 +49,9 @@ export default function EachCartItemPage({food}: EachCartItemProp) {
   }, [exceedQuantity]);
 
   return (
-    <View key={food.sizeId} className="pb-5 gap-3 border-b-2 border-b-gray-300">
+    <View
+      key={food.sizeId}
+      style={[styles.eachCartItemContainer, ShadowStyle.shadowBox]}>
       <View className="flex-row justify-between">
         <Text className="text-2xl">{food.itemName}</Text>
         <Text className="font-bold text-xl">RM {food.price}</Text>
@@ -56,7 +60,7 @@ export default function EachCartItemPage({food}: EachCartItemProp) {
       <View className="flex-row gap-3">
         <Text>Quantity:</Text>
         <TouchableOpacity
-          style={styles.plusMinusButton}
+          style={ButtonStyle.plusMinusButton}
           onPress={() => {
             /* Reset error message when user start changing quantity */
             setExceedQuantity(false);
@@ -76,11 +80,11 @@ export default function EachCartItemPage({food}: EachCartItemProp) {
               return prev - 1;
             });
           }}>
-          <Text style={styles.plusMinusText}>-</Text>
+          <Text style={ButtonStyle.plusMinusText}>-</Text>
         </TouchableOpacity>
         <Text>{selectedQuantity}</Text>
         <TouchableOpacity
-          style={styles.plusMinusButton}
+          style={ButtonStyle.plusMinusButton}
           onPress={() => {
             /* Reset error message when user start changing quantity */
             setExceedQuantity(false);
@@ -100,19 +104,20 @@ export default function EachCartItemPage({food}: EachCartItemProp) {
               return prev + 1;
             });
           }}>
-          <Text style={styles.plusMinusText}>+</Text>
+          <Text style={ButtonStyle.plusMinusText}>+</Text>
         </TouchableOpacity>
       </View>
-      <Button
-        title="Remove"
-        onPress={() =>
+      <TouchableOpacity
+        style={styles.removeButton}
+        onPress={() => {
           removeFromCartMutation.mutate({
             cartId: food.cartId,
             prevQuantity: food.quantity,
             unitPrice: food.price,
-          })
-        }
-      />
+          });
+        }}>
+        <Text style={styles.removeButtonText}>Remove</Text>
+      </TouchableOpacity>
       {/* Error message then user selects over the max quantity */}
       {exceedQuantity && (
         <Text className="font-bold text-red-500 text-center">
@@ -124,17 +129,23 @@ export default function EachCartItemPage({food}: EachCartItemProp) {
 }
 
 const styles = StyleSheet.create({
-  plusMinusButton: {
-    borderRadius: 10,
-    width: 23,
-    height: 23,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'lightblue',
+  eachCartItemContainer: {
+    gap: 10,
+    borderRadius: 9,
+    padding: 10,
+    marginVertical: 8,
+    marginHorizontal: 6,
   },
-  plusMinusText: {
+  removeButton: {
+    backgroundColor: 'rgb(255,131,131)',
+    padding: 10,
+    borderRadius: 8,
+    width: '100%',
+    alignSelf: 'center',
+  },
+  removeButtonText: {
+    color: 'white',
     fontWeight: 'bold',
-    fontSize: 15,
     textAlign: 'center',
   },
 });

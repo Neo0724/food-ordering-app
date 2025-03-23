@@ -1,9 +1,18 @@
-import {Alert, Button, Image, Text, TouchableOpacity, View} from 'react-native';
+import {
+  Alert,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import {FoodStackParamList} from './RootLayout';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {useEffect, useState} from 'react';
 import {useCardContext} from '../context/CartProvider';
 import {Variant} from './FoodPage';
+import {ShadowStyle} from '../../styles/ShadowStyle';
+import {ButtonStyle} from '../../styles/ButtonStyles';
 
 type FoodDetailPageProps = NativeStackScreenProps<
   FoodStackParamList,
@@ -76,29 +85,51 @@ export default function FoodDetailsPage({
         <Text className="text-4xl">{food.itemName}</Text>
         <Text>{food.itemDescription}</Text>
         <Text>{food.ingredient}</Text>
+
+        {/* Container to show all variants */}
         <View className="justify-between gap-3 flex-row flex-wrap">
           {food.list.map(variant => (
             <TouchableOpacity
               key={variant.sizeId}
-              className={`border p-1 flex-1 rounded-lg ${
-                selectedSize === variant.sizeId && 'bg-blue-500'
-              }`}
+              style={[
+                styles.variantContainer,
+                selectedSize === variant.sizeId && styles.selectedVariant,
+              ]}
               onPress={() => {
                 exceedQuantity && setExceedQuantity(false);
                 setSelectedQuantity(1);
                 setSelectedSize(variant.sizeId);
               }}>
-              <Text>Size: {variant.size}</Text>
-              <Text>Left: {variant.quantity}</Text>
-              <Text>Price: {variant.price}</Text>
+              <Text
+                style={[
+                  styles.variantText,
+                  selectedSize === variant.sizeId && styles.selectedVariantText,
+                ]}>
+                Size: {variant.size}
+              </Text>
+              <Text
+                style={[
+                  styles.variantText,
+                  selectedSize === variant.sizeId && styles.selectedVariantText,
+                ]}>
+                Left: {variant.quantity}
+              </Text>
+              <Text
+                style={[
+                  styles.variantText,
+                  selectedSize === variant.sizeId && styles.selectedVariantText,
+                ]}>
+                $: RM{variant.price}
+              </Text>
             </TouchableOpacity>
           ))}
         </View>
 
-        <View className="flex-row gap-3 items-center">
+        {/* Container to show the quantity and the plus minus button */}
+        <View className="flex-row gap-3 items-center mt-3">
           <Text>Quantity: </Text>
           <TouchableOpacity
-            className="bg-blue-400 w-10 h-8 items-center justify-center"
+            style={ButtonStyle.plusMinusButton}
             onPress={() =>
               setSelectedQuantity(prev => {
                 // Reset the exceed quantity message
@@ -106,11 +137,11 @@ export default function FoodDetailsPage({
                 return prev === 1 ? prev : prev - 1;
               })
             }>
-            <Text className="text-white font-bold">-</Text>
+            <Text style={ButtonStyle.plusMinusText}>-</Text>
           </TouchableOpacity>
           <Text>{selectedQuantity}</Text>
           <TouchableOpacity
-            className="bg-blue-400 w-10 h-8 items-center justify-center"
+            style={ButtonStyle.plusMinusButton}
             onPress={() => {
               setSelectedQuantity(prev => {
                 // Reset the exceed quantity message
@@ -123,10 +154,17 @@ export default function FoodDetailsPage({
                 return exceeded ? prev : prev + 1;
               });
             }}>
-            <Text className="text-white font-bold">+</Text>
+            <Text style={ButtonStyle.plusMinusText}>+</Text>
           </TouchableOpacity>
         </View>
-        <Button title="Add to cart" onPress={handleAddToCart} />
+        {/* Button to add to cart */}
+        <TouchableOpacity
+          className="mt-4"
+          style={ButtonStyle.generalButton}
+          onPress={handleAddToCart}>
+          <Text style={ButtonStyle.generalButtonText}>Add to cart</Text>
+        </TouchableOpacity>
+        {/* Error message then user selects over the max quantity */}
         {exceedQuantity && (
           <Text className="font-bold text-red-500 text-center">
             You have reached the maximum quantity
@@ -136,3 +174,22 @@ export default function FoodDetailsPage({
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  variantContainer: {
+    ...ShadowStyle.shadowBox,
+    padding: 10,
+    borderRadius: 10,
+    flex: 1,
+  },
+  selectedVariant: {
+    backgroundColor: 'rgb(238,167,52)',
+  },
+  selectedVariantText: {
+    color: 'white',
+  },
+  variantText: {
+    fontWeight: 'bold',
+    color: 'black',
+  },
+});

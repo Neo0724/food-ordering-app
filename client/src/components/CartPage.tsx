@@ -1,10 +1,43 @@
-import {ScrollView, Text, TouchableOpacity, View} from 'react-native';
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import {
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import {useCardContext} from '../context/CartProvider';
 import EachCartItemPage from './EachCartItemPage';
 import {ButtonStyle} from '../../styles/ButtonStyles';
+import {useOrderContext} from '../context/OrderProvider';
 
 export default function CartPage() {
   const {foodsInCart, totalPrice} = useCardContext();
+  const {addOrderMutation} = useOrderContext();
+
+  const handleCheckout = () => {
+    const filteredFood = foodsInCart?.map(
+      ({
+        createTime,
+        updateTime,
+        availableQuantity,
+        itemName,
+        price,
+        size,
+        status,
+        ...food
+      }) => {
+        return food;
+      },
+    );
+
+    if (!filteredFood) {
+      console.log('Cart cannot be empty');
+      return;
+    }
+    addOrderMutation.mutate(filteredFood);
+  };
+
   return (
     <View className="m-3 p-2">
       {!foodsInCart?.length && <Text>Cart is empty...</Text>}
@@ -19,7 +52,9 @@ export default function CartPage() {
           <Text className="text-2xl">Subtotal</Text>
           <Text className="text-2xl">{totalPrice.toFixed(2)}</Text>
         </View>
-        <TouchableOpacity style={ButtonStyle.generalButton}>
+        <TouchableOpacity
+          style={ButtonStyle.generalButton}
+          onPress={handleCheckout}>
           <Text style={ButtonStyle.generalButtonText}>Checkout</Text>
         </TouchableOpacity>
       </View>
