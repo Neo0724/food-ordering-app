@@ -6,17 +6,17 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {FoodStackParamList} from './RootLayout';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {useEffect, useState} from 'react';
 import {useCardContext} from '../context/CartProvider';
 import {Variant} from './FoodPage';
 import {ShadowStyle} from '../../styles/ShadowStyle';
 import {ButtonStyle} from '../../styles/ButtonStyles';
+import {FoodStackParamList} from '../navigation/RootLayout';
 
 type FoodDetailPageProps = NativeStackScreenProps<
   FoodStackParamList,
-  'FoodDetailPage'
+  'EachFoodPage'
 >;
 
 export default function FoodDetailsPage({
@@ -84,7 +84,7 @@ export default function FoodDetailsPage({
       <View className="m-5 gap-3">
         <Text className="text-4xl">{food.itemName}</Text>
         <Text>{food.itemDescription}</Text>
-        <Text>{food.ingredient}</Text>
+        <Text>Ingredients: {food.ingredient}</Text>
 
         {/* Container to show all variants */}
         <View className="justify-between gap-3 flex-row flex-wrap">

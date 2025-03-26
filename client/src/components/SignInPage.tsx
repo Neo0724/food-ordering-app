@@ -2,13 +2,14 @@ import {getAuth, signInWithEmailAndPassword} from '@react-native-firebase/auth';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import React, {useEffect, useState} from 'react';
-import {Image, Text, TextInput, TouchableOpacity, View} from 'react-native';
-import {RootStackParamList} from './RootLayout';
+import {Image, Text, TouchableOpacity, View} from 'react-native';
+import {RootStackParamList} from '../navigation/RootLayout';
 import {Controller, useForm} from 'react-hook-form';
 import {signInSchema, UserSignInType} from './userSchema';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {AuthStyles} from '../../styles/AuthStyles';
 import {ButtonStyle} from '../../styles/ButtonStyles';
+import CustomTextInput from './CustomTextInput';
 
 export default function SignInPage() {
   const auth = getAuth();
@@ -71,7 +72,7 @@ export default function SignInPage() {
           control={control}
           name="email"
           render={({field: {onChange, onBlur, value}}) => (
-            <TextInput
+            <CustomTextInput
               style={AuthStyles.input}
               onBlur={onBlur}
               onChangeText={onChange}
@@ -91,7 +92,7 @@ export default function SignInPage() {
           name="password"
           render={({field: {onChange, onBlur, value}}) => (
             <View>
-              <TextInput
+              <CustomTextInput
                 style={AuthStyles.input}
                 onBlur={onBlur}
                 onChangeText={onChange}
@@ -101,7 +102,7 @@ export default function SignInPage() {
                 secureTextEntry={!showPassword}
               />
               <TouchableOpacity
-                className="absolute right-0"
+                className="absolute right-3 top-[.9rem]"
                 onPress={() => setShowPassword(prev => !prev)}>
                 <Image
                   source={

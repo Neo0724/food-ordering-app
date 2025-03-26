@@ -11,8 +11,9 @@ import {
 } from '@react-native-firebase/auth';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {RootStackParamList} from './RootLayout';
+import {RootStackParamList} from '../navigation/RootLayout';
 import {AuthStyles} from '../../styles/AuthStyles';
+import CustomTextInput from './CustomTextInput';
 
 export default function SignUpPage() {
   const auth = getAuth();
@@ -86,7 +87,7 @@ export default function SignUpPage() {
           control={control}
           name="username"
           render={({field: {onChange, onBlur, value}}) => (
-            <TextInput
+            <CustomTextInput
               style={AuthStyles.input}
               onBlur={onBlur}
               onChangeText={onChange}
@@ -105,7 +106,7 @@ export default function SignUpPage() {
           control={control}
           name="email"
           render={({field: {onChange, onBlur, value}}) => (
-            <TextInput
+            <CustomTextInput
               style={AuthStyles.input}
               onBlur={onBlur}
               onChangeText={onChange}
@@ -125,7 +126,7 @@ export default function SignUpPage() {
           name="password"
           render={({field: {onChange, onBlur, value}}) => (
             <View>
-              <TextInput
+              <CustomTextInput
                 style={AuthStyles.input}
                 onBlur={onBlur}
                 onChangeText={onChange}
@@ -135,7 +136,7 @@ export default function SignUpPage() {
                 secureTextEntry={!showPassword}
               />
               <TouchableOpacity
-                className="absolute right-0"
+                className="absolute right-3 top-[.9rem]"
                 onPress={() => setShowPassword(prev => !prev)}>
                 <Image
                   source={

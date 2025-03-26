@@ -6,11 +6,15 @@ export const AuthStyles = StyleSheet.create({
     gap: 5,
   },
   input: {
-    height: 40,
-    borderColor: 'gray',
-    borderBottomWidth: 1,
+    height: 50,
     marginBottom: 10,
-    paddingHorizontal: 8,
+    borderColor: 'lightgrey',
+    borderWidth: 2,
+    borderRadius: 5,
+    paddingHorizontal: 10,
+  },
+  focusedInput: {
+    borderColor: 'rgb(238,137,52)',
   },
   error: {
     color: 'red',

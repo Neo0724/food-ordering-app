@@ -1,5 +1,5 @@
 import React, {useEffect, useMemo, useState} from 'react';
-import {View, Text, TouchableOpacity, Button, StyleSheet} from 'react-native';
+import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import {RetrievedFoodCartType, useCardContext} from '../context/CartProvider';
 import debounce from '../../utils/debounce';
 import {ShadowStyle} from '../../styles/ShadowStyle';

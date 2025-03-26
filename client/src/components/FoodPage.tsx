@@ -1,6 +1,6 @@
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import React from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import {
   FlatList,
   Image,
@@ -9,8 +9,12 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {FoodStackParamList} from './RootLayout';
 import useFood from '../custom-hook/useFood';
+import {ShadowStyle} from '../../styles/ShadowStyle';
+import {FoodStackParamList} from '../navigation/FoodStack';
+import {Searchbar} from 'react-native-paper';
+import debounce from '../../utils/debounce';
+import {useQueryClient} from '@tanstack/react-query';
 
 export type Variant = {
   sizeId: number;
@@ -31,6 +35,21 @@ export type Food = {
 export default function FoodPage() {
   const navigation =
     useNavigation<NativeStackNavigationProp<FoodStackParamList>>();
+
+  const [searchFoodName, setSearchFoodName] = useState<string>('');
+
+  // const debounceSearchFoodName = useMemo(
+  //   () =>
+  //     debounce((newFoodName: string) => {
+  //       queryClient.setQueryData(['foods'], (old: any) => {
+  //         return old.filter((food: any) =>
+  //           food.itemName.toLowerCase().includes(newFoodName.toLowerCase()),
+  //         );
+  //       });
+  //     }, 500),
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  //   [],
+  // );
 
   /* Custom hook to fetch all foods */
   const {allFoods, isLoading, error} = useFood();
@@ -54,31 +73,46 @@ export default function FoodPage() {
         <Text>No foods found.</Text>
       )}
       {!isLoading && !error && allFoods.length > 0 && (
-        <FlatList
-          data={allFoods}
-          numColumns={2}
-          style={styles.parentContainer}
-          keyExtractor={food => food.itemId.toString()}
-          columnWrapperStyle={{
-            justifyContent: 'space-between',
-            marginBottom: 10,
-          }} // Space between columns and rows
-          renderItem={({item: food}) => (
-            <TouchableOpacity
-              style={styles.foodContainer}
-              onPress={() => navigation.navigate('FoodDetailPage', {food})}>
-              <View style={styles.innerContent}>
-                <Image
-                  source={require('../../assets/img/friedchicken.jpeg')}
-                  className="flex self-center w-[85%] mt-4"
-                />
-                <Text className="font-semibold text-xl ml-3 mt-1">
-                  {food.itemName}
-                </Text>
-              </View>
-            </TouchableOpacity>
-          )}
-        />
+        <View style={styles.parentContainer}>
+          <Searchbar
+            style={[styles.searchBar]}
+            placeholder="Search"
+            iconColor="white"
+            cursorColor="white"
+            placeholderTextColor="white"
+            inputStyle={{color: 'white'}}
+            value={searchFoodName}
+            onChangeText={text => {
+              // debounceSearchFoodName(text);
+              setSearchFoodName(text);
+            }}
+          />
+          <FlatList
+            data={allFoods}
+            numColumns={2}
+            keyExtractor={food => food.itemId.toString()}
+            // eslint-disable-next-line react-native/no-inline-styles
+            columnWrapperStyle={{
+              justifyContent: 'space-between',
+              marginBottom: 10,
+            }}
+            renderItem={({item: food}) => (
+              <TouchableOpacity
+                style={styles.foodContainer}
+                onPress={() => navigation.navigate('EachFoodPage', {food})}>
+                <View style={styles.innerContent}>
+                  <Image
+                    source={require('../../assets/img/friedchicken.jpeg')}
+                    className="flex self-center w-full rounded-t-lg"
+                  />
+                  <Text className="font-semibold text-[1.1rem] ml-3 mt-1">
+                    {food.itemName}
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            )}
+          />
+        </View>
       )}
     </View>
   );
@@ -95,8 +129,13 @@ const styles = StyleSheet.create({
   },
 
   innerContent: {
+    ...ShadowStyle.shadowBox,
     backgroundColor: 'white',
     flex: 1,
     borderRadius: 10,
+  },
+  searchBar: {
+    margin: 10,
+    backgroundColor: 'rgb(238,200,10)',
   },
 });
