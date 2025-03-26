@@ -12,6 +12,7 @@ export type RootStackParamList = {
   LandingPage: undefined;
   SignInPage: undefined;
   SignUpPage: undefined;
+  BottomTabLayout: undefined;
 };
 
 export default function RootLayout() {
@@ -22,21 +23,32 @@ export default function RootLayout() {
   } else {
     return (
       <RootStack.Navigator initialRouteName="LandingPage" id="RootStack">
-        <RootStack.Screen
-          name="LandingPage"
-          component={LandingPage}
-          options={{title: 'Welcome!'}}
-        />
-        <RootStack.Screen
-          name="SignInPage"
-          component={SignInPage}
-          options={{title: 'Sign In'}}
-        />
-        <RootStack.Screen
-          name="SignUpPage"
-          component={SignUpPage}
-          options={{title: 'Sign Up'}}
-        />
+        {!user ? (
+          <>
+            <RootStack.Screen
+              name="LandingPage"
+              component={LandingPage}
+              options={{title: 'Welcome!'}}
+            />
+            <RootStack.Screen
+              name="SignInPage"
+              component={SignInPage}
+              options={{title: 'Sign In'}}
+            />
+            <RootStack.Screen
+              name="SignUpPage"
+              component={SignUpPage}
+              options={{title: 'Sign Up'}}
+            />
+          </>
+        ) : (
+          <>
+            <RootStack.Screen
+              name="BottomTabLayout"
+              component={BottomTabLayout}
+            />
+          </>
+        )}
       </RootStack.Navigator>
     );
   }
