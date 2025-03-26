@@ -47,10 +47,10 @@ export default function CartPage() {
         ))}
       </ScrollView>
       {/* The subtotal and proceed to checkout */}
-      <View className="flex-col gap-2  mt-5 bg-blue">
+      <View className="flex-col gap-2 mt-[6px] px-3">
         <View className="flex-row justify-between">
           <Text className="text-2xl">Subtotal</Text>
-          <Text className="text-2xl">{totalPrice.toFixed(2)}</Text>
+          <Text className="text-2xl font-bold">RM {totalPrice.toFixed(2)}</Text>
         </View>
         <TouchableOpacity
           style={ButtonStyle.generalButton}

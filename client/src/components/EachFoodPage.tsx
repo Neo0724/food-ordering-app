@@ -12,7 +12,7 @@ import {useCardContext} from '../context/CartProvider';
 import {Variant} from './FoodPage';
 import {ShadowStyle} from '../../styles/ShadowStyle';
 import {ButtonStyle} from '../../styles/ButtonStyles';
-import {FoodStackParamList} from '../navigation/RootLayout';
+import {FoodStackParamList} from '../navigation/FoodStack';
 
 type FoodDetailPageProps = NativeStackScreenProps<
   FoodStackParamList,
@@ -84,7 +84,7 @@ export default function FoodDetailsPage({
       <View className="m-5 gap-3">
         <Text className="text-4xl">{food.itemName}</Text>
         <Text>{food.itemDescription}</Text>
-        <Text>Ingredients: {food.ingredient}</Text>
+        <Text>In: {food.ingredient}</Text>
 
         {/* Container to show all variants */}
         <View className="justify-between gap-3 flex-row flex-wrap">

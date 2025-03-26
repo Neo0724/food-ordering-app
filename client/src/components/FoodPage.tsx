@@ -13,8 +13,8 @@ import useFood from '../custom-hook/useFood';
 import {ShadowStyle} from '../../styles/ShadowStyle';
 import {FoodStackParamList} from '../navigation/FoodStack';
 import {Searchbar} from 'react-native-paper';
-import debounce from '../../utils/debounce';
-import {useQueryClient} from '@tanstack/react-query';
+// import debounce from '../../utils/debounce';
+// import {useQueryClient} from '@tanstack/react-query';
 
 export type Variant = {
   sizeId: number;
@@ -73,7 +73,7 @@ export default function FoodPage() {
         <Text>No foods found.</Text>
       )}
       {!isLoading && !error && allFoods.length > 0 && (
-        <View style={styles.parentContainer}>
+        <View>
           <Searchbar
             style={[styles.searchBar]}
             placeholder="Search"
@@ -96,7 +96,11 @@ export default function FoodPage() {
               justifyContent: 'space-between',
               marginBottom: 10,
             }}
-            renderItem={({item: food}) => (
+            // eslint-disable-next-line react-native/no-inline-styles
+            contentContainerStyle={{
+              paddingBottom: 160,
+            }}
+            renderItem={({item: food}: {item: Food}) => (
               <TouchableOpacity
                 style={styles.foodContainer}
                 onPress={() => navigation.navigate('EachFoodPage', {food})}>
@@ -119,9 +123,6 @@ export default function FoodPage() {
 }
 
 const styles = StyleSheet.create({
-  parentContainer: {
-    backgroundColor: 'lightgray',
-  },
   foodContainer: {
     height: 275,
     width: '50%',

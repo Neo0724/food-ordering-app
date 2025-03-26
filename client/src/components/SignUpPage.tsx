@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {Controller, useForm} from 'react-hook-form';
-import {Image, Text, TextInput, TouchableOpacity, View} from 'react-native';
+import {Image, Text, TouchableOpacity, View} from 'react-native';
 import {signUpSchema, UserSignUpType} from './userSchema';
 import {ButtonStyle} from '../../styles/ButtonStyles';
 import {
