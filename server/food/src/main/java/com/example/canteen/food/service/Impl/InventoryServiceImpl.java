@@ -1,8 +1,10 @@
 package com.example.canteen.food.service.Impl;
 
+import com.example.canteen.food.common.exceptions.OrderException;
 import com.example.canteen.food.model.dto.ItemDTO;
 import com.example.canteen.food.model.dto.VariantDTO;
 import com.example.canteen.food.model.entity.Item;
+import com.example.canteen.food.model.entity.Order;
 import com.example.canteen.food.model.entity.Variant;
 import com.example.canteen.food.model.vo.ItemVO;
 import com.example.canteen.food.model.vo.VariantVO;
@@ -37,7 +39,10 @@ public class InventoryServiceImpl implements InventoryService {
     public List<ItemVO> getList() {
     // Retrieve all Items from the database
     List<Item> items = itemRepository.findAllWithVariants();
-
+    if(items.isEmpty()) {
+        throw new OrderException("No items found ");
+    }
+    
     // Convert each Item to ItemVO and return the list
     return items.stream().map(item -> {
         ItemVO itemVO = new ItemVO();
@@ -90,7 +95,7 @@ public class InventoryServiceImpl implements InventoryService {
 public void modifyItem(ItemDTO itemDTO) {
     //return exisitng item with id
     Item item = itemRepository.findById(itemDTO.getItemId())
-            .orElseThrow(() -> new NoSuchElementException("Item not found with ID: " + itemDTO.getItemId()));
+            .orElseThrow(() -> new OrderException("Item not found with ID: " + itemDTO.getItemId()));
 
 
     item.setItemName(itemDTO.getItemName());

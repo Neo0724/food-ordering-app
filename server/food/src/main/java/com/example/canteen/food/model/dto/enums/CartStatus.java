@@ -4,6 +4,6 @@ public enum CartStatus {
     ACTIVE,
     ORDERED,
     CANCELLED,
-    DELIVERED,
+    PREPARING,
     COMPLETED
 }

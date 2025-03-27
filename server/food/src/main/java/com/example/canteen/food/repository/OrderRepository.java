@@ -38,5 +38,9 @@ List<ItemPerOrder> findOrderItem(@Param("userId") String userId);
     @Modifying
     @Query("DELETE FROM Order o WHERE o.orderId = :orderId")    
     void deleteByOrderId(String orderId);
+
+    @Modifying
+    @Query("UPDATE FROM Order o SET o.status = 'CANCELLED' WHERE o.orderId = :orderId")
+    void updateCancelStatus(@Param("orderId") String orderId);
 }
 

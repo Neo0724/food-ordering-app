@@ -18,6 +18,7 @@ import com.example.canteen.food.repository.VariantRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.example.canteen.food.common.exceptions.OrderException;
 import com.example.canteen.food.model.dto.CartDTO;
 import com.example.canteen.food.model.entity.Cart;
 import com.example.canteen.food.repository.CartRepository;
@@ -73,7 +74,7 @@ public class CartServiceImpl implements CartService {
 
         Cart cart = cartRepository.findById(modifyQuantityDTO.getCartId())
                 .orElseThrow(
-                        () -> new NoSuchElementException("Cart not found with id: " + modifyQuantityDTO.getCartId()));
+                        () -> new OrderException("Cart not found with id: " + modifyQuantityDTO.getCartId()));
 
         cart.setQuantity(modifyQuantityDTO.getItemQuantity());
         log.info("Current cart quantity: " + modifyQuantityDTO.getItemQuantity().toString());
@@ -85,20 +86,7 @@ public class CartServiceImpl implements CartService {
     public void deleteCart(Integer cartId) {
         cartRepository.deleteById(cartId);
     }
-    // Cart cart = cartRepository.findById(dto.getCartId())
-    // .orElseThrow(() -> new IllegalArgumentException("Cart not found with ID: " +
-    // dto.getCartId()));
-    // order.setCart(cart);
 
-    // Item item = itemRepository.findById(dto.getItemId())
-    // .orElseThrow(() -> new IllegalArgumentException("Item not found with ID: " +
-    // dto.getItemId()));
-    // order.setItem(item);
-
-    // Variant variant = variantRepository.findById(dto.getSizeId())
-    // .orElseThrow(() -> new IllegalArgumentException("Variant not found with ID: "
-    // + dto.getSizeId()));
-    // order.setVariant(variant);
     public void placeOrder(List<CartDTO> cartDTOs) {
         String uuid = UUID.randomUUID().toString();
         cartDTOs.forEach(x -> x.setOrderId(uuid));

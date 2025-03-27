@@ -14,11 +14,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.canteen.food.model.dto.enums.CartStatus;
+import com.example.canteen.food.model.entity.Order;
+import com.example.canteen.food.model.entity.OrderId;
 import com.example.canteen.food.model.vo.Order.ItemPerOrder;
 import com.example.canteen.food.model.vo.Order.OrderVO;
 import com.example.canteen.food.repository.OrderRepository;
 import com.example.canteen.food.service.OrderService;
 
+import jakarta.persistence.IdClass;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 @Transactional
@@ -71,7 +74,8 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void deleteOrder(String orderId) {
-        orderRepository.deleteByOrderId(orderId);
+ 
+        orderRepository.updateCancelStatus(orderId);
     }
 
     
