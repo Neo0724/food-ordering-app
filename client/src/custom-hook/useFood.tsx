@@ -17,9 +17,12 @@ export default function useFood() {
 
         if (response.data.code === 1 && response.data.msg === 'success') {
           return response.data.data;
+        } else {
+          return null;
         }
       } catch (err) {
         console.log('Error fetching foods, ' + err);
+        throw err;
       }
     },
   });

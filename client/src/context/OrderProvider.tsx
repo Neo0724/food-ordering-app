@@ -67,6 +67,7 @@ export function OrderProvider({children}: {children: React.ReactNode}) {
         }
       } catch (err) {
         console.log('Error fetching data, ' + err);
+        throw err;
       }
     },
     enabled: !!user?.uid,

@@ -25,11 +25,11 @@ export default function App() {
       <QueryClientProvider client={queryClient}>
         <OrderProvider>
           <CartProvider>
-            <NavigationContainer>
-              <PaperProvider theme={theme}>
+            <PaperProvider theme={theme}>
+              <NavigationContainer>
                 <RootLayout />
-              </PaperProvider>
-            </NavigationContainer>
+              </NavigationContainer>
+            </PaperProvider>
           </CartProvider>
         </OrderProvider>
       </QueryClientProvider>

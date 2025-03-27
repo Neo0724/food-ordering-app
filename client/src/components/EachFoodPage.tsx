@@ -1,11 +1,3 @@
-import {
-  Alert,
-  Image,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {useEffect, useState} from 'react';
 import {useCardContext} from '../context/CartProvider';
@@ -13,6 +5,8 @@ import {Variant} from './FoodPage';
 import {ShadowStyle} from '../../styles/ShadowStyle';
 import {ButtonStyle} from '../../styles/ButtonStyles';
 import {FoodStackParamList} from '../navigation/FoodStack';
+import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import CustomDialog from './CustomDialog';
 
 type FoodDetailPageProps = NativeStackScreenProps<
   FoodStackParamList,
@@ -21,14 +15,18 @@ type FoodDetailPageProps = NativeStackScreenProps<
 
 export default function FoodDetailsPage({
   route,
-  navigation,
-}: FoodDetailPageProps) {
+}: // navigation,
+FoodDetailPageProps) {
   const food = route.params.food;
   const [selectedSize, setSelectedSize] = useState<number>(-1);
   const [selectedQuantity, setSelectedQuantity] = useState<number>(1);
   const {addToCartMutation, updateCartQuantityMutation, foodsInCart} =
     useCardContext();
   const [exceedQuantity, setExceedQuantity] = useState<boolean>(false);
+  /* State for dialog */
+  const [visible, setVisible] = useState<boolean>(false);
+  const [dialogTitle, setDialogTitle] = useState<string>('');
+  const [dialogMessage, setDialogMessage] = useState<string>('');
 
   // Variant map for faster lookup
   const variantMap = new Map(
@@ -37,7 +35,9 @@ export default function FoodDetailsPage({
 
   const handleAddToCart = () => {
     if (selectedSize === -1) {
-      Alert.alert('Invalid option', 'Please select one variant');
+      setDialogTitle('Invalid option');
+      setDialogMessage('Please select one variant');
+      setVisible(true);
       return;
     }
 
@@ -49,18 +49,43 @@ export default function FoodDetailsPage({
 
     /* Food already in cart, hence update the quantity */
     if (foodExistsInCart) {
+      const exceededQuantity =
+        foodExistsInCart.quantity + selectedQuantity >
+        foodExistsInCart.availableQuantity;
+
+      if (exceededQuantity) {
+        setDialogTitle('Invalid option');
+        setDialogMessage('You have exceeded the maximum quantity');
+        setVisible(true);
+        return;
+      }
       updateCartQuantityMutation.mutate({
         cartId: foodExistsInCart.cartId,
         newQuantity: foodExistsInCart.quantity + selectedQuantity,
-        prevQuantity: foodExistsInCart.quantity,
-        unitPrice: foodExistsInCart.price,
+        setDialogTitle,
+        setDialogMessage,
+        setVisible,
       });
     } else {
       /* Food not in cart, hence add the food into the cart */
+
+      const exceededQuantity =
+        selectedQuantity > (variantMap.get(selectedSize)?.quantity ?? Infinity);
+
+      if (exceededQuantity) {
+        setDialogTitle('Invalid option');
+        setDialogMessage('You have exceeded the maximum quantity');
+        setVisible(true);
+        return;
+      }
+
       addToCartMutation.mutate({
         itemId: food.itemId,
         selectedQuantity: selectedQuantity,
         selectedVariant: variantMap.get(selectedSize) as Variant,
+        setDialogTitle,
+        setDialogMessage,
+        setVisible,
       });
     }
   };
@@ -77,10 +102,19 @@ export default function FoodDetailsPage({
 
   return (
     <View>
+      {/* Dialog to show that user has selected over the max quantity */}
+      <CustomDialog
+        title={dialogTitle}
+        message={dialogMessage}
+        visible={visible}
+        setVisible={setVisible}
+      />
+      {/* Food image */}
       <Image
         source={require('../../assets/img/friedchicken.jpeg')}
         className="w-full h-[20em]"
       />
+      {/* Food details container */}
       <View className="m-5 gap-3">
         <Text className="text-4xl">{food.itemName}</Text>
         <Text>{food.itemDescription}</Text>
@@ -129,30 +163,35 @@ export default function FoodDetailsPage({
         <View className="flex-row gap-3 items-center mt-3">
           <Text>Quantity: </Text>
           <TouchableOpacity
+            disabled={selectedSize === -1}
             style={ButtonStyle.plusMinusButton}
-            onPress={() =>
+            onPress={() => {
+              // Reset the exceed quantity message
+              exceedQuantity && setExceedQuantity(false);
+
               setSelectedQuantity(prev => {
-                // Reset the exceed quantity message
-                exceedQuantity && setExceedQuantity(false);
                 return prev === 1 ? prev : prev - 1;
-              })
-            }>
+              });
+            }}>
             <Text style={ButtonStyle.plusMinusText}>-</Text>
           </TouchableOpacity>
           <Text>{selectedQuantity}</Text>
           <TouchableOpacity
+            disabled={selectedSize === -1}
             style={ButtonStyle.plusMinusButton}
             onPress={() => {
-              setSelectedQuantity(prev => {
-                // Reset the exceed quantity message
-                exceedQuantity && setExceedQuantity(false);
-                const exceeded =
-                  prev >= (variantMap.get(selectedSize)?.quantity ?? 0);
-                if (exceeded) {
-                  setExceedQuantity(true);
-                }
-                return exceeded ? prev : prev + 1;
-              });
+              // Reset the exceed quantity message
+              exceedQuantity && setExceedQuantity(false);
+              /* Check if exceeded the available quantity */
+              const exceeded =
+                selectedQuantity + 1 >
+                (variantMap.get(selectedSize)?.quantity ?? 0);
+
+              exceeded && setExceedQuantity(true);
+              !exceeded &&
+                setSelectedQuantity(prev => {
+                  return prev + 1;
+                });
             }}>
             <Text style={ButtonStyle.plusMinusText}>+</Text>
           </TouchableOpacity>

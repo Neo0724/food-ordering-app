@@ -66,7 +66,7 @@ export default function FoodPage() {
   }
 
   return (
-    <View>
+    <View className="m-3">
       {isLoading && <Text>Loading...</Text>}
       {error && <Text>Error loading data.</Text>}
       {!isLoading && !error && allFoods.length === 0 && (
@@ -99,6 +99,7 @@ export default function FoodPage() {
             // eslint-disable-next-line react-native/no-inline-styles
             contentContainerStyle={{
               paddingBottom: 160,
+              borderRadius: 10,
             }}
             renderItem={({item: food}: {item: Food}) => (
               <TouchableOpacity
@@ -136,7 +137,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   searchBar: {
-    margin: 10,
+    marginBottom: 10,
     backgroundColor: 'rgb(238,200,10)',
   },
 });

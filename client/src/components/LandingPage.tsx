@@ -2,8 +2,8 @@ import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {Image, Text, View, TouchableOpacity, StyleSheet} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {RootStackParamList} from './RootLayout';
 import {ButtonStyle} from '../../styles/ButtonStyles';
+import {RootStackParamList} from '../navigation/RootLayout';
 
 export default function LandingPage() {
   const navigation =

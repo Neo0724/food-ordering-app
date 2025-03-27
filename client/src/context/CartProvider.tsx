@@ -13,12 +13,15 @@ import {STATUS} from '../constant/constant';
 
 type UpdateCartQuantityType = {
   cartId: number;
-  unitPrice: number;
-  prevQuantity: number;
   newQuantity: number;
 };
 
-type RemoveFromCartType = Omit<UpdateCartQuantityType, 'newQuantity'>;
+type RemoveFromCartType = {
+  cartId: number;
+  unitPrice: number;
+  prevQuantity: number;
+  isChecked: boolean;
+};
 
 export type RetrievedFoodCartType = {
   userId: string;
@@ -33,17 +36,35 @@ export type RetrievedFoodCartType = {
   createTime: string;
   updateTime: string;
   price: number;
+  isChecked: boolean;
+};
+
+type NewFoodToAddTypeWithDialog = NewFoodToAddType & {
+  setDialogTitle: React.Dispatch<SetStateAction<string>>;
+  setDialogMessage: React.Dispatch<SetStateAction<string>>;
+  setVisible: React.Dispatch<SetStateAction<boolean>>;
+};
+
+type UpdateCartQuantityTypeWithDialog = UpdateCartQuantityType & {
+  setDialogTitle?: React.Dispatch<SetStateAction<string>>;
+  setDialogMessage?: React.Dispatch<SetStateAction<string>>;
+  setVisible?: React.Dispatch<SetStateAction<boolean>>;
 };
 
 type CardContextType = {
   foodsInCart: RetrievedFoodCartType[] | undefined;
   isLoading: boolean;
   error: any;
-  addToCartMutation: UseMutationResult<void, Error, NewFoodToAddType, unknown>;
+  addToCartMutation: UseMutationResult<
+    void,
+    Error,
+    NewFoodToAddTypeWithDialog,
+    unknown
+  >;
   updateCartQuantityMutation: UseMutationResult<
     void,
     Error,
-    UpdateCartQuantityType,
+    UpdateCartQuantityTypeWithDialog,
     unknown
   >;
   removeFromCartMutation: UseMutationResult<
@@ -52,6 +73,7 @@ type CardContextType = {
     RemoveFromCartType,
     unknown
   >;
+  checkFoodInCart: (cartId: number) => void;
   setTotalPrice: React.Dispatch<SetStateAction<number>>;
   totalPrice: number;
 };
@@ -79,23 +101,24 @@ export function CartProvider({children}: {children: React.ReactNode}) {
     error,
   } = useQuery<RetrievedFoodCartType[]>({
     queryKey: ['cart-items', user?.uid],
-    queryFn: async ({queryKey}) => {
+    queryFn: async ({queryKey}): Promise<RetrievedFoodCartType[]> => {
       try {
         const response = await axios.get(
           `http://${Config.BACKEND_URL}/products?userId=${queryKey[1]}`,
         );
         if (response.data.code === 1 && response.data.msg === 'success') {
-          const returnedFoodInCart = response.data
+          const retrievedFoodInCart = response.data
             .data as RetrievedFoodCartType[];
-          const retrievedTotalPrice = returnedFoodInCart.reduce(
-            (acc, food) => acc + food.quantity * food.price,
-            0,
-          );
-          setTotalPrice(retrievedTotalPrice);
-          return response.data.data;
+          return retrievedFoodInCart.map(food => ({
+            ...food,
+            isChecked: false,
+          }));
+        } else {
+          return [];
         }
       } catch (err) {
         console.log('Error fetching data, ' + err);
+        throw err;
       }
     },
     enabled: !!user?.uid,
@@ -105,68 +128,60 @@ export function CartProvider({children}: {children: React.ReactNode}) {
   const [totalPrice, setTotalPrice] = useState<number>(0);
 
   const addToCartMutation = useMutation({
-    mutationFn: async (newFood: NewFoodToAddType) => {
-      setTotalPrice(
-        prev => prev + newFood.selectedQuantity * newFood.selectedVariant.price,
-      );
-
+    mutationFn: async ({
+      itemId,
+      selectedQuantity,
+      selectedVariant,
+    }: NewFoodToAddTypeWithDialog) => {
       try {
         await axios.post(`http://${Config.BACKEND_URL}/products`, {
-          itemId: newFood.itemId,
+          itemId: itemId,
           userId: user?.uid,
-          sizeId: newFood.selectedVariant.sizeId,
-          quantity: newFood.selectedQuantity,
+          sizeId: selectedVariant.sizeId,
+          quantity: selectedQuantity,
         });
       } catch (err) {
         throw err;
       }
     },
-    onError: (err, newFood) => {
+    onError: err => {
       console.log('Error adding to cart, ' + err);
-      setTotalPrice(
-        prev => prev - newFood.selectedQuantity * newFood.selectedVariant.price,
-      );
     },
-    onSuccess: () => {
+    onSuccess: (_, {setDialogTitle, setDialogMessage, setVisible}) => {
+      setDialogTitle('Success');
+      setDialogMessage('Food added to cart');
+      setVisible(true);
       queryClient.invalidateQueries({queryKey: ['cart-items', user?.uid]});
     },
   });
 
   const updateCartQuantityMutation = useMutation({
-    mutationFn: async (foodToUpdate: UpdateCartQuantityType) => {
+    mutationFn: async ({
+      newQuantity,
+      cartId,
+    }: UpdateCartQuantityTypeWithDialog) => {
       try {
         await axios.put(`http://${Config.BACKEND_URL}/products`, {
-          itemQuantity: foodToUpdate.newQuantity,
-          cartId: foodToUpdate.cartId,
+          itemQuantity: newQuantity,
+          cartId: cartId,
         });
       } catch (err) {
         throw err;
       }
     },
-    onError: (err, foodToUpdate) => {
+    onError: err => {
       console.log('Error upating cart quantity, ' + err);
-      setTotalPrice(prev =>
-        Math.abs(
-          prev -
-            foodToUpdate.newQuantity * foodToUpdate.unitPrice +
-            foodToUpdate.prevQuantity * foodToUpdate.unitPrice,
-        ),
-      );
     },
-    onSuccess: () => {
+    onSuccess: (_, {setDialogTitle, setDialogMessage, setVisible}) => {
+      setDialogTitle && setDialogTitle('Success');
+      setDialogMessage && setDialogMessage('Cart quantity updated');
+      setVisible && setVisible(true);
       queryClient.invalidateQueries({queryKey: ['cart-items', user?.uid]});
     },
   });
 
   const removeFromCartMutation = useMutation({
-    mutationFn: async ({
-      cartId,
-      prevQuantity,
-      unitPrice,
-    }: RemoveFromCartType) => {
-      setTotalPrice(prevPrice =>
-        Math.abs(prevPrice - prevQuantity * unitPrice),
-      );
+    mutationFn: async ({cartId}: RemoveFromCartType) => {
       try {
         await axios.delete(
           `http://${Config.BACKEND_URL}/products?cartId=${cartId}`,
@@ -175,18 +190,32 @@ export function CartProvider({children}: {children: React.ReactNode}) {
         throw err;
       }
     },
-    onError: (err, foodToRemove) => {
+    onError: (err, {isChecked, unitPrice, prevQuantity}) => {
       console.log('Error removing food from cart, ' + err);
-      setTotalPrice(prevPrice =>
-        Math.abs(
-          prevPrice + foodToRemove.prevQuantity * foodToRemove.unitPrice,
-        ),
-      );
+      isChecked && setTotalPrice(prev => prev + unitPrice * prevQuantity);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({queryKey: ['cart-items', user?.uid]});
     },
   });
+
+  const checkFoodInCart = (cartId: number) => {
+    queryClient.setQueryData<RetrievedFoodCartType[]>(
+      ['cart-items', user?.uid],
+      (prevCartItem: RetrievedFoodCartType[] | undefined) => {
+        return prevCartItem?.map(cartItem => {
+          if (cartItem.cartId === cartId) {
+            return {
+              ...cartItem,
+              isChecked: !cartItem.isChecked,
+            };
+          } else {
+            return cartItem;
+          }
+        });
+      },
+    );
+  };
 
   return (
     <CartContext.Provider
@@ -199,6 +228,7 @@ export function CartProvider({children}: {children: React.ReactNode}) {
         setTotalPrice,
         isLoading,
         error,
+        checkFoodInCart,
       }}>
       {children}
     </CartContext.Provider>

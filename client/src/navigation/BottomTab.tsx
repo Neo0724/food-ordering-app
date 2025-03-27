@@ -14,12 +14,13 @@ export type BottomTabParamList = {
   OrderPage: undefined;
 };
 
-const Tab = createBottomTabNavigator<BottomTabParamList>();
+const Tab = createBottomTabNavigator<BottomTabParamList, 'BottomTab'>();
 const WindowHeight = Dimensions.get('window').height;
 
 export default function BottomTabLayout() {
   return (
     <Tab.Navigator
+      id="BottomTab"
       initialRouteName="HomePage"
       screenOptions={({route}) => ({
         tabBarActiveTintColor: 'white',
