@@ -13,34 +13,32 @@ import com.example.canteen.food.model.entity.Order;
 import com.example.canteen.food.model.entity.OrderId;
 import com.example.canteen.food.model.vo.Order.ItemPerOrder;
 
-
 @Repository
 public interface OrderRepository extends JpaRepository<Order, OrderId> {
 
     @Query("SELECT new com.example.canteen.food.model.vo.Order.ItemPerOrder( " +
-    "o.orderId, " +
-    "o.cartId, " +
-    "o.itemId, " +
-    "i.itemName, " +
-    "o.sizeId, " +
-    "v.size, " +
-    "v.price, " +
-    "o.quantity, " +
-    "o.status, " +
-    "o.createTime, " +
-    "o.updateTime) " +
-    "FROM Order o " +
-    "JOIN Item i ON o.itemId = i.itemId " +
-    "JOIN Variant v ON o.sizeId = v.sizeId " +
-    "WHERE o.userId = :userId")
-List<ItemPerOrder> findOrderItem(@Param("userId") String userId);
+            "o.orderId, " +
+            "o.cartId, " +
+            "o.itemId, " +
+            "i.itemName, " +
+            "o.sizeId, " +
+            "v.size, " +
+            "v.price, " +
+            "o.quantity, " +
+            "o.status, " +
+            "o.createTime, " +
+            "o.updateTime) " +
+            "FROM Order o " +
+            "JOIN Item i ON o.itemId = i.itemId " +
+            "JOIN Variant v ON o.sizeId = v.sizeId " +
+            "WHERE o.userId = :userId")
+    List<ItemPerOrder> findOrderItem(@Param("userId") String userId);
 
     @Modifying
-    @Query("DELETE FROM Order o WHERE o.orderId = :orderId")    
+    @Query("DELETE FROM Order o WHERE o.orderId = :orderId")
     void deleteByOrderId(String orderId);
 
     @Modifying
-    @Query("UPDATE FROM Order o SET o.status = 'CANCELLED' WHERE o.orderId = :orderId")
+    @Query("UPDATE Order o SET o.status = 'CANCELLED' WHERE o.orderId = :orderId")
     void updateCancelStatus(@Param("orderId") String orderId);
 }
-
