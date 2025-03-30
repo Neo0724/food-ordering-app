@@ -2,12 +2,28 @@ import {useQuery} from '@tanstack/react-query';
 import axios from 'axios';
 import Config from 'react-native-config';
 
+export type Variant = {
+  sizeId: number;
+  size: string;
+  price: number;
+  onSale: number;
+  quantity: number;
+};
+
+export type Food = {
+  itemId: number;
+  itemName: string;
+  itemDescription: string;
+  ingredient: string;
+  list: Variant[];
+};
+
 export default function useFood() {
   const {
     data: allFoods,
     isLoading,
     error,
-  } = useQuery({
+  } = useQuery<Food[]>({
     queryKey: ['foods'],
     queryFn: async () => {
       try {

@@ -35,11 +35,16 @@ export type RetrievedOrdersType = {
   status: string;
 };
 
+type AddToOrderType = {
+  ordersToAdd: PlaceOrderType[];
+  totalPrice: number;
+};
+
 type OrderContextType = {
   allOrders: RetrievedOrdersType[] | undefined;
   isLoading: boolean;
   error: any;
-  addOrderMutation: UseMutationResult<void, Error, PlaceOrderType[], unknown>;
+  addOrderMutation: UseMutationResult<void, Error, AddToOrderType, unknown>;
   deleteOrderMutation: UseMutationResult<void, Error, string, unknown>;
 };
 
@@ -76,9 +81,14 @@ export function OrderProvider({children}: {children: React.ReactNode}) {
   const queryClient = useQueryClient();
 
   const addOrderMutation = useMutation({
-    mutationFn: async (ordersToAdd: PlaceOrderType[]) => {
+    mutationFn: async ({ordersToAdd, totalPrice}: AddToOrderType) => {
       try {
-        await axios.post(`http://${Config.BACKEND_URL}/orders`, ordersToAdd);
+        await axios.post(
+          `http://${
+            Config.BACKEND_URL
+          }/orders?totalPrice=${totalPrice}&isPoint=${false}`,
+          ordersToAdd,
+        );
       } catch (err) {
         throw err;
       }

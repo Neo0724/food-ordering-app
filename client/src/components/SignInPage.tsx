@@ -1,4 +1,4 @@
-import {getAuth, signInWithEmailAndPassword} from '@react-native-firebase/auth';
+import auth from '@react-native-firebase/auth';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import React, {useEffect, useState} from 'react';
@@ -12,8 +12,6 @@ import {ButtonStyle} from '../../styles/ButtonStyles';
 import CustomTextInput from './CustomTextInput';
 
 export default function SignInPage() {
-  const auth = getAuth();
-  console.log(auth.currentUser);
   const stackNavigation =
     useNavigation<
       NativeStackNavigationProp<RootStackParamList, 'SignInPage'>
@@ -38,7 +36,10 @@ export default function SignInPage() {
   // Handle sign in
   const submitSignIn = async (formData: UserSignInType) => {
     try {
-      await signInWithEmailAndPassword(auth, formData.email, formData.password);
+      await auth().signInWithEmailAndPassword(
+        formData.email,
+        formData.password,
+      );
     } catch (error: any) {
       setSignInErr(true);
       if (error.code === 'auth/invalid-credential') {

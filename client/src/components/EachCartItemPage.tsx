@@ -1,4 +1,4 @@
-import React, {useEffect, useMemo, useState} from 'react';
+import React, {SetStateAction, useEffect, useMemo, useState} from 'react';
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import {RetrievedFoodCartType, useCardContext} from '../context/CartProvider';
 import debounce from '../../utils/debounce';
@@ -8,15 +8,15 @@ import {Checkbox} from 'react-native-paper';
 
 type EachCartItemProp = {
   food: RetrievedFoodCartType;
+  setTotalPrice: React.Dispatch<SetStateAction<number>>;
 };
 
-export default function EachCartItemPage({food}: EachCartItemProp) {
-  const {
-    removeFromCartMutation,
-    updateCartQuantityMutation,
-    setTotalPrice,
-    checkFoodInCart,
-  } = useCardContext();
+export default function EachCartItemPage({
+  food,
+  setTotalPrice,
+}: EachCartItemProp) {
+  const {removeFromCartMutation, updateCartQuantityMutation, checkFoodInCart} =
+    useCardContext();
   const [exceedQuantity, setExceedQuantity] = useState<boolean>(false);
   const [selectedQuantity, setSelectedQuantity] = useState<number>(
     food.quantity,

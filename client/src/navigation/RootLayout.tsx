@@ -1,11 +1,11 @@
-/* eslint-disable react/no-unstable-nested-components */
 import {useAuthContext} from '../context/AuthProvider';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import LandingPage from '../components/LandingPage';
 import SignInPage from '../components/SignInPage';
 import SignUpPage from '../components/SignUpPage';
 import BottomTabLayout from './BottomTab';
-import CheckoutStackLayout from './CheckoutStack';
+import CheckoutStackLayout, {CheckoutStackParamList} from './CheckoutStack';
+import {NavigatorScreenParams} from '@react-navigation/native';
 
 const RootStack = createNativeStackNavigator<RootStackParamList, 'RootStack'>();
 
@@ -14,7 +14,7 @@ export type RootStackParamList = {
   SignInPage: undefined;
   SignUpPage: undefined;
   BottomTabLayout: undefined;
-  CheckoutStack: undefined;
+  CheckoutStack: NavigatorScreenParams<CheckoutStackParamList>;
 };
 
 export default function RootLayout() {

@@ -9,14 +9,16 @@ import {
 import {useCardContext} from '../context/CartProvider';
 import EachCartItemPage from './EachCartItemPage';
 import {ButtonStyle} from '../../styles/ButtonStyles';
-import {useOrderContext} from '../context/OrderProvider';
 import {ShadowStyle} from '../../styles/ShadowStyle';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../navigation/RootLayout';
+import {useState} from 'react';
+import {useOrderContext} from '../context/OrderProvider';
 
 export default function CartPage() {
-  const {foodsInCart, totalPrice} = useCardContext();
+  const {foodsInCart} = useCardContext();
+  const [totalPrice, setTotalPrice] = useState<number>(0);
   const {addOrderMutation} = useOrderContext();
 
   const navigation =
@@ -34,17 +36,21 @@ export default function CartPage() {
           price,
           size,
           status,
+          isChecked,
           ...food
         }) => food,
       );
 
-    if (filteredFood?.length === 0) {
+    if (filteredFood?.length === 0 || !filteredFood) {
       console.log('Cart cannot be empty');
       return;
     }
-    console.log(filteredFood);
-    // addOrderMutation.mutate(filteredFood);
-    // navigation.navigate('CheckoutStack');
+    // console.log(JSON.stringify(filteredFood, null, 2));
+    addOrderMutation.mutate({ordersToAdd: filteredFood, totalPrice});
+    // navigation.navigate('CheckoutStack', {
+    //   screen: 'CheckoutPage',
+    //   params: {totalPrice},
+    // });
   };
 
   return (
@@ -52,10 +58,14 @@ export default function CartPage() {
       {!foodsInCart?.length && <Text>Cart is empty...</Text>}
       <ScrollView className="h-[88%]">
         {foodsInCart?.map(food => (
-          <EachCartItemPage food={food} key={food.cartId} />
+          <EachCartItemPage
+            food={food}
+            key={food.cartId}
+            setTotalPrice={setTotalPrice}
+          />
         ))}
       </ScrollView>
-      {/* The subtotal and proceed to checkout */}
+      {/* The subtotal and proceed to checkout container */}
       <View style={styles.subTotalAndCheckoutContainer}>
         <View className="flex-col justify-between flex-2">
           <Text className="text-xl">Subtotal</Text>

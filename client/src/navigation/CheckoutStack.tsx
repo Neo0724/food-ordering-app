@@ -1,8 +1,10 @@
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import CheckoutPage from '../components/CheckoutPage';
+import PayAtCounterPage from '../components/PayAtCounterPage';
 
 export type CheckoutStackParamList = {
-  CheckoutPage: undefined;
+  CheckoutPage: {totalPrice: number};
+  PayAtCounterPage: undefined;
 };
 
 const CheckoutStack = createNativeStackNavigator<CheckoutStackParamList>();
@@ -16,6 +18,13 @@ export default function CheckoutStackLayout() {
           title: 'Checkout',
         }}
         component={CheckoutPage}
+      />
+      <CheckoutStack.Screen
+        name="PayAtCounterPage"
+        options={{
+          title: 'Pay at Counter',
+        }}
+        component={PayAtCounterPage}
       />
     </CheckoutStack.Navigator>
   );

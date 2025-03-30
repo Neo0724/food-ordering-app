@@ -21,6 +21,7 @@ type RemoveFromCartType = {
   unitPrice: number;
   prevQuantity: number;
   isChecked: boolean;
+  setTotalPrice: React.Dispatch<SetStateAction<number>>;
 };
 
 export type RetrievedFoodCartType = {
@@ -74,8 +75,6 @@ type CardContextType = {
     unknown
   >;
   checkFoodInCart: (cartId: number) => void;
-  setTotalPrice: React.Dispatch<SetStateAction<number>>;
-  totalPrice: number;
 };
 
 export type NewFoodToAddType = Omit<
@@ -123,9 +122,6 @@ export function CartProvider({children}: {children: React.ReactNode}) {
     },
     enabled: !!user?.uid,
   });
-
-  /* State */
-  const [totalPrice, setTotalPrice] = useState<number>(0);
 
   const addToCartMutation = useMutation({
     mutationFn: async ({
@@ -190,7 +186,7 @@ export function CartProvider({children}: {children: React.ReactNode}) {
         throw err;
       }
     },
-    onError: (err, {isChecked, unitPrice, prevQuantity}) => {
+    onError: (err, {isChecked, unitPrice, prevQuantity, setTotalPrice}) => {
       console.log('Error removing food from cart, ' + err);
       isChecked && setTotalPrice(prev => prev + unitPrice * prevQuantity);
     },
@@ -224,8 +220,6 @@ export function CartProvider({children}: {children: React.ReactNode}) {
         addToCartMutation,
         updateCartQuantityMutation,
         removeFromCartMutation,
-        totalPrice,
-        setTotalPrice,
         isLoading,
         error,
         checkFoodInCart,

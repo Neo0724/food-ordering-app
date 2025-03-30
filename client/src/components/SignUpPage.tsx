@@ -1,26 +1,56 @@
 import React, {useEffect, useState} from 'react';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {Controller, useForm} from 'react-hook-form';
-import {Image, Text, TouchableOpacity, View} from 'react-native';
+import {Button, Image, Text, TouchableOpacity, View} from 'react-native';
 import {signUpSchema, UserSignUpType} from './userSchema';
 import {ButtonStyle} from '../../styles/ButtonStyles';
-import {
-  createUserWithEmailAndPassword,
-  getAuth,
-  updateProfile,
-} from '@react-native-firebase/auth';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../navigation/RootLayout';
 import {AuthStyles} from '../../styles/AuthStyles';
+import {GoogleSignin} from '@react-native-google-signin/google-signin';
+import auth from '@react-native-firebase/auth';
 import CustomTextInput from './CustomTextInput';
-
 export default function SignUpPage() {
-  const auth = getAuth();
   const navigation =
     useNavigation<
       NativeStackNavigationProp<RootStackParamList, 'SignUpPage'>
     >();
+
+  GoogleSignin.configure({
+    webClientId:
+      '381706735826-5o7c7vm68fbpj32a68h8jbs2ko1h40j5.apps.googleusercontent.com',
+    offlineAccess: true,
+  });
+
+  /* Testing Google Sign In */
+  const signInWithGoogle = async () => {
+    try {
+      await GoogleSignin.hasPlayServices();
+      const result = await GoogleSignin.signIn();
+      console.log('signIn');
+      const idToken = result.data?.idToken;
+
+      if (!idToken) {
+        throw new Error('No id token found');
+      }
+      const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+      const userCredential = await auth().signInWithCredential(
+        googleCredential,
+      );
+      console.log(userCredential);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    GoogleSignin.configure({
+      webClientId:
+        '381706735826-5o7c7vm68fbpj32a68h8jbs2ko1h40j5.apps.googleusercontent.com',
+      offlineAccess: true,
+    });
+  }, []);
 
   // Set sign up eror message and error
   const [signUpErrMsg, setSignUpErrMsg] = useState<string>('');
@@ -41,13 +71,12 @@ export default function SignUpPage() {
   // Handle sign up
   const submitSignUp = async (formData: UserSignUpType) => {
     try {
-      const userCredential = await createUserWithEmailAndPassword(
-        auth,
+      const userCredential = await auth().createUserWithEmailAndPassword(
         formData.email,
         formData.password,
       );
 
-      updateProfile(userCredential.user, {
+      await userCredential.user.updateProfile({
         displayName: formData.username,
       });
 
@@ -175,6 +204,7 @@ export default function SignUpPage() {
           </TouchableOpacity>
         </View>
       </View>
+      <Button onPress={signInWithGoogle} title="Sign in with google" />
     </View>
   );
 }

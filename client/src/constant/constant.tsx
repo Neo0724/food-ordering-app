@@ -5,3 +5,5 @@ export const STATUS = [
   'DELIVERED',
   'COMPLETED',
 ] as const;
+
+export type PAYMENT_METHOD = 'CREDIT' | 'EWALLET' | 'COUNTER';

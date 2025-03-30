@@ -6,6 +6,7 @@ import {CartProvider} from './src/context/CartProvider';
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
 import {OrderProvider} from './src/context/OrderProvider';
 import {DefaultTheme, PaperProvider} from 'react-native-paper';
+import {PointAndCreditProvider} from './src/context/CreditProvider';
 
 export default function App() {
   const queryClient = new QueryClient();
@@ -23,15 +24,17 @@ export default function App() {
   return (
     <AuthProvider>
       <QueryClientProvider client={queryClient}>
-        <OrderProvider>
-          <CartProvider>
-            <PaperProvider theme={theme}>
-              <NavigationContainer>
-                <RootLayout />
-              </NavigationContainer>
-            </PaperProvider>
-          </CartProvider>
-        </OrderProvider>
+        <PointAndCreditProvider>
+          <OrderProvider>
+            <CartProvider>
+              <PaperProvider theme={theme}>
+                <NavigationContainer>
+                  <RootLayout />
+                </NavigationContainer>
+              </PaperProvider>
+            </CartProvider>
+          </OrderProvider>
+        </PointAndCreditProvider>
       </QueryClientProvider>
     </AuthProvider>
   );
