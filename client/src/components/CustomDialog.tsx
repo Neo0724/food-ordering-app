@@ -6,6 +6,7 @@ type CustomDialogProps = {
   setVisible: React.Dispatch<React.SetStateAction<boolean>>;
   title: string;
   message: string;
+  onCloseFunction?: () => void;
 };
 
 export default function CustomDialog({
@@ -13,6 +14,7 @@ export default function CustomDialog({
   message,
   visible,
   setVisible,
+  onCloseFunction,
 }: CustomDialogProps) {
   const theme = useTheme();
   return (
@@ -28,7 +30,11 @@ export default function CustomDialog({
           <Text style={styles.dialogText}>{message}</Text>
         </Dialog.Content>
         <Dialog.Actions>
-          <Button onPress={() => setVisible(false)}>
+          <Button
+            onPress={() => {
+              setVisible(false);
+              onCloseFunction?.();
+            }}>
             <Text style={styles.dialogText}>Close</Text>
           </Button>
         </Dialog.Actions>

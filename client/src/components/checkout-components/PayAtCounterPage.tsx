@@ -1,5 +1,5 @@
 import {StyleSheet, Text, View} from 'react-native';
-import {ShadowStyle} from '../../styles/ShadowStyle';
+import {ShadowStyle} from '../../../styles/ShadowStyle';
 import QRCode from 'react-native-qrcode-svg';
 
 export default function PayAtCounterPage() {

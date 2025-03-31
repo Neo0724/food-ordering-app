@@ -6,4 +6,4 @@ export const STATUS = [
   'COMPLETED',
 ] as const;
 
-export type PAYMENT_METHOD = 'CREDIT' | 'EWALLET' | 'COUNTER';
+export type PAYMENT_METHOD = 'CREDIT' | 'EWALLET' | 'COUNTER' | 'POINT';

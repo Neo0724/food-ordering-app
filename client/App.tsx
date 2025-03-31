@@ -6,7 +6,7 @@ import {CartProvider} from './src/context/CartProvider';
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
 import {OrderProvider} from './src/context/OrderProvider';
 import {DefaultTheme, PaperProvider} from 'react-native-paper';
-import {PointAndCreditProvider} from './src/context/CreditProvider';
+import {PointAndCreditProvider} from './src/context/PointAndCreditProvider';
 
 export default function App() {
   const queryClient = new QueryClient();

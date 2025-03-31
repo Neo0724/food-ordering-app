@@ -6,20 +6,22 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {useCardContext} from '../context/CartProvider';
+import {useCartContext} from '../../context/CartProvider';
 import EachCartItemPage from './EachCartItemPage';
-import {ButtonStyle} from '../../styles/ButtonStyles';
-import {ShadowStyle} from '../../styles/ShadowStyle';
+import {ButtonStyle} from '../../../styles/ButtonStyles';
+import {ShadowStyle} from '../../../styles/ShadowStyle';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {RootStackParamList} from '../navigation/RootLayout';
+import {RootStackParamList} from '../../navigation/RootLayout';
 import {useState} from 'react';
-import {useOrderContext} from '../context/OrderProvider';
+import CustomDialog from '../CustomDialog';
 
 export default function CartPage() {
-  const {foodsInCart} = useCardContext();
+  const {foodsInCart} = useCartContext();
   const [totalPrice, setTotalPrice] = useState<number>(0);
-  const {addOrderMutation} = useOrderContext();
+  const [dialogTitle, setDialogTitle] = useState<string>('');
+  const [dialogMessage, setDialogMessage] = useState<string>('');
+  const [visible, setVisible] = useState<boolean>(false);
 
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
@@ -42,19 +44,32 @@ export default function CartPage() {
       );
 
     if (filteredFood?.length === 0 || !filteredFood) {
-      console.log('Cart cannot be empty');
+      setDialogTitle('None is selected');
+      setDialogMessage('Please select some foods to checkout');
+      setVisible(true);
       return;
     }
-    // console.log(JSON.stringify(filteredFood, null, 2));
-    addOrderMutation.mutate({ordersToAdd: filteredFood, totalPrice});
-    // navigation.navigate('CheckoutStack', {
-    //   screen: 'CheckoutPage',
-    //   params: {totalPrice},
+    // addOrderMutation.mutate({
+    //   ordersToAdd: filteredFood,
+    //   totalPrice,
+    //   setDialogMessage,
+    //   setDialogTitle,
+    //   setVisible,
     // });
+    navigation.navigate('CheckoutStack', {
+      screen: 'CheckoutPage',
+      params: {totalPrice},
+    });
   };
 
   return (
-    <View className="m-3 p-2 flex-col">
+    <View className="m-3 p-2 flex-col mb-10">
+      <CustomDialog
+        title={dialogTitle}
+        message={dialogMessage}
+        visible={visible}
+        setVisible={setVisible}
+      />
       {!foodsInCart?.length && <Text>Cart is empty...</Text>}
       <ScrollView className="h-[88%]">
         {foodsInCart?.map(food => (

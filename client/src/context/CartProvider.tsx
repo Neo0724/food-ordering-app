@@ -229,4 +229,4 @@ export function CartProvider({children}: {children: React.ReactNode}) {
   );
 }
 
-export const useCardContext = () => useContext(CartContext);
+export const useCartContext = () => useContext(CartContext);

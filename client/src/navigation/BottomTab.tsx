@@ -3,7 +3,7 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {Dimensions} from 'react-native';
 import HomePage from '../components/HomePage';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import CartPage from '../components/CartPage';
+import CartPage from '../components/cart-component/CartPage';
 import OrderPage from '../components/OrderPage';
 import FoodStackLayout from './FoodStack';
 
@@ -53,6 +53,7 @@ export default function BottomTabLayout() {
           tabBarIcon: ({color, size}) => (
             <MaterialCommunityIcons name="home" color={color} size={size} />
           ),
+          headerShown: false,
         }}
       />
       <Tab.Screen

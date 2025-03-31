@@ -1,4 +1,4 @@
-import {createContext, useContext} from 'react';
+import {createContext, SetStateAction, useContext} from 'react';
 import {useAuthContext} from './AuthProvider';
 import {
   useMutation,
@@ -9,7 +9,7 @@ import {
 import axios from 'axios';
 import Config from 'react-native-config';
 import {Alert} from 'react-native';
-import {STATUS} from '../constant/constant';
+import {PAYMENT_METHOD, STATUS} from '../constant/constant';
 
 export type PlaceOrderType = {
   cartId: number;
@@ -38,6 +38,10 @@ export type RetrievedOrdersType = {
 type AddToOrderType = {
   ordersToAdd: PlaceOrderType[];
   totalPrice: number;
+  paymentMethod: PAYMENT_METHOD;
+  setDialogTitle: React.Dispatch<SetStateAction<string>>;
+  setDialogMessage: React.Dispatch<SetStateAction<string>>;
+  setVisible: React.Dispatch<SetStateAction<boolean>>;
 };
 
 type OrderContextType = {
@@ -81,24 +85,40 @@ export function OrderProvider({children}: {children: React.ReactNode}) {
   const queryClient = useQueryClient();
 
   const addOrderMutation = useMutation({
-    mutationFn: async ({ordersToAdd, totalPrice}: AddToOrderType) => {
+    mutationFn: async ({
+      ordersToAdd,
+      totalPrice,
+      paymentMethod,
+    }: AddToOrderType) => {
       try {
-        await axios.post(
+        const response = await axios.post(
           `http://${
             Config.BACKEND_URL
-          }/orders?totalPrice=${totalPrice}&isPoint=${false}`,
+          }/orders?totalPrice=${totalPrice}&isPoint=${
+            paymentMethod === 'POINT' ? true : false
+          }`,
           ordersToAdd,
         );
+        if (response.data.code !== 1 || response.data.msg !== 'success') {
+          throw new Error('Failed to place order');
+        }
       } catch (err) {
         throw err;
       }
     },
-    onError: err => {
-      console.log(err);
+    onError: (err, {setDialogTitle, setDialogMessage, setVisible}) => {
+      setDialogTitle('Failed to place order');
+      setDialogMessage(err.message);
+      setVisible(true);
     },
-    onSuccess: () => {
-      Alert.alert('Order placed successfully');
+    onSuccess: (data, {setDialogTitle, setDialogMessage, setVisible}) => {
+      setDialogTitle('Order placed successfully');
+      setDialogMessage('Order placed successfully');
+      setVisible(true);
       queryClient.invalidateQueries({queryKey: ['orders', user?.uid]});
+      queryClient.invalidateQueries({
+        queryKey: ['pointAndCreditBalance', user?.uid],
+      });
     },
   });
 

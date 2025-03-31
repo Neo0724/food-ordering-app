@@ -2,6 +2,7 @@ import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import React, {useEffect, useMemo, useState} from 'react';
 import {
+  ActivityIndicator,
   FlatList,
   Image,
   StyleSheet,
@@ -41,49 +42,58 @@ export default function FoodPage() {
   // const debounceSearchFoodName = useMemo(
   //   () =>
   //     debounce((newFoodName: string) => {
-  //       queryClient.setQueryData(['foods'], (old: any) => {
+  //       queryClient.setQueryData(['foods'], (old: any)
+  // => {
   //         return old.filter((food: any) =>
-  //           food.itemName.toLowerCase().includes(newFoodName.toLowerCase()),
+  //           food.itemName.toLowerCase().includes
+  // (newFoodName.toLowerCase()),
   //         );
   //       });
   //     }, 500),
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  //   // eslint-disable-next-line react-hooks/
+  // exhaustive-deps
   //   [],
   // );
 
   /* Custom hook to fetch all foods */
   const {allFoods, isLoading, error} = useFood();
 
-  if (isLoading) {
-    return <Text>Loading...</Text>;
-  }
-  if (error || !allFoods) {
-    return <Text>Error loading data.</Text>;
-  }
-
-  if (!isLoading && !error && allFoods.length === 0) {
-    return <Text>No foods found.</Text>;
-  }
-
   return (
-    <View className="m-3">
-      {isLoading && <Text>Loading...</Text>}
-      {error && <Text>Error loading data.</Text>}
-      {!isLoading && !error && allFoods.length === 0 && (
-        <Text>No foods found.</Text>
+    <View className="flex-1">
+      {isLoading && (
+        /* Loading indicator */
+        <View className="flex-1 justify-center items-center">
+          <Text className="text-lg font-medium text-gray-600">
+            Loading contents...
+          </Text>
+          <ActivityIndicator size="large" color="black" />
+        </View>
       )}
-      {!isLoading && !error && allFoods.length > 0 && (
-        <View>
+      {error && (
+        <View className="flex-1 justify-center items-center">
+          <Text className="text-lg font-medium text-red-500">
+            Error loading foods.
+          </Text>
+        </View>
+      )}
+      {!isLoading && !error && allFoods && allFoods.length === 0 && (
+        <View className="flex-1 justify-center items-center">
+          <Text className="text-lg font-medium text-gray-600">
+            No foods found.
+          </Text>
+        </View>
+      )}
+      {!isLoading && !error && allFoods && allFoods.length > 0 && (
+        <View className="flex-1">
           <Searchbar
-            style={[styles.searchBar]}
-            placeholder="Search"
+            style={[ShadowStyle.shadowBox, styles.searchBar]}
+            placeholder="Search for your favorite food..."
             iconColor="white"
             cursorColor="white"
-            placeholderTextColor="white"
-            inputStyle={{color: 'white'}}
+            placeholderTextColor="rgba(255,255,255,0.8)"
+            inputStyle={{color: 'white', fontSize: 16}}
             value={searchFoodName}
             onChangeText={text => {
-              // debounceSearchFoodName(text);
               setSearchFoodName(text);
             }}
           />
@@ -91,28 +101,37 @@ export default function FoodPage() {
             data={allFoods}
             numColumns={2}
             keyExtractor={food => food.itemId.toString()}
-            // eslint-disable-next-line react-native/no-inline-styles
-            columnWrapperStyle={{
-              justifyContent: 'space-between',
-              marginBottom: 10,
-            }}
-            // eslint-disable-next-line react-native/no-inline-styles
-            contentContainerStyle={{
-              paddingBottom: 160,
-              borderRadius: 10,
-            }}
+            columnWrapperStyle={styles.columnWrapper}
+            contentContainerStyle={styles.flatListContent}
             renderItem={({item: food}: {item: Food}) => (
               <TouchableOpacity
                 style={styles.foodContainer}
-                onPress={() => navigation.navigate('EachFoodPage', {food})}>
+                onPress={() => navigation.navigate('EachFoodPage', {food})}
+                activeOpacity={0.7}>
                 <View style={styles.innerContent}>
+                  {/* Food image */}
                   <Image
                     source={require('../../assets/img/friedchicken.jpeg')}
-                    className="flex self-center w-full rounded-t-lg"
+                    style={styles.foodImage}
                   />
-                  <Text className="font-semibold text-[1.1rem] ml-3 mt-1">
-                    {food.itemName}
-                  </Text>
+                  {/* Food name and description */}
+                  <View className="p-3 flex-1">
+                    {/* Food name */}
+                    <Text className="font-bold text-[16px] text-gray-800">
+                      {food.itemName}
+                    </Text>
+                    {/* Food description */}
+                    <Text
+                      className="text-sm text-gray-500 mt-1"
+                      numberOfLines={2}>
+                      {food.itemDescription}
+                    </Text>
+                    {/* Food price */}
+                    <Text className="text-sm font-medium text-orange-500 mt-5">
+                      From RM{' '}
+                      {Math.min(...food.list.map(v => v.price)).toFixed(2)}
+                    </Text>
+                  </View>
                 </View>
               </TouchableOpacity>
             )}
@@ -125,19 +144,32 @@ export default function FoodPage() {
 
 const styles = StyleSheet.create({
   foodContainer: {
-    height: 275,
+    height: 300,
     width: '50%',
-    padding: 7,
+    padding: 8,
   },
-
   innerContent: {
     ...ShadowStyle.shadowBox,
     backgroundColor: 'white',
     flex: 1,
-    borderRadius: 10,
+    borderRadius: 16,
+    overflow: 'hidden',
+  },
+  foodImage: {
+    width: '100%',
+    height: 160,
+    resizeMode: 'cover',
   },
   searchBar: {
-    marginBottom: 10,
-    backgroundColor: 'rgb(238,200,10)',
+    margin: 12,
+    borderRadius: 12,
+    backgroundColor: '#FF9F1C',
+  },
+  columnWrapper: {
+    justifyContent: 'space-between',
+  },
+  flatListContent: {
+    paddingHorizontal: 4,
+    paddingBottom: 160,
   },
 });

@@ -1,9 +1,12 @@
 import React, {SetStateAction, useEffect, useMemo, useState} from 'react';
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
-import {RetrievedFoodCartType, useCardContext} from '../context/CartProvider';
-import debounce from '../../utils/debounce';
-import {ShadowStyle} from '../../styles/ShadowStyle';
-import {ButtonStyle} from '../../styles/ButtonStyles';
+import {
+  RetrievedFoodCartType,
+  useCartContext,
+} from '../../context/CartProvider';
+import debounce from '../../../utils/debounce';
+import {ShadowStyle} from '../../../styles/ShadowStyle';
+import {ButtonStyle} from '../../../styles/ButtonStyles';
 import {Checkbox} from 'react-native-paper';
 
 type EachCartItemProp = {
@@ -16,7 +19,7 @@ export default function EachCartItemPage({
   setTotalPrice,
 }: EachCartItemProp) {
   const {removeFromCartMutation, updateCartQuantityMutation, checkFoodInCart} =
-    useCardContext();
+    useCartContext();
   const [exceedQuantity, setExceedQuantity] = useState<boolean>(false);
   const [selectedQuantity, setSelectedQuantity] = useState<number>(
     food.quantity,

@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {ActivityIndicator, StyleSheet, Text, View} from 'react-native';
 import EachOrderItem from './EachOrderItem';
 import {useOrderContext} from '../context/OrderProvider';
 import {ScrollView} from 'react-native';
@@ -8,9 +8,17 @@ import {ShadowStyle} from '../../styles/ShadowStyle';
 export default function OrderPage() {
   const {allOrders, isLoading, error} = useOrderContext();
   return (
-    <View className="mx-2">
-      {isLoading && <Text>Loading...</Text>}
-      {error && <Text>Error: {error.message}</Text>}
+    <View className="mx-2 flex-1">
+      {isLoading && (
+        /* Loading indicator */
+        <View className="my-auto gap-y-2 justify-center items-center">
+          <Text className="text-lg font-medium text-gray-600">
+            Loading orders ...
+          </Text>
+          <ActivityIndicator size="large" color="black" />
+        </View>
+      )}
+      {error && <Text className="my-auto">Error: {error.message}</Text>}
       {allOrders?.length === 0 && <Text>No orders found</Text>}
       {!isLoading && !error && allOrders?.length !== 0 && (
         <>

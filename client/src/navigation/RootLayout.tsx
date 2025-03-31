@@ -3,17 +3,17 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import LandingPage from '../components/LandingPage';
 import SignInPage from '../components/SignInPage';
 import SignUpPage from '../components/SignUpPage';
-import BottomTabLayout from './BottomTab';
+import BottomTabLayout, {BottomTabParamList} from './BottomTab';
 import CheckoutStackLayout, {CheckoutStackParamList} from './CheckoutStack';
 import {NavigatorScreenParams} from '@react-navigation/native';
 
-const RootStack = createNativeStackNavigator<RootStackParamList, 'RootStack'>();
+const RootStack = createNativeStackNavigator<RootStackParamList>();
 
 export type RootStackParamList = {
   LandingPage: undefined;
   SignInPage: undefined;
   SignUpPage: undefined;
-  BottomTabLayout: undefined;
+  BottomTabLayout: NavigatorScreenParams<BottomTabParamList>;
   CheckoutStack: NavigatorScreenParams<CheckoutStackParamList>;
 };
 
@@ -22,8 +22,7 @@ export default function RootLayout() {
 
   return (
     <RootStack.Navigator
-      initialRouteName={user ? 'BottomTabLayout' : 'LandingPage'}
-      id="RootStack">
+      initialRouteName={user ? 'BottomTabLayout' : 'LandingPage'}>
       {!user ? (
         /* For not signed in user */
         <RootStack.Group>

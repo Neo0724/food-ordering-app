@@ -6,7 +6,7 @@ import Config from 'react-native-config';
 import {useAuthContext} from './AuthProvider';
 
 type PointAndCreditBalanceContextType = {
-  point: number;
+  pointBalance: number;
   creditBalance: number;
   isLoading: boolean;
   error: any;
@@ -15,6 +15,11 @@ type PointAndCreditBalanceContextType = {
 const PointAndCreditContext = createContext<PointAndCreditBalanceContextType>(
   {} as PointAndCreditBalanceContextType,
 );
+
+type PointAndCreditBalanceReturnType = {
+  point: number;
+  balance: number;
+};
 
 export function PointAndCreditProvider({
   children,
@@ -29,14 +34,26 @@ export function PointAndCreditProvider({
     data: pointAndCreditBalance,
     isLoading,
     error,
-  } = useQuery({
+  } = useQuery<PointAndCreditBalanceReturnType>({
     queryKey: ['pointAndCreditBalance', user?.uid],
     queryFn: async () => {
+      /* Try to get the credit balance */
       const response = await axios.get(
         `http://${Config.BACKEND_URL}/credits/${user?.uid}`,
       );
       if (response.data.code === 1 && response.data.msg === 'success') {
         return response.data.data;
+      } else {
+        /* User is new, therefore initialize the credit balance */
+        const initResponse = await axios.get(
+          `http://${Config.BACKEND_URL}/credits?userId=${user?.uid}`,
+        );
+        if (
+          initResponse.data.code === 1 &&
+          initResponse.data.msg === 'success'
+        ) {
+          return initResponse.data.data;
+        }
       }
     },
     enabled: !!user?.uid,
@@ -53,8 +70,8 @@ export function PointAndCreditProvider({
   return (
     <PointAndCreditContext.Provider
       value={{
-        point: pointAndCreditBalance?.point ?? 0,
-        creditBalance: pointAndCreditBalance?.creditBalance ?? 0,
+        pointBalance: pointAndCreditBalance?.point ?? 0,
+        creditBalance: pointAndCreditBalance?.balance ?? 0,
         isLoading,
         error,
       }}>
