@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.canteen.food.common.exceptions.OrderException;
+import com.example.canteen.food.common.exceptions.UserException;
 import com.example.canteen.food.model.entity.Credit;
 import com.example.canteen.food.repository.CreditRepository;
 import com.example.canteen.food.service.CreditService;
@@ -65,6 +66,26 @@ public class CreditServiceImpl implements CreditService {
 
         
     }
+
+    @Override
+    public Credit getCreditList(String userId) {
+        Optional<Credit> credit = creditRepository.findById(userId);
+        if (credit.isPresent()) {
+            return credit.get();  
+        } else {
+            throw new UserException("User not found");
+        }
+    }
+
+    @Override
+    public void intializeUser(String userId) {
+        Credit credit = new Credit(userId, BigDecimal.ZERO, 0);
+        log.info(credit.getUserId().toString());
+       creditRepository.save(credit);
+        
+    }
+
+    
 
     
     
