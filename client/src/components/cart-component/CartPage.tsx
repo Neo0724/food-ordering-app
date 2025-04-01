@@ -17,8 +17,7 @@ import {useState} from 'react';
 import CustomDialog from '../CustomDialog';
 
 export default function CartPage() {
-  const {foodsInCart} = useCartContext();
-  const [totalPrice, setTotalPrice] = useState<number>(0);
+  const {foodsInCart, totalPrice, setTotalPrice} = useCartContext();
   const [dialogTitle, setDialogTitle] = useState<string>('');
   const [dialogMessage, setDialogMessage] = useState<string>('');
   const [visible, setVisible] = useState<boolean>(false);
@@ -49,13 +48,7 @@ export default function CartPage() {
       setVisible(true);
       return;
     }
-    // addOrderMutation.mutate({
-    //   ordersToAdd: filteredFood,
-    //   totalPrice,
-    //   setDialogMessage,
-    //   setDialogTitle,
-    //   setVisible,
-    // });
+
     navigation.navigate('CheckoutStack', {
       screen: 'CheckoutPage',
       params: {totalPrice},
@@ -73,11 +66,7 @@ export default function CartPage() {
       {!foodsInCart?.length && <Text>Cart is empty...</Text>}
       <ScrollView className="h-[88%]">
         {foodsInCart?.map(food => (
-          <EachCartItemPage
-            food={food}
-            key={food.cartId}
-            setTotalPrice={setTotalPrice}
-          />
+          <EachCartItemPage food={food} key={food.cartId} />
         ))}
       </ScrollView>
       {/* The subtotal and proceed to checkout container */}

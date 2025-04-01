@@ -11,6 +11,28 @@ import {
 } from '@tanstack/react-query';
 import {STATUS} from '../constant/constant';
 
+type CardContextType = {
+  foodsInCart: RetrievedFoodCartType[] | undefined;
+  isLoading: boolean;
+  error: any;
+  addToCartMutation: UseMutationResult<void, Error, NewFoodToAddType, unknown>;
+  updateCartQuantityMutation: UseMutationResult<
+    void,
+    Error,
+    UpdateCartQuantityType,
+    unknown
+  >;
+  removeFromCartMutation: UseMutationResult<
+    void,
+    Error,
+    RemoveFromCartType,
+    unknown
+  >;
+  checkFoodInCart: (cartId: number) => void;
+  totalPrice: number;
+  setTotalPrice: React.Dispatch<SetStateAction<number>>;
+};
+
 type UpdateCartQuantityType = {
   cartId: number;
   newQuantity: number;
@@ -21,7 +43,6 @@ type RemoveFromCartType = {
   unitPrice: number;
   prevQuantity: number;
   isChecked: boolean;
-  setTotalPrice: React.Dispatch<SetStateAction<number>>;
 };
 
 export type RetrievedFoodCartType = {
@@ -48,31 +69,12 @@ export type NewFoodToAddType = Omit<
   selectedQuantity: number;
 };
 
-type CardContextType = {
-  foodsInCart: RetrievedFoodCartType[] | undefined;
-  isLoading: boolean;
-  error: any;
-  addToCartMutation: UseMutationResult<void, Error, NewFoodToAddType, unknown>;
-  updateCartQuantityMutation: UseMutationResult<
-    void,
-    Error,
-    UpdateCartQuantityType,
-    unknown
-  >;
-  removeFromCartMutation: UseMutationResult<
-    void,
-    Error,
-    RemoveFromCartType,
-    unknown
-  >;
-  checkFoodInCart: (cartId: number) => void;
-};
-
 const CartContext = createContext<CardContextType>({} as CardContextType);
 
 export function CartProvider({children}: {children: React.ReactNode}) {
   /* Firebase logged in user */
   const {user} = useAuthContext();
+  const [totalPrice, setTotalPrice] = useState<number>(0);
 
   const queryClient = useQueryClient();
 
@@ -161,7 +163,7 @@ export function CartProvider({children}: {children: React.ReactNode}) {
         throw err;
       }
     },
-    onError: (err, {isChecked, unitPrice, prevQuantity, setTotalPrice}) => {
+    onError: (err, {isChecked, unitPrice, prevQuantity}) => {
       console.log('Error removing food from cart, ' + err);
       isChecked && setTotalPrice(prev => prev + unitPrice * prevQuantity);
     },
@@ -198,6 +200,8 @@ export function CartProvider({children}: {children: React.ReactNode}) {
         isLoading,
         error,
         checkFoodInCart,
+        totalPrice,
+        setTotalPrice,
       }}>
       {children}
     </CartContext.Provider>

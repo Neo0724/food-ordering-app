@@ -134,14 +134,14 @@ const PayWithPointPage = ({
       </View>
 
       {/* Insufficient point balance */}
-      {!sufficientPoint && (
+      {/* {!sufficientPoint && (
         <View className="bg-red-100 p-4 rounded-lg">
           <Text className="text-red-600 text-center">
             Insufficient points. Please earn more points or use another payment
             method.
           </Text>
         </View>
-      )}
+      )} */}
 
       {/* Sufficient point balance */}
       {sufficientPoint && (

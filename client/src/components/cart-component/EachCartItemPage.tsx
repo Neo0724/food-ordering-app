@@ -1,4 +1,4 @@
-import React, {SetStateAction, useEffect, useMemo, useState} from 'react';
+import {useEffect, useMemo, useState} from 'react';
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import {
   RetrievedFoodCartType,
@@ -11,15 +11,15 @@ import {Checkbox} from 'react-native-paper';
 
 type EachCartItemProp = {
   food: RetrievedFoodCartType;
-  setTotalPrice: React.Dispatch<SetStateAction<number>>;
 };
 
-export default function EachCartItemPage({
-  food,
-  setTotalPrice,
-}: EachCartItemProp) {
-  const {removeFromCartMutation, updateCartQuantityMutation, checkFoodInCart} =
-    useCartContext();
+export default function EachCartItemPage({food}: EachCartItemProp) {
+  const {
+    removeFromCartMutation,
+    updateCartQuantityMutation,
+    checkFoodInCart,
+    setTotalPrice,
+  } = useCartContext();
   const [exceedQuantity, setExceedQuantity] = useState<boolean>(false);
   const [selectedQuantity, setSelectedQuantity] = useState<number>(
     food.quantity,
@@ -141,7 +141,6 @@ export default function EachCartItemPage({
               unitPrice: food.price,
               prevQuantity: food.quantity,
               isChecked: checked,
-              setTotalPrice,
             });
           }}>
           <Text style={styles.removeButtonText}>Remove</Text>

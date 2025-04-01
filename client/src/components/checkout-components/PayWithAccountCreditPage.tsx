@@ -26,10 +26,7 @@ import DebitCartInputPage from './DebitCartInputPage';
 import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
-import {
-  debitCardSchemaWithTopUp,
-  DebitCardWithTopUpType,
-} from './schemas/debit-cart-schema';
+import {debitCardSchemaWithTopUp} from './schemas/debit-cart-schema';
 
 const PayWithAccountCreditPage = ({
   route,
@@ -210,13 +207,13 @@ const PayWithAccountCreditPage = ({
           <Text className="text-gray-600 text-lg">Total amount to be paid</Text>
           <Text className="font-bold text-lg">RM {totalPrice.toFixed(2)}</Text>
         </View>
-        {/* Container to display the point earned by this transaction */}
+        {/* Container to display the point earned by this order */}
         <View style={styles.eachPaymentDetailContainer}>
           <Text className="text-gray-600 text-lg">
-            Point earned by this transaction
+            Point earned by this order
           </Text>
           <Text className="font-bold text-lg text-green-600">
-            {(totalPrice / 10).toFixed(2)} point
+            {totalPrice > 10 ? (totalPrice / 10).toFixed(2) : 1} point
           </Text>
         </View>
         {/* Container to display the remaining balance after payment */}
