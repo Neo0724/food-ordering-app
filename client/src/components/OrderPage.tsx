@@ -25,6 +25,7 @@ export default function OrderPage() {
           <ScrollView
             contentContainerStyle={{
               rowGap: 10,
+              marginVertical: 10,
             }}>
             {allOrders?.map(order => (
               <View

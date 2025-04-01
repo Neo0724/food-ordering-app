@@ -1,5 +1,5 @@
 import axios from 'axios';
-import {useQuery} from '@tanstack/react-query';
+import {useMutation, UseMutationResult, useQuery} from '@tanstack/react-query';
 import {useQueryClient} from '@tanstack/react-query';
 import React, {createContext, useContext, useEffect} from 'react';
 import Config from 'react-native-config';
@@ -10,6 +10,7 @@ type PointAndCreditBalanceContextType = {
   creditBalance: number;
   isLoading: boolean;
   error: any;
+  topUpCredit: UseMutationResult<void, Error, number, unknown>;
 };
 
 const PointAndCreditContext = createContext<PointAndCreditBalanceContextType>(
@@ -59,13 +60,26 @@ export function PointAndCreditProvider({
     enabled: !!user?.uid,
   });
 
-  useEffect(() => {
-    if (user?.uid) {
+  const topUpCredit = useMutation({
+    mutationFn: async (topUpAmount: number) => {
+      const response = await axios.get(
+        `http://${Config.BACKEND_URL}/credits/${user?.uid}/add?balance=${
+          topUpAmount + (pointAndCreditBalance?.balance ?? 0)
+        }`,
+      );
+      if (response.data.code !== 1) {
+        throw new Error(response.data.msg);
+      }
+    },
+    onError: error => {
+      console.log('Error top up to current balance ', error);
+    },
+    onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ['pointAndCreditBalance', user?.uid],
       });
-    }
-  }, [queryClient, user?.uid]);
+    },
+  });
 
   return (
     <PointAndCreditContext.Provider
@@ -74,6 +88,7 @@ export function PointAndCreditProvider({
         creditBalance: pointAndCreditBalance?.balance ?? 0,
         isLoading,
         error,
+        topUpCredit,
       }}>
       {children}
     </PointAndCreditContext.Provider>

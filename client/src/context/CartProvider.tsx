@@ -40,32 +40,23 @@ export type RetrievedFoodCartType = {
   isChecked: boolean;
 };
 
-type NewFoodToAddTypeWithDialog = NewFoodToAddType & {
-  setDialogTitle: React.Dispatch<SetStateAction<string>>;
-  setDialogMessage: React.Dispatch<SetStateAction<string>>;
-  setVisible: React.Dispatch<SetStateAction<boolean>>;
-};
-
-type UpdateCartQuantityTypeWithDialog = UpdateCartQuantityType & {
-  setDialogTitle?: React.Dispatch<SetStateAction<string>>;
-  setDialogMessage?: React.Dispatch<SetStateAction<string>>;
-  setVisible?: React.Dispatch<SetStateAction<boolean>>;
+export type NewFoodToAddType = Omit<
+  Food,
+  'itemDescription' | 'ingredient' | 'list' | 'itemName'
+> & {
+  selectedVariant: Variant;
+  selectedQuantity: number;
 };
 
 type CardContextType = {
   foodsInCart: RetrievedFoodCartType[] | undefined;
   isLoading: boolean;
   error: any;
-  addToCartMutation: UseMutationResult<
-    void,
-    Error,
-    NewFoodToAddTypeWithDialog,
-    unknown
-  >;
+  addToCartMutation: UseMutationResult<void, Error, NewFoodToAddType, unknown>;
   updateCartQuantityMutation: UseMutationResult<
     void,
     Error,
-    UpdateCartQuantityTypeWithDialog,
+    UpdateCartQuantityType,
     unknown
   >;
   removeFromCartMutation: UseMutationResult<
@@ -75,14 +66,6 @@ type CardContextType = {
     unknown
   >;
   checkFoodInCart: (cartId: number) => void;
-};
-
-export type NewFoodToAddType = Omit<
-  Food,
-  'itemDescription' | 'ingredient' | 'list' | 'itemName'
-> & {
-  selectedVariant: Variant;
-  selectedQuantity: number;
 };
 
 const CartContext = createContext<CardContextType>({} as CardContextType);
@@ -108,6 +91,7 @@ export function CartProvider({children}: {children: React.ReactNode}) {
         if (response.data.code === 1 && response.data.msg === 'success') {
           const retrievedFoodInCart = response.data
             .data as RetrievedFoodCartType[];
+          console.log(retrievedFoodInCart);
           return retrievedFoodInCart.map(food => ({
             ...food,
             isChecked: false,
@@ -128,7 +112,7 @@ export function CartProvider({children}: {children: React.ReactNode}) {
       itemId,
       selectedQuantity,
       selectedVariant,
-    }: NewFoodToAddTypeWithDialog) => {
+    }: NewFoodToAddType) => {
       try {
         await axios.post(`http://${Config.BACKEND_URL}/products`, {
           itemId: itemId,
@@ -143,19 +127,13 @@ export function CartProvider({children}: {children: React.ReactNode}) {
     onError: err => {
       console.log('Error adding to cart, ' + err);
     },
-    onSuccess: (_, {setDialogTitle, setDialogMessage, setVisible}) => {
-      setDialogTitle('Success');
-      setDialogMessage('Food added to cart');
-      setVisible(true);
+    onSuccess: () => {
       queryClient.invalidateQueries({queryKey: ['cart-items', user?.uid]});
     },
   });
 
   const updateCartQuantityMutation = useMutation({
-    mutationFn: async ({
-      newQuantity,
-      cartId,
-    }: UpdateCartQuantityTypeWithDialog) => {
+    mutationFn: async ({newQuantity, cartId}: UpdateCartQuantityType) => {
       try {
         await axios.put(`http://${Config.BACKEND_URL}/products`, {
           itemQuantity: newQuantity,
@@ -168,10 +146,7 @@ export function CartProvider({children}: {children: React.ReactNode}) {
     onError: err => {
       console.log('Error upating cart quantity, ' + err);
     },
-    onSuccess: (_, {setDialogTitle, setDialogMessage, setVisible}) => {
-      setDialogTitle && setDialogTitle('Success');
-      setDialogMessage && setDialogMessage('Cart quantity updated');
-      setVisible && setVisible(true);
+    onSuccess: () => {
       queryClient.invalidateQueries({queryKey: ['cart-items', user?.uid]});
     },
   });

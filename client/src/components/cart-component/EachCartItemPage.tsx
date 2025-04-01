@@ -25,11 +25,6 @@ export default function EachCartItemPage({
     food.quantity,
   );
   const [checked, setChecked] = useState<boolean>(food.isChecked);
-
-  useEffect(() => {
-    setSelectedQuantity(food.quantity);
-  }, [food.quantity]);
-
   const debounceQuantityUpdate = useMemo(
     () =>
       debounce((params: {cartId: number; newQuantity: number}) => {
@@ -38,6 +33,49 @@ export default function EachCartItemPage({
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [],
   );
+
+  const handleDecreaseQuantity = () => {
+    /* Reset error message when user start changing quantity */
+    setExceedQuantity(false);
+
+    /* Current quantity is 1 */
+    if (selectedQuantity === 1) {
+      setExceedQuantity(true);
+      return;
+    }
+    checked && setTotalPrice(prev => Math.abs(prev - food.price));
+    setSelectedQuantity(prev => {
+      debounceQuantityUpdate({
+        cartId: food.cartId,
+        newQuantity: prev - 1,
+      });
+
+      return prev - 1;
+    });
+  };
+
+  const handleIncreaseQuantity = () => {
+    /* Reset error message when user start changing quantity */
+    setExceedQuantity(false);
+    /* Quantity exceed the available quantity */
+    if (selectedQuantity + 1 > food.availableQuantity) {
+      setExceedQuantity(true);
+      return;
+    }
+    checked && setTotalPrice(prev => prev + food.price);
+    setSelectedQuantity(prev => {
+      debounceQuantityUpdate({
+        cartId: food.cartId,
+        newQuantity: prev + 1,
+      });
+
+      return prev + 1;
+    });
+  };
+
+  useEffect(() => {
+    setSelectedQuantity(food.quantity);
+  }, [food.quantity]);
 
   useEffect(() => {
     if (exceedQuantity) {
@@ -81,52 +119,13 @@ export default function EachCartItemPage({
           <Text>Quantity:</Text>
           <TouchableOpacity
             style={ButtonStyle.plusMinusButton}
-            onPress={() => {
-              /* Reset error message when user start changing quantity */
-              setExceedQuantity(false);
-
-              /* Current quantity is 1 */
-              if (selectedQuantity === 1) {
-                setExceedQuantity(true);
-                return;
-              }
-              checked && setTotalPrice(prev => Math.abs(prev - food.price));
-              setSelectedQuantity(prev => {
-                debounceQuantityUpdate({
-                  cartId: food.cartId,
-                  newQuantity: prev - 1,
-                  prevQuantity: prev,
-                  unitPrice: food.price,
-                });
-
-                return prev - 1;
-              });
-            }}>
+            onPress={handleDecreaseQuantity}>
             <Text style={ButtonStyle.plusMinusText}>-</Text>
           </TouchableOpacity>
           <Text>{selectedQuantity}</Text>
           <TouchableOpacity
             style={ButtonStyle.plusMinusButton}
-            onPress={() => {
-              /* Reset error message when user start changing quantity */
-              setExceedQuantity(false);
-              /* Quantity exceed the available quantity */
-              if (selectedQuantity + 1 > food.availableQuantity) {
-                setExceedQuantity(true);
-                return;
-              }
-              checked && setTotalPrice(prev => prev + food.price);
-              setSelectedQuantity(prev => {
-                debounceQuantityUpdate({
-                  cartId: food.cartId,
-                  newQuantity: prev + 1,
-                  prevQuantity: prev,
-                  unitPrice: food.price,
-                });
-
-                return prev + 1;
-              });
-            }}>
+            onPress={handleIncreaseQuantity}>
             <Text style={ButtonStyle.plusMinusText}>+</Text>
           </TouchableOpacity>
         </View>
@@ -142,6 +141,7 @@ export default function EachCartItemPage({
               unitPrice: food.price,
               prevQuantity: food.quantity,
               isChecked: checked,
+              setTotalPrice,
             });
           }}>
           <Text style={styles.removeButtonText}>Remove</Text>

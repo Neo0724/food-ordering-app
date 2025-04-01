@@ -1,4 +1,4 @@
-import {createContext, SetStateAction, useContext} from 'react';
+import {createContext, useContext} from 'react';
 import {useAuthContext} from './AuthProvider';
 import {
   useMutation,
@@ -8,7 +8,6 @@ import {
 } from '@tanstack/react-query';
 import axios from 'axios';
 import Config from 'react-native-config';
-import {Alert} from 'react-native';
 import {PAYMENT_METHOD, STATUS} from '../constant/constant';
 
 export type PlaceOrderType = {
@@ -39,9 +38,6 @@ type AddToOrderType = {
   ordersToAdd: PlaceOrderType[];
   totalPrice: number;
   paymentMethod: PAYMENT_METHOD;
-  setDialogTitle: React.Dispatch<SetStateAction<string>>;
-  setDialogMessage: React.Dispatch<SetStateAction<string>>;
-  setVisible: React.Dispatch<SetStateAction<boolean>>;
 };
 
 type OrderContextType = {
@@ -71,7 +67,6 @@ export function OrderProvider({children}: {children: React.ReactNode}) {
           `http://${Config.BACKEND_URL}/orders?userId=${queryKey[1]}`,
         );
         if (response.data.code === 1 && response.data.msg === 'success') {
-          console.log(response.data.data);
           return response.data.data;
         }
       } catch (err) {
@@ -106,15 +101,10 @@ export function OrderProvider({children}: {children: React.ReactNode}) {
         throw err;
       }
     },
-    onError: (err, {setDialogTitle, setDialogMessage, setVisible}) => {
-      setDialogTitle('Failed to place order');
-      setDialogMessage(err.message);
-      setVisible(true);
+    onError: err => {
+      console.log('Error from order provider: ' + err);
     },
-    onSuccess: (data, {setDialogTitle, setDialogMessage, setVisible}) => {
-      setDialogTitle('Order placed successfully');
-      setDialogMessage('Order placed successfully');
-      setVisible(true);
+    onSuccess: () => {
       queryClient.invalidateQueries({queryKey: ['orders', user?.uid]});
       queryClient.invalidateQueries({
         queryKey: ['pointAndCreditBalance', user?.uid],
@@ -133,10 +123,16 @@ export function OrderProvider({children}: {children: React.ReactNode}) {
       }
     },
     onError: err => {
-      console.log(err);
+      console.log('Error from delete order: ' + err);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({queryKey: ['orders', user?.uid]});
+      queryClient.invalidateQueries({
+        queryKey: ['pointAndCreditBalance', user?.uid],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['cart-items', user?.uid],
+      });
     },
   });
 

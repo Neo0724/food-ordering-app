@@ -1,6 +1,6 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {useEffect, useState} from 'react';
-import {useCardContext} from '../context/CartProvider';
+import {useCartContext} from '../context/CartProvider';
 import {Variant} from './FoodPage';
 import {ShadowStyle} from '../../styles/ShadowStyle';
 import {ButtonStyle} from '../../styles/ButtonStyles';
@@ -21,7 +21,7 @@ FoodDetailPageProps) {
   const [selectedSize, setSelectedSize] = useState<number>(-1);
   const [selectedQuantity, setSelectedQuantity] = useState<number>(1);
   const {addToCartMutation, updateCartQuantityMutation, foodsInCart} =
-    useCardContext();
+    useCartContext();
   const [exceedQuantity, setExceedQuantity] = useState<boolean>(false);
   /* State for dialog */
   const [visible, setVisible] = useState<boolean>(false);
@@ -33,7 +33,7 @@ FoodDetailPageProps) {
     food.list.map(variant => [variant.sizeId, variant]),
   );
 
-  const handleAddToCart = () => {
+  const handleAddToCart = async () => {
     if (selectedSize === -1) {
       setDialogTitle('Invalid option');
       setDialogMessage('Please select one variant');
@@ -59,13 +59,19 @@ FoodDetailPageProps) {
         setVisible(true);
         return;
       }
-      updateCartQuantityMutation.mutate({
-        cartId: foodExistsInCart.cartId,
-        newQuantity: foodExistsInCart.quantity + selectedQuantity,
-        setDialogTitle,
-        setDialogMessage,
-        setVisible,
-      });
+      try {
+        await updateCartQuantityMutation.mutateAsync({
+          cartId: foodExistsInCart.cartId,
+          newQuantity: foodExistsInCart.quantity + selectedQuantity,
+        });
+        setDialogTitle('Success');
+        setDialogMessage('Updated cart successfully');
+        setVisible(true);
+      } catch (error) {
+        setDialogTitle('Server error');
+        setDialogMessage('Please try again later');
+        setVisible(true);
+      }
     } else {
       /* Food not in cart, hence add the food into the cart */
 
@@ -79,14 +85,20 @@ FoodDetailPageProps) {
         return;
       }
 
-      addToCartMutation.mutate({
-        itemId: food.itemId,
-        selectedQuantity: selectedQuantity,
-        selectedVariant: variantMap.get(selectedSize) as Variant,
-        setDialogTitle,
-        setDialogMessage,
-        setVisible,
-      });
+      try {
+        await addToCartMutation.mutateAsync({
+          itemId: food.itemId,
+          selectedQuantity: selectedQuantity,
+          selectedVariant: variantMap.get(selectedSize) as Variant,
+        });
+        setDialogTitle('Success');
+        setDialogMessage('Food added to cart');
+        setVisible(true);
+      } catch (error) {
+        setDialogTitle('Server error');
+        setDialogMessage('Please try again later');
+        setVisible(true);
+      }
     }
   };
 

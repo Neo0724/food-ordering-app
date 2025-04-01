@@ -39,152 +39,156 @@ export default function CheckoutPage({
   return (
     <ScrollView style={styles.container}>
       <Text style={styles.title}>Select Payment Method</Text>
-      {/* Credit payment method */}
-      <TouchableOpacity
-        style={[
-          styles.paymentOption,
-          ShadowStyle.shadowBox,
-          selectedPaymentMethod === 'CREDIT' && styles.selectedPayment,
-        ]}
-        onPress={() => setSelectedPaymentMethod('CREDIT')}>
-        <View style={styles.paymentOptionContent}>
-          <RadioButton
-            value="credit"
-            status={
-              selectedPaymentMethod === 'CREDIT' ? 'checked' : 'unchecked'
-            }
-            onPress={() => setSelectedPaymentMethod('CREDIT')}
-          />
-          <View style={styles.paymentDetails}>
-            <Text style={styles.paymentTitle}>Pay with Account Credit</Text>
-            <Text style={styles.paymentDescription}>
-              Use your existing credit balance
-            </Text>
-            <Text
-              style={[
-                styles.paymentDescription,
-                {
-                  color: creditBalance > totalPrice ? 'green' : 'red',
-                },
-              ]}>
-              Available credit: RM {creditBalance.toFixed(2)}
-              {creditBalance < totalPrice && ' (Insufficient)'}
-            </Text>
-            {selectedPaymentMethod === 'CREDIT' && (
-              <Text style={styles.selectedText}>Selected</Text>
-            )}
-          </View>
-        </View>
-      </TouchableOpacity>
-
-      {/* Point payment method */}
-      <TouchableOpacity
-        style={[
-          styles.paymentOption,
-          ShadowStyle.shadowBox,
-          selectedPaymentMethod === 'POINT' && styles.selectedPayment,
-          pointBalance < totalPrice * 10 && {opacity: 0.5},
-        ]}
-        disabled={pointBalance < totalPrice * 10}
-        onPress={() => setSelectedPaymentMethod('POINT')}>
-        <View style={styles.paymentOptionContent}>
-          <RadioButton
-            disabled={pointBalance < totalPrice * 10}
-            value="point"
-            status={selectedPaymentMethod === 'POINT' ? 'checked' : 'unchecked'}
-            onPress={() => setSelectedPaymentMethod('POINT')}
-          />
-          <View style={styles.paymentDetails}>
-            <Text
-              style={[
-                styles.paymentTitle,
-                pointBalance < totalPrice * 10 && {color: '#999'},
-              ]}>
-              Pay with Points
-            </Text>
-            <Text
-              style={[
-                styles.paymentDescription,
-                pointBalance < totalPrice * 10 && {color: '#999'},
-              ]}>
-              Use your existing point balance
-            </Text>
-            <Text
-              style={[
-                styles.paymentDescription,
-                pointBalance < totalPrice * 10
-                  ? {color: 'red'}
-                  : {color: 'green'},
-              ]}>
-              Available points: {pointBalance}
-            </Text>
-            {pointBalance < totalPrice * 10 && (
-              <Text className="text-red-600">
-                Insufficient points (Required: {(totalPrice * 10).toFixed(2)})
+      <View className="flex-grow">
+        {/* Credit payment method */}
+        <TouchableOpacity
+          style={[
+            styles.paymentOption,
+            ShadowStyle.shadowBox,
+            selectedPaymentMethod === 'CREDIT' && styles.selectedPayment,
+          ]}
+          onPress={() => setSelectedPaymentMethod('CREDIT')}>
+          <View style={styles.paymentOptionContent}>
+            <RadioButton
+              value="credit"
+              status={
+                selectedPaymentMethod === 'CREDIT' ? 'checked' : 'unchecked'
+              }
+              onPress={() => setSelectedPaymentMethod('CREDIT')}
+            />
+            <View style={styles.paymentDetails}>
+              <Text style={styles.paymentTitle}>Pay with Account Credit</Text>
+              <Text style={styles.paymentDescription}>
+                Use your existing credit balance
               </Text>
-            )}
-            {selectedPaymentMethod === 'POINT' && (
-              <Text style={styles.selectedText}>Selected</Text>
-            )}
+              <Text
+                style={[
+                  styles.paymentDescription,
+                  {
+                    color: creditBalance > totalPrice ? 'green' : 'red',
+                  },
+                ]}>
+                Available credit: RM {creditBalance.toFixed(2)}
+                {creditBalance < totalPrice && ' (Insufficient)'}
+              </Text>
+              {selectedPaymentMethod === 'CREDIT' && (
+                <Text style={styles.selectedText}>Selected</Text>
+              )}
+            </View>
           </View>
-        </View>
-      </TouchableOpacity>
+        </TouchableOpacity>
 
-      {/* E-Wallet payment method */}
-      <TouchableOpacity
-        style={[
-          styles.paymentOption,
-          ShadowStyle.shadowBox,
-          selectedPaymentMethod === 'EWALLET' && styles.selectedPayment,
-        ]}
-        onPress={() => setSelectedPaymentMethod('EWALLET')}>
-        <View style={styles.paymentOptionContent}>
-          <RadioButton
-            value="ewallet"
-            status={
-              selectedPaymentMethod === 'EWALLET' ? 'checked' : 'unchecked'
-            }
-            onPress={() => setSelectedPaymentMethod('EWALLET')}
-          />
-          <View style={styles.paymentDetails}>
-            <Text style={styles.paymentTitle}>Pay with E-Wallet</Text>
-            <Text style={styles.paymentDescription}>
-              GrabPay, Touch n Go, etc
-            </Text>
-            {selectedPaymentMethod === 'EWALLET' && (
-              <Text style={styles.selectedText}>Selected</Text>
-            )}
+        {/* Point payment method */}
+        <TouchableOpacity
+          style={[
+            styles.paymentOption,
+            ShadowStyle.shadowBox,
+            selectedPaymentMethod === 'POINT' && styles.selectedPayment,
+            pointBalance < totalPrice * 10 && {opacity: 0.5},
+          ]}
+          disabled={pointBalance < totalPrice * 10}
+          onPress={() => setSelectedPaymentMethod('POINT')}>
+          <View style={styles.paymentOptionContent}>
+            <RadioButton
+              disabled={pointBalance < totalPrice * 10}
+              value="point"
+              status={
+                selectedPaymentMethod === 'POINT' ? 'checked' : 'unchecked'
+              }
+              onPress={() => setSelectedPaymentMethod('POINT')}
+            />
+            <View style={styles.paymentDetails}>
+              <Text
+                style={[
+                  styles.paymentTitle,
+                  pointBalance < totalPrice * 10 && {color: '#999'},
+                ]}>
+                Pay with Points
+              </Text>
+              <Text
+                style={[
+                  styles.paymentDescription,
+                  pointBalance < totalPrice * 10 && {color: '#999'},
+                ]}>
+                Use your existing point balance
+              </Text>
+              <Text
+                style={[
+                  styles.paymentDescription,
+                  pointBalance < totalPrice * 10
+                    ? {color: 'red'}
+                    : {color: 'green'},
+                ]}>
+                Available points: {pointBalance}
+              </Text>
+              {pointBalance < totalPrice * 10 && (
+                <Text className="text-red-600">
+                  Insufficient points (Required: {(totalPrice * 10).toFixed(2)})
+                </Text>
+              )}
+              {selectedPaymentMethod === 'POINT' && (
+                <Text style={styles.selectedText}>Selected</Text>
+              )}
+            </View>
           </View>
-        </View>
-      </TouchableOpacity>
+        </TouchableOpacity>
 
-      {/* Counter payment method */}
-      <TouchableOpacity
-        style={[
-          styles.paymentOption,
-          ShadowStyle.shadowBox,
-          selectedPaymentMethod === 'COUNTER' && styles.selectedPayment,
-        ]}
-        onPress={() => setSelectedPaymentMethod('COUNTER')}>
-        <View style={styles.paymentOptionContent}>
-          <RadioButton
-            value="counter"
-            status={
-              selectedPaymentMethod === 'COUNTER' ? 'checked' : 'unchecked'
-            }
-            onPress={() => setSelectedPaymentMethod('COUNTER')}
-          />
-          <View style={styles.paymentDetails}>
-            <Text style={styles.paymentTitle}>Pay at Counter</Text>
-            <Text style={styles.paymentDescription}>
-              Pay when collecting your order
-            </Text>
-            {selectedPaymentMethod === 'COUNTER' && (
-              <Text style={styles.selectedText}>Selected</Text>
-            )}
+        {/* E-Wallet payment method */}
+        <TouchableOpacity
+          style={[
+            styles.paymentOption,
+            ShadowStyle.shadowBox,
+            selectedPaymentMethod === 'EWALLET' && styles.selectedPayment,
+          ]}
+          onPress={() => setSelectedPaymentMethod('EWALLET')}>
+          <View style={styles.paymentOptionContent}>
+            <RadioButton
+              value="ewallet"
+              status={
+                selectedPaymentMethod === 'EWALLET' ? 'checked' : 'unchecked'
+              }
+              onPress={() => setSelectedPaymentMethod('EWALLET')}
+            />
+            <View style={styles.paymentDetails}>
+              <Text style={styles.paymentTitle}>Pay with E-Wallet</Text>
+              <Text style={styles.paymentDescription}>
+                GrabPay, Touch n Go, etc
+              </Text>
+              {selectedPaymentMethod === 'EWALLET' && (
+                <Text style={styles.selectedText}>Selected</Text>
+              )}
+            </View>
           </View>
-        </View>
-      </TouchableOpacity>
+        </TouchableOpacity>
+
+        {/* Counter payment method */}
+        <TouchableOpacity
+          style={[
+            styles.paymentOption,
+            ShadowStyle.shadowBox,
+            selectedPaymentMethod === 'COUNTER' && styles.selectedPayment,
+          ]}
+          onPress={() => setSelectedPaymentMethod('COUNTER')}>
+          <View style={styles.paymentOptionContent}>
+            <RadioButton
+              value="counter"
+              status={
+                selectedPaymentMethod === 'COUNTER' ? 'checked' : 'unchecked'
+              }
+              onPress={() => setSelectedPaymentMethod('COUNTER')}
+            />
+            <View style={styles.paymentDetails}>
+              <Text style={styles.paymentTitle}>Pay at Counter</Text>
+              <Text style={styles.paymentDescription}>
+                Pay when collecting your order
+              </Text>
+              {selectedPaymentMethod === 'COUNTER' && (
+                <Text style={styles.selectedText}>Selected</Text>
+              )}
+            </View>
+          </View>
+        </TouchableOpacity>
+      </View>
       {/* Total price and pay now container */}
       <View style={styles.totalPriceContainer}>
         <View className="flex-col mt-3">
@@ -203,8 +207,11 @@ export default function CheckoutPage({
           </View>
         </View>
         <TouchableOpacity
-          style={[ButtonStyle.generalButton]}
-          disabled={totalPrice > 0 && selectedPaymentMethod === ''}
+          style={[
+            ButtonStyle.generalButton,
+            selectedPaymentMethod === '' && {opacity: 0.5},
+          ]}
+          disabled={selectedPaymentMethod === ''}
           onPress={handlePayNow}>
           <Text style={ButtonStyle.generalButtonText}>
             {selectedPaymentMethod === 'CREDIT' && totalPrice > creditBalance
@@ -263,8 +270,8 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   totalPriceContainer: {
-    marginTop: 16,
-    marginBottom: 50,
+    // marginTop: 16,
+    // marginBottom: 50,
   },
   usePointsContainer: {
     display: 'flex',
@@ -286,6 +293,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     columnGap: 12,
   },
+
   pointsTextContainer: {
     flexDirection: 'row',
     alignItems: 'center',
