@@ -15,4 +15,6 @@ public interface CreditService {
 
     Credit getCreditList(String userId);
 
+    void addBalance(String userId, BigDecimal balance);
+
 }

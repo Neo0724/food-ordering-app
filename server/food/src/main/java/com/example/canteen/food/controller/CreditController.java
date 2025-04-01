@@ -1,5 +1,7 @@
 package com.example.canteen.food.controller;
 
+import java.math.BigDecimal;
+
 import org.apache.el.stream.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,5 +39,12 @@ public class CreditController {
          Credit user = creditService.getCreditList(userId);
         return ResultCode.success(user);
 
+    }
+    @GetMapping("/{userId}/add")
+    public ResultCode  addBalance(@PathVariable String userId, @RequestParam Double balance) {
+        BigDecimal newBalance = BigDecimal.valueOf(balance);
+        log.info("Add balance for {} , userId");
+        creditService.addBalance(userId, newBalance);
+        return ResultCode.success();
     }
 }

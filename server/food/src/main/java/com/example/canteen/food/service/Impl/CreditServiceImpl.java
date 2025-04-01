@@ -25,8 +25,12 @@ public class CreditServiceImpl implements CreditService {
 
     @Override
     public void payWithCredit(BigDecimal totalPrice, String userId) {
+
         
-        Integer awardedPoints = totalPrice.divide(BigDecimal.valueOf(BigDecimal.TEN.intValue())).intValue();
+        
+        Integer awardedPoints = totalPrice.compareTo(BigDecimal.TEN) > 0  
+        ? totalPrice.divide(BigDecimal.TEN).intValue()  
+        : 1;
 
         Optional<Credit> optionalCredit = creditRepository.findById(userId);
 
@@ -84,6 +88,24 @@ public class CreditServiceImpl implements CreditService {
        creditRepository.save(credit);
         
     }
+
+    @Override
+    public void addBalance(String userId, BigDecimal balance) {
+        Optional<Credit> credit = creditRepository.findById(userId);
+
+        if(credit.isPresent()) {
+            Credit userCredit = credit.get();
+            userCredit.setBalance(userCredit.getBalance().add(balance));
+            creditRepository.save(userCredit);
+
+        } else {
+            throw new UserException("User not found");
+        }
+
+        
+    }
+
+    
 
     
 
