@@ -63,6 +63,7 @@ const SearchFoodPage = ({
           }}
           autoFocus={true}
           onSubmitEditing={handlePressSearchFood}
+          onClearIconPress={() => setSearchFoodName('')}
         />
       </View>
       <ScrollView>

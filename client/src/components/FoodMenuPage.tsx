@@ -39,7 +39,7 @@ export default function FoodPage() {
   const navigation =
     useNavigation<NativeStackNavigationProp<FoodStackParamList>>();
 
-  const {searchFoodName} = useSearchFoodContext();
+  const {searchFoodName, setSearchFoodName} = useSearchFoodContext();
 
   // const debounceSearchFoodName = useMemo(
   //   () =>
@@ -96,6 +96,7 @@ export default function FoodPage() {
             inputStyle={{color: 'white', fontSize: 16}}
             value={searchFoodName}
             onPress={() => navigation.navigate('SearchFoodScreen')}
+            onClearIconPress={() => setSearchFoodName('')}
           />
           <FlatList
             data={allFoods}
