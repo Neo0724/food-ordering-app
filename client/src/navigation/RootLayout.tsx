@@ -18,12 +18,12 @@ export type RootStackParamList = {
 };
 
 export default function RootLayout() {
-  const {user} = useAuthContext();
+  const {isSignedIn} = useAuthContext();
 
   return (
     <RootStack.Navigator
-      initialRouteName={user ? 'BottomTabLayout' : 'LandingPage'}>
-      {!user ? (
+      initialRouteName={isSignedIn ? 'BottomTabLayout' : 'LandingPage'}>
+      {!isSignedIn ? (
         /* For not signed in user */
         <RootStack.Group>
           <RootStack.Screen

@@ -43,5 +43,9 @@ export default function useFood() {
     },
   });
 
-  return {allFoods, isLoading, error};
+  const handleSearchFood = (query: string) => {
+    /* To be completed... */
+  };
+
+  return {allFoods, isLoading, error, handleSearchFood};
 }

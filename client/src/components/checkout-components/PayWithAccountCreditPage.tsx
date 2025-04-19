@@ -127,6 +127,7 @@ const PayWithAccountCreditPage = ({
   };
 
   const handleProceedPayment = async () => {
+    /* Double check for foods that user wanted to checkout */
     const filteredFood = foodsInCart
       ?.filter(food => food.isChecked)
       .map(

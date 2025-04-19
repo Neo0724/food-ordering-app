@@ -4,6 +4,6 @@ export const ShadowStyle = StyleSheet.create({
   shadowBox: {
     elevation: 6,
     shadowColor: 'rgba(0, 0, 0, 0.5)',
-    backgroundColor: '#fff',
+    backgroundColor: 'white',
   },
 });

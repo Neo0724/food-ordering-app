@@ -1,5 +1,5 @@
 import {createContext, SetStateAction, useContext, useState} from 'react';
-import {Food, Variant} from '../components/FoodPage';
+import {Food, Variant} from '../components/FoodMenuPage';
 import Config from 'react-native-config';
 import axios from 'axios';
 import {useAuthContext} from './AuthProvider';

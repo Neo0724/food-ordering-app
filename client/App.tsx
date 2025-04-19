@@ -7,6 +7,9 @@ import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
 import {OrderProvider} from './src/context/OrderProvider';
 import {DefaultTheme, PaperProvider} from 'react-native-paper';
 import {PointAndCreditProvider} from './src/context/PointAndCreditProvider';
+import RNFS from 'react-native-fs';
+import {useEffect} from 'react';
+import SearchFoodNameProvider from './src/context/SearchFoodProvider';
 
 export default function App() {
   const queryClient = new QueryClient();
@@ -21,20 +24,43 @@ export default function App() {
     },
   };
 
+  useEffect(() => {
+    const createSearchHistoryFile = async () => {
+      const fileName = '/search-history.txt';
+      const filePath = RNFS.DocumentDirectoryPath + fileName;
+
+      try {
+        const fileExists = await RNFS.exists(filePath);
+        console.log(fileExists);
+
+        if (!fileExists) {
+          await RNFS.writeFile(filePath, '');
+          console.log('Search history file is created');
+        }
+      } catch (error) {
+        console.log('Error creating search history file: ' + error);
+      }
+    };
+
+    createSearchHistoryFile();
+  }, []);
+
   return (
     <AuthProvider>
       <QueryClientProvider client={queryClient}>
-        <PointAndCreditProvider>
-          <OrderProvider>
-            <CartProvider>
-              <PaperProvider theme={theme}>
-                <NavigationContainer>
-                  <RootLayout />
-                </NavigationContainer>
-              </PaperProvider>
-            </CartProvider>
-          </OrderProvider>
-        </PointAndCreditProvider>
+        <SearchFoodNameProvider>
+          <PointAndCreditProvider>
+            <OrderProvider>
+              <CartProvider>
+                <PaperProvider theme={theme}>
+                  <NavigationContainer>
+                    <RootLayout />
+                  </NavigationContainer>
+                </PaperProvider>
+              </CartProvider>
+            </OrderProvider>
+          </PointAndCreditProvider>
+        </SearchFoodNameProvider>
       </QueryClientProvider>
     </AuthProvider>
   );

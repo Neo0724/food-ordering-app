@@ -14,6 +14,8 @@ import useFood from '../custom-hook/useFood';
 import {ShadowStyle} from '../../styles/ShadowStyle';
 import {FoodStackParamList} from '../navigation/FoodStack';
 import {Searchbar} from 'react-native-paper';
+import {SearchBarStyles} from '../../styles/SearchBarStyles';
+import {useSearchFoodContext} from '../context/SearchFoodProvider';
 // import debounce from '../../utils/debounce';
 // import {useQueryClient} from '@tanstack/react-query';
 
@@ -37,7 +39,7 @@ export default function FoodPage() {
   const navigation =
     useNavigation<NativeStackNavigationProp<FoodStackParamList>>();
 
-  const [searchFoodName, setSearchFoodName] = useState<string>('');
+  const {searchFoodName} = useSearchFoodContext();
 
   // const debounceSearchFoodName = useMemo(
   //   () =>
@@ -86,16 +88,14 @@ export default function FoodPage() {
       {!isLoading && !error && allFoods && allFoods.length > 0 && (
         <View className="flex-1">
           <Searchbar
-            style={[ShadowStyle.shadowBox, styles.searchBar]}
+            style={[ShadowStyle.shadowBox, SearchBarStyles.searchBar]}
             placeholder="Search for your favorite food..."
             iconColor="white"
             cursorColor="white"
             placeholderTextColor="rgba(255,255,255,0.8)"
             inputStyle={{color: 'white', fontSize: 16}}
             value={searchFoodName}
-            onChangeText={text => {
-              setSearchFoodName(text);
-            }}
+            onPress={() => navigation.navigate('SearchFoodScreen')}
           />
           <FlatList
             data={allFoods}
@@ -159,11 +159,6 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 160,
     resizeMode: 'cover',
-  },
-  searchBar: {
-    margin: 12,
-    borderRadius: 12,
-    backgroundColor: '#FF9F1C',
   },
   columnWrapper: {
     justifyContent: 'space-between',

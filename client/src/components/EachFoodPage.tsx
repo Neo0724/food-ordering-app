@@ -1,7 +1,7 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {useEffect, useState} from 'react';
 import {useCartContext} from '../context/CartProvider';
-import {Variant} from './FoodPage';
+import {Variant} from './FoodMenuPage';
 import {ShadowStyle} from '../../styles/ShadowStyle';
 import {ButtonStyle} from '../../styles/ButtonStyles';
 import {FoodStackParamList} from '../navigation/FoodStack';
