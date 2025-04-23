@@ -1,6 +1,6 @@
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import React, {useEffect, useMemo, useState} from 'react';
+import React from 'react';
 import {
   ActivityIndicator,
   FlatList,
@@ -151,7 +151,7 @@ const styles = StyleSheet.create({
   },
   innerContent: {
     ...ShadowStyle.shadowBox,
-    backgroundColor: 'white',
+    // boxShadow: '2px 2px 8px rgba(0,0,0,0.4)',
     flex: 1,
     borderRadius: 16,
     overflow: 'hidden',
@@ -166,6 +166,6 @@ const styles = StyleSheet.create({
   },
   flatListContent: {
     paddingHorizontal: 4,
-    paddingBottom: 160,
+    paddingBottom: 30,
   },
 });
