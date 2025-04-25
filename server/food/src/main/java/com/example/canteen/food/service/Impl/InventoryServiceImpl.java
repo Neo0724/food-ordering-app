@@ -7,6 +7,7 @@ import com.example.canteen.food.model.entity.Category;
 import com.example.canteen.food.model.entity.Item;
 import com.example.canteen.food.model.entity.Order;
 import com.example.canteen.food.model.entity.Variant;
+import com.example.canteen.food.model.vo.CategoryVO;
 import com.example.canteen.food.model.vo.ItemVO;
 import com.example.canteen.food.model.vo.VariantVO;
 import com.example.canteen.food.repository.CategoryRepository;
@@ -80,8 +81,16 @@ public class InventoryServiceImpl implements InventoryService {
         item.setItemDescription(itemDTO.getItemDescription());
         item.setIngredient(itemDTO.getIngredient());
 
-        Category category = categoryRepository.findById(itemDTO.getCategoryId())
-                .orElseThrow(() -> new OrderException("Category not found"));
+        Category category = new Category();
+        CategoryVO categoryExists = categoryRepository.checkIfCategoryAlreadyExists(itemDTO.getCategoryName().trim());
+        if(categoryExists == null) {
+            category.setCategoryName(itemDTO.getCategoryName());
+            categoryRepository.save(category);
+        } else {
+            category.setCategoryId(categoryExists.getCategoryId());
+            category.setCategoryName(categoryExists.getCategoryName().toLowerCase());
+        }
+
         item.setCategory(category);
 
         List<Variant> variants = itemDTO.getList().stream()
