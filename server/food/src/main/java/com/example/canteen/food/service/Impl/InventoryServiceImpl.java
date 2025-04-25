@@ -166,7 +166,15 @@ public void deleteItem(Integer sizeId) {
     log.info("Variant with sizeId {} deleted successfully.", variant.getSizeId());
 }
 
-    
+    @Override
+    public List<CategoryVO> getAllCategory() {
+        return categoryRepository.findAll().stream().map(category -> {
+            CategoryVO categoryVO = new CategoryVO();
+            categoryVO.setCategoryName(category.getCategoryName());
+            categoryVO.setCategoryId(category.getCategoryId());
+            return  categoryVO;
+        }).collect(Collectors.toList());
+    }
 }
 
 

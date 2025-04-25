@@ -3,6 +3,7 @@ package com.example.canteen.food.controller;
 import com.example.canteen.food.common.ResultCode;
 import com.example.canteen.food.model.dto.ItemDTO;
 import com.example.canteen.food.model.entity.Item;
+import com.example.canteen.food.model.vo.CategoryVO;
 import com.example.canteen.food.model.vo.ItemVO;
 import com.example.canteen.food.service.InventoryService;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +24,12 @@ public class InventoryController {
     public ResultCode getList(@RequestParam String searchCriteria) {
         List<ItemVO> item = inventoryService.getList(searchCriteria);
         return ResultCode.success(item);
+    }
+
+    @GetMapping("/category")
+    public ResultCode getAllCategory() {
+        List<CategoryVO> categoryVOS = inventoryService.getAllCategory();
+        return ResultCode.success(categoryVOS);
     }
 
     @PostMapping
