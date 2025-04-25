@@ -14,7 +14,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 
 public class CartDTO {
-
     private Integer cartId;
     private Integer itemId;
     private String userId;
@@ -23,6 +22,5 @@ public class CartDTO {
     private CartStatus status;
     private LocalDateTime createTime;
     private LocalDateTime updateTime;
-
     private String orderId;
 }

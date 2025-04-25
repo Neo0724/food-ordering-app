@@ -7,7 +7,7 @@ import java.util.List;
 
 
 public interface InventoryService {
-    List<ItemVO> getList();
+    List<ItemVO> getList(String searchCriteria);
 
     void addNewItem(ItemDTO item);
 

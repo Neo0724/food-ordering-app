@@ -30,7 +30,11 @@ public class Item {
 
     private String ingredient;
 
-    //so this two means if i retireve the list it wil auto join the column where item_id = same
-    @OneToMany(mappedBy = "item", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany
+    @JoinColumn(name = "size_id")
     private List<Variant> list;
+
+    @OneToOne
+    @JoinColumn(name = "category_id")
+    private Category category;
 }

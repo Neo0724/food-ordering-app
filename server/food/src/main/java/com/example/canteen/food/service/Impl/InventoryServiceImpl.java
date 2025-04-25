@@ -36,9 +36,9 @@ public class InventoryServiceImpl implements InventoryService {
     private VariantRepository variantRepository;
 
     @Override
-    public List<ItemVO> getList() {
+    public List<ItemVO> getList(String searchCriteria) {
     // Retrieve all Items from the database
-    List<Item> items = itemRepository.findAllWithVariants();
+    List<Item> items = itemRepository.findAllWithVariants(searchCriteria);
     if(items.isEmpty()) {
         throw new OrderException("No items found ");
     }
@@ -50,8 +50,9 @@ public class InventoryServiceImpl implements InventoryService {
         itemVO.setItemName(item.getItemName());
         itemVO.setItemDescription(item.getItemDescription());
         itemVO.setIngredient(item.getIngredient());
+        itemVO.setCategoryId(item.getCategory().getCategoryId());
+        itemVO.setCategoryName(item.getCategory().getCategoryName());
         
-        // Map variants if needed
         itemVO.setList(item.getList().stream().map(variant -> {
             VariantVO variantVO = new VariantVO();
             variantVO.setSizeId(variant.getSizeId());

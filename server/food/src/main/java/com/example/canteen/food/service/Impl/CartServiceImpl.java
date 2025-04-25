@@ -49,13 +49,6 @@ public class CartServiceImpl implements CartService {
     @Override
     public void addToCart(CartDTO cartDTO) {
 
-        // itemRepository.findById(cartDTO.getItemId())
-        // .orElseThrow(() -> new IllegalArgumentException("Item with ID " +
-        // cartDTO.getItemId() + " not found"));
-        // variantRepository.findById(cartDTO.getSizeId())
-        // .orElseThrow(() -> new IllegalArgumentException("Variant with ID " +
-        // cartDTO.getSizeId() + " not found"));
-
         Cart cart = new Cart();
 
         cart.setItemId(cartDTO.getItemId());

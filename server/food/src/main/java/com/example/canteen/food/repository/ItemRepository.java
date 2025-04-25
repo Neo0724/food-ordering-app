@@ -17,8 +17,14 @@ import java.util.List;
 @Repository
 public interface ItemRepository extends JpaRepository<Item, Integer> {
 
-    @Query("SELECT i FROM Item i LEFT JOIN FETCH i.list")
-    List<Item> findAllWithVariants();
-
+    @Query("""
+    SELECT i FROM Item i 
+    LEFT JOIN FETCH i.list 
+    LEFT JOIN i.category c
+    WHERE LOWER(i.itemName) LIKE LOWER(CONCAT('%', :searchCriteria, '%')) 
+       OR LOWER(i.ingredient) LIKE LOWER(CONCAT('%', :searchCriteria, '%')) 
+       OR LOWER(c.categoryName) LIKE LOWER(CONCAT('%', :searchCriteria, '%'))
+""")
+    List<Item> findAllWithVariants(String searchCriteria);
 }
 

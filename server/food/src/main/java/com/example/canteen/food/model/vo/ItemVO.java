@@ -25,6 +25,11 @@ public class ItemVO {
 
     private List<VariantVO> list;
 
+    private Integer categoryId;
+
+    private String categoryName;
+
+
 
 
 

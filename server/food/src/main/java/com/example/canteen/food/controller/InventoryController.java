@@ -20,8 +20,8 @@ public class InventoryController {
     private InventoryService inventoryService;
 
     @GetMapping
-    public ResultCode getList() {
-        List<ItemVO> item = inventoryService.getList();
+    public ResultCode getList(@RequestParam String searchCriteria) {
+        List<ItemVO> item = inventoryService.getList(searchCriteria);
         return ResultCode.success(item);
     }
 
