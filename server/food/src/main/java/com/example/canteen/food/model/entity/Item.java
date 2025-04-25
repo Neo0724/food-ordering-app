@@ -30,8 +30,7 @@ public class Item {
 
     private String ingredient;
 
-    @OneToMany
-    @JoinColumn(name = "size_id")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "item", fetch = FetchType.LAZY)
     private List<Variant> list;
 
     @OneToOne

@@ -21,7 +21,9 @@ public class ItemDTO {
 
     private String itemDescription;
 
-    private String ingredient; 
+    private String ingredient;
+
+    private Integer categoryId;
 
     private List<VariantDTO> list;
 }

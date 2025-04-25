@@ -3,11 +3,13 @@ package com.example.canteen.food.service.Impl;
 import com.example.canteen.food.common.exceptions.OrderException;
 import com.example.canteen.food.model.dto.ItemDTO;
 import com.example.canteen.food.model.dto.VariantDTO;
+import com.example.canteen.food.model.entity.Category;
 import com.example.canteen.food.model.entity.Item;
 import com.example.canteen.food.model.entity.Order;
 import com.example.canteen.food.model.entity.Variant;
 import com.example.canteen.food.model.vo.ItemVO;
 import com.example.canteen.food.model.vo.VariantVO;
+import com.example.canteen.food.repository.CategoryRepository;
 import com.example.canteen.food.repository.ItemRepository;
 import com.example.canteen.food.repository.VariantRepository;
 import com.example.canteen.food.service.InventoryService;
@@ -34,6 +36,9 @@ public class InventoryServiceImpl implements InventoryService {
 
     @Autowired
     private VariantRepository variantRepository;
+
+    @Autowired
+    private CategoryRepository categoryRepository;
 
     @Override
     public List<ItemVO> getList(String searchCriteria) {
@@ -68,13 +73,16 @@ public class InventoryServiceImpl implements InventoryService {
     }).collect(Collectors.toList());
 }
 
- 
     @Override
     public void addNewItem(ItemDTO itemDTO) {
         Item item = new Item();
         item.setItemName(itemDTO.getItemName());
         item.setItemDescription(itemDTO.getItemDescription());
         item.setIngredient(itemDTO.getIngredient());
+
+        Category category = categoryRepository.findById(itemDTO.getCategoryId())
+                .orElseThrow(() -> new OrderException("Category not found"));
+        item.setCategory(category);
 
         List<Variant> variants = itemDTO.getList().stream()
         .map(variantDTO -> {
