@@ -23,7 +23,7 @@ public class ItemDTO {
 
     private String ingredient;
 
-    private Integer categoryId;
+    private String categoryName;
 
     private List<VariantDTO> list;
 }
