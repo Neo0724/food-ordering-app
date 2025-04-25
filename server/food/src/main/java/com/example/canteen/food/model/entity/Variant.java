@@ -26,7 +26,7 @@ public class Variant {
     private Integer onSale;
     private Integer quantity;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "item_id")
     private Item item;
 
