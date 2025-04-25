@@ -15,13 +15,13 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../../navigation/RootLayout';
 import {useState} from 'react';
 import CustomDialog from '../CustomDialog';
+import {useCustomDialog} from '../../context/CustomDialogContext';
 
 export default function CartPage() {
   const {foodsInCart, totalPrice, setTotalPrice} = useCartContext();
-  const [dialogTitle, setDialogTitle] = useState<string>('');
-  const [dialogMessage, setDialogMessage] = useState<string>('');
-  const [visible, setVisible] = useState<boolean>(false);
 
+  /* Custom dialog function */
+  const {showDialog} = useCustomDialog();
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
@@ -43,9 +43,7 @@ export default function CartPage() {
       );
 
     if (filteredFood?.length === 0 || !filteredFood) {
-      setDialogTitle('None is selected');
-      setDialogMessage('Please select some foods to checkout');
-      setVisible(true);
+      showDialog('None is selected', 'Please select some foods to checkout');
       return;
     }
 
@@ -57,12 +55,6 @@ export default function CartPage() {
 
   return (
     <View className="m-3 p-2 flex-col mb-10">
-      <CustomDialog
-        title={dialogTitle}
-        message={dialogMessage}
-        visible={visible}
-        setVisible={setVisible}
-      />
       {!foodsInCart?.length && <Text>Cart is empty...</Text>}
       <ScrollView className="h-[88%]">
         {foodsInCart?.map(food => (

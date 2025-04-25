@@ -15,7 +15,9 @@ export default function EachOrderItem({food}: {food: EachOrderItemType}) {
           <Text style={styles.itemName}>{food.itemName}</Text>
           <View style={styles.quantityPrice}>
             <Text style={styles.quantity}>Quantity: {food.quantity}</Text>
-            <Text style={styles.price}>RM{food.price.toFixed(2)}</Text>
+            <Text style={styles.price}>
+              RM{(food.quantity * food.price).toFixed(2)}
+            </Text>
           </View>
           <Text style={styles.size}>Size: {food.size}</Text>
         </View>

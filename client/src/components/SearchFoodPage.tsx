@@ -10,6 +10,7 @@ import {ScrollView} from 'react-native';
 import useFood from '../custom-hook/useFood';
 import {useEffect, useState} from 'react';
 import {getSearchHistory, saveSearchHistory} from '../../utils/file-system';
+import {useCustomDialog} from '../context/CustomDialogContext';
 
 const SearchFoodPage = ({
   route,
@@ -18,6 +19,7 @@ const SearchFoodPage = ({
   const [history, setHistory] = useState<string[]>([]);
   const {searchFoodName, setSearchFoodName} = useSearchFoodContext();
   const {handleSearchFood} = useFood();
+  const {showDialog} = useCustomDialog();
 
   const handlePressSearchFood = async (foodToSearch?: string) => {
     let newHistory: string[] = [];
@@ -34,7 +36,6 @@ const SearchFoodPage = ({
       setHistory(prev => {
         newHistory = prev.filter(prevFoodName => prevFoodName !== foodToSearch);
         newHistory.push(foodToSearch);
-        console.log(newHistory);
 
         return newHistory;
       });
@@ -63,7 +64,13 @@ const SearchFoodPage = ({
     /* Save the new search history to file system */
     saveSearchHistory(newHistory);
     /* Query for new food data */
-    handleSearchFood(foodToSearch);
+    try {
+      await handleSearchFood.mutateAsync(foodToSearch);
+    } catch (error: any) {
+      if (error.message === 'Not found') {
+        showDialog('Error', 'No foods can be found');
+      }
+    }
     navigation.goBack();
   };
 

@@ -56,7 +56,6 @@ const DebitCartInputPage = ({control, errors}: DebitCardInputPageProps) => {
                 placeholder="HELLO WORLD"
                 value={value}
                 onChangeText={onChange}
-                autoCapitalize="characters"
               />
             )}
           />
@@ -81,7 +80,7 @@ const DebitCartInputPage = ({control, errors}: DebitCardInputPageProps) => {
                     onChangeText={text => {
                       const month = text.replace(/\D/g, '');
                       if (month.length === 1) {
-                        onChange('0' + month);
+                        onChange('0' + month === '0' ? '1' : '0');
                       } else {
                         onChange(month);
                       }
@@ -121,7 +120,7 @@ const DebitCartInputPage = ({control, errors}: DebitCardInputPageProps) => {
           </View>
 
           {/* CVV input */}
-          <View className="flex-1">
+          <View className="flex-1 mt-4">
             <Text className="text-gray-600 mb-2">CVV</Text>
             <Controller
               control={control}

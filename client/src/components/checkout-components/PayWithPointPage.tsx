@@ -15,6 +15,7 @@ import {useNavigation} from '@react-navigation/native';
 import auth from '@react-native-firebase/auth';
 import {ShadowStyle} from '../../../styles/ShadowStyle';
 import {ButtonStyle} from '../../../styles/ButtonStyles';
+import {useCustomDialog} from '../../context/CustomDialogContext';
 
 const PayWithPointPage = ({
   route,
@@ -23,9 +24,8 @@ const PayWithPointPage = ({
   const {pointBalance} = usePointAndCredit();
   const {addOrderMutation} = useOrderContext();
   const {foodsInCart} = useCartContext();
-  const [dialogTitle, setDialogTitle] = useState('');
-  const [dialogMessage, setDialogMessage] = useState('');
-  const [visible, setVisible] = useState(false);
+  /* Custom dialog function */
+  const {showDialog} = useCustomDialog();
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
@@ -51,9 +51,7 @@ const PayWithPointPage = ({
       );
 
     if (!filteredFood) {
-      setDialogTitle('Error');
-      setDialogMessage('Something went wrong');
-      setVisible(true);
+      showDialog('Error', 'Something went wrong');
       return;
     }
 
@@ -63,36 +61,18 @@ const PayWithPointPage = ({
         totalPrice,
         paymentMethod: 'POINT',
       });
-      setDialogTitle('Success');
-      setDialogMessage('Order placed successfully');
-      setVisible(true);
+      showDialog('Success', 'Order placed successfully', () =>
+        navigation.navigate('BottomTabLayout', {screen: 'OrderPage'}),
+      );
     } catch (error) {
-      setDialogTitle('Error');
-      setDialogMessage('Server error. Please try again later.');
-      setVisible(true);
+      showDialog('Error', 'Server error. Please try again later.', () =>
+        navigation.navigate('BottomTabLayout', {screen: 'HomePage'}),
+      );
     }
   };
 
   return (
     <View style={styles.parentContainer}>
-      <CustomDialog
-        title={dialogTitle}
-        message={dialogMessage}
-        visible={visible}
-        setVisible={setVisible}
-        onCloseFunction={() => {
-          if (addOrderMutation.isError) {
-            navigation.navigate('BottomTabLayout', {
-              screen: 'HomePage',
-            });
-          } else {
-            navigation.navigate('BottomTabLayout', {
-              screen: 'OrderPage',
-            });
-          }
-        }}
-      />
-
       {/* Point Balance Display */}
       <View style={[ShadowStyle.shadowBox, styles.pointCardContainer]}>
         <View>

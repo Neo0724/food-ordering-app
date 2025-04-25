@@ -7,9 +7,13 @@ import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
 import {OrderProvider} from './src/context/OrderProvider';
 import {DefaultTheme, PaperProvider} from 'react-native-paper';
 import {PointAndCreditProvider} from './src/context/PointAndCreditProvider';
-import RNFS from 'react-native-fs';
 import {useEffect} from 'react';
 import SearchFoodNameProvider from './src/context/SearchFoodProvider';
+import {CustomDialogProvider} from './src/context/CustomDialogContext';
+import {
+  createSearchHistoryFile,
+  createTransactionHistoryFile,
+} from './utils/file-system';
 
 export default function App() {
   const queryClient = new QueryClient();
@@ -25,23 +29,7 @@ export default function App() {
   };
 
   useEffect(() => {
-    const createSearchHistoryFile = async () => {
-      const fileName = '/search-history.txt';
-      const filePath = RNFS.DocumentDirectoryPath + fileName;
-
-      try {
-        const fileExists = await RNFS.exists(filePath);
-        console.log(fileExists);
-
-        if (!fileExists) {
-          await RNFS.writeFile(filePath, '');
-          console.log('Search history file is created');
-        }
-      } catch (error) {
-        console.log('Error creating search history file: ' + error);
-      }
-    };
-
+    createTransactionHistoryFile();
     createSearchHistoryFile();
   }, []);
 
@@ -53,9 +41,11 @@ export default function App() {
             <OrderProvider>
               <CartProvider>
                 <PaperProvider theme={theme}>
-                  <NavigationContainer>
-                    <RootLayout />
-                  </NavigationContainer>
+                  <CustomDialogProvider>
+                    <NavigationContainer>
+                      <RootLayout />
+                    </NavigationContainer>
+                  </CustomDialogProvider>
                 </PaperProvider>
               </CartProvider>
             </OrderProvider>

@@ -27,6 +27,8 @@ import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
 import {debitCardSchemaWithTopUp} from './schemas/debit-cart-schema';
+import {useCustomDialog} from '../../context/CustomDialogContext';
+import {saveTransactionHistory} from '../../../utils/file-system';
 
 const PayWithAccountCreditPage = ({
   route,
@@ -40,9 +42,8 @@ const PayWithAccountCreditPage = ({
   const accountHolderName = auth().currentUser?.displayName;
   const {addOrderMutation} = useOrderContext();
   const {foodsInCart} = useCartContext();
-  const [dialogTitle, setDialogTitle] = useState('');
-  const [dialogMessage, setDialogMessage] = useState('');
-  const [visible, setVisible] = useState(false);
+  /* Custom dialog function  */
+  const {showDialog} = useCustomDialog();
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
@@ -76,13 +77,19 @@ const PayWithAccountCreditPage = ({
     /* Top up the account credit first */
     try {
       await topUpCredit.mutateAsync(Number(formData.topUpAmount));
+      await saveTransactionHistory({
+        amount: Number(formData.topUpAmount),
+        createTime: Date.now().toString(),
+        type: 'INCREASE',
+        description: 'Topped up with bank card',
+      });
     } catch (error) {
       console.log('Error top up to current balance ', error);
-      setDialogTitle('Error');
-      setDialogMessage(
+      showDialog(
+        'Error',
         'Error proceeding with the top up. Please try again later',
+        () => navigation.navigate('BottomTabLayout', {screen: 'HomePage'}),
       );
-      setVisible(true);
       return;
     }
 
@@ -104,9 +111,7 @@ const PayWithAccountCreditPage = ({
           }) => food,
         );
       if (!filteredFood) {
-        setDialogTitle('Error');
-        setDialogMessage('Something went wrong');
-        setVisible(true);
+        showDialog('Error', 'Something went wrong');
         return;
       }
 
@@ -115,13 +120,13 @@ const PayWithAccountCreditPage = ({
         totalPrice,
         paymentMethod: 'CREDIT',
       });
-      setDialogTitle('Success');
-      setDialogMessage('Order placed successfully');
-      setVisible(true);
+      showDialog('Success', 'Order placed successfully', () =>
+        navigation.navigate('BottomTabLayout', {screen: 'OrderPage'}),
+      );
     } catch (error) {
-      setDialogTitle('Error');
-      setDialogMessage('Server error. Please try again later.');
-      setVisible(true);
+      showDialog('Error', 'Server error. Please try again later.', () =>
+        navigation.navigate('BottomTabLayout', {screen: 'HomePage'}),
+      );
       console.log('Error proceeding with the payment ', error);
     }
   };
@@ -144,9 +149,7 @@ const PayWithAccountCreditPage = ({
         }) => food,
       );
     if (!foodToCheckout) {
-      setDialogTitle('Error');
-      setDialogMessage('Something went wrong');
-      setVisible(true);
+      showDialog('Error', 'Something went wrong');
       return;
     }
     try {
@@ -155,13 +158,19 @@ const PayWithAccountCreditPage = ({
         totalPrice,
         paymentMethod: 'CREDIT',
       });
-      setDialogTitle('Success');
-      setDialogMessage('Order placed successfully');
-      setVisible(true);
+      showDialog('Success', 'Order placed successfully', () =>
+        navigation.navigate('BottomTabLayout', {screen: 'OrderPage'}),
+      );
+      await saveTransactionHistory({
+        amount: totalPrice,
+        type: 'DECREASE',
+        createTime: Date.now().toString(),
+        description: 'Placed foods order',
+      });
     } catch (error) {
-      setDialogTitle('Error');
-      setDialogMessage('Server error. Please try again later.');
-      setVisible(true);
+      showDialog('Error', 'Server error. Please try again later.', () =>
+        navigation.navigate('BottomTabLayout', {screen: 'HomePage'}),
+      );
     }
   };
 
@@ -169,23 +178,6 @@ const PayWithAccountCreditPage = ({
     <ScrollView
       className="p-4"
       contentContainerStyle={{paddingBottom: 35, flexGrow: 1}}>
-      <CustomDialog
-        title={dialogTitle}
-        message={dialogMessage}
-        visible={visible}
-        setVisible={setVisible}
-        onCloseFunction={() => {
-          if (addOrderMutation.isError || topUpCredit.isError) {
-            navigation.navigate('BottomTabLayout', {
-              screen: 'HomePage',
-            });
-          } else {
-            navigation.navigate('BottomTabLayout', {
-              screen: 'OrderPage',
-            });
-          }
-        }}
-      />
       {/* Credit Card Display */}
       <View style={[ShadowStyle.shadowBox, styles.creditCardContainer]}>
         <View>

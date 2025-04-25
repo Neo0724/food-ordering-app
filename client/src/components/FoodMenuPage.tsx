@@ -1,6 +1,6 @@
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import React from 'react';
+import React, {useState} from 'react';
 import {
   ActivityIndicator,
   FlatList,
@@ -10,14 +10,13 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import useFood from '../custom-hook/useFood';
+import useFood, {Food} from '../custom-hook/useFood';
 import {ShadowStyle} from '../../styles/ShadowStyle';
 import {FoodStackParamList} from '../navigation/FoodStack';
 import {Searchbar} from 'react-native-paper';
 import {SearchBarStyles} from '../../styles/SearchBarStyles';
 import {useSearchFoodContext} from '../context/SearchFoodProvider';
 // import debounce from '../../utils/debounce';
-// import {useQueryClient} from '@tanstack/react-query';
 
 export type Variant = {
   sizeId: number;
@@ -54,6 +53,17 @@ export default function FoodPage() {
 
   return (
     <View className="flex-1">
+      <Searchbar
+        style={[ShadowStyle.shadowBox, SearchBarStyles.searchBar]}
+        placeholder="Search for your favorite food..."
+        iconColor="white"
+        cursorColor="white"
+        placeholderTextColor="rgba(254,255,255,0.8)"
+        inputStyle={{color: 'white', fontSize: 15}}
+        value={searchFoodName}
+        onPress={() => navigation.navigate('SearchFoodScreen')}
+        onClearIconPress={() => setSearchFoodName('')}
+      />
       {isLoading && (
         /* Loading indicator */
         <View className="flex-1 justify-center items-center">
@@ -79,17 +89,6 @@ export default function FoodPage() {
       )}
       {!isLoading && !error && allFoods && allFoods.length > 0 && (
         <View className="flex-1">
-          <Searchbar
-            style={[ShadowStyle.shadowBox, SearchBarStyles.searchBar]}
-            placeholder="Search for your favorite food..."
-            iconColor="white"
-            cursorColor="white"
-            placeholderTextColor="rgba(255,255,255,0.8)"
-            inputStyle={{color: 'white', fontSize: 16}}
-            value={searchFoodName}
-            onPress={() => navigation.navigate('SearchFoodScreen')}
-            onClearIconPress={() => setSearchFoodName('')}
-          />
           <FlatList
             data={allFoods}
             numColumns={2}

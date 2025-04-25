@@ -93,9 +93,9 @@ export function CartProvider({children}: {children: React.ReactNode}) {
         if (response.data.code === 1 && response.data.msg === 'success') {
           const retrievedFoodInCart = response.data
             .data as RetrievedFoodCartType[];
-          console.log(retrievedFoodInCart);
           return retrievedFoodInCart.map(food => ({
             ...food,
+            /* Add the isChecked attribute as it is not stored in database */
             isChecked: false,
           }));
         } else {
@@ -165,6 +165,7 @@ export function CartProvider({children}: {children: React.ReactNode}) {
     },
     onError: (err, {isChecked, unitPrice, prevQuantity}) => {
       console.log('Error removing food from cart, ' + err);
+      /* Decrease the total cart price if the removed cart food is selected by the user */
       isChecked && setTotalPrice(prev => prev + unitPrice * prevQuantity);
     },
     onSuccess: () => {

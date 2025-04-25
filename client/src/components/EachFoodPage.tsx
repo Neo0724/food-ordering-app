@@ -14,6 +14,7 @@ import {
   View,
 } from 'react-native';
 import CustomDialog from './CustomDialog';
+import {useCustomDialog} from '../context/CustomDialogContext';
 
 type FoodDetailPageProps = NativeStackScreenProps<
   FoodStackParamList,
@@ -22,8 +23,8 @@ type FoodDetailPageProps = NativeStackScreenProps<
 
 export default function FoodDetailsPage({
   route,
-}: // navigation,
-FoodDetailPageProps) {
+  navigation,
+}: FoodDetailPageProps) {
   const food = route.params.food;
   const [selectedSize, setSelectedSize] = useState<number>(-1);
   const [selectedQuantity, setSelectedQuantity] = useState<number>(1);
@@ -31,10 +32,8 @@ FoodDetailPageProps) {
     useCartContext();
   const [exceedQuantity, setExceedQuantity] = useState<boolean>(false);
 
-  /* State for dialog */
-  const [visible, setVisible] = useState<boolean>(false);
-  const [dialogTitle, setDialogTitle] = useState<string>('');
-  const [dialogMessage, setDialogMessage] = useState<string>('');
+  /* Custom dialog function */
+  const {showDialog} = useCustomDialog();
 
   // Variant map for faster lookup
   const variantMap = new Map(
@@ -43,9 +42,7 @@ FoodDetailPageProps) {
 
   const handleAddToCart = async () => {
     if (selectedSize === -1) {
-      setDialogTitle('Invalid option');
-      setDialogMessage('Please select one variant');
-      setVisible(true);
+      showDialog('Invalid option', 'Please select one variant');
       return;
     }
 
@@ -62,9 +59,7 @@ FoodDetailPageProps) {
         foodExistsInCart.availableQuantity;
 
       if (exceededQuantity) {
-        setDialogTitle('Invalid option');
-        setDialogMessage('You have exceeded the maximum quantity');
-        setVisible(true);
+        showDialog('Invalid option', 'You have exceeded the maximum quantity');
         return;
       }
       try {
@@ -72,13 +67,9 @@ FoodDetailPageProps) {
           cartId: foodExistsInCart.cartId,
           newQuantity: foodExistsInCart.quantity + selectedQuantity,
         });
-        setDialogTitle('Success');
-        setDialogMessage('Updated cart successfully');
-        setVisible(true);
+        showDialog('Success', 'Updated cart successfully');
       } catch (error) {
-        setDialogTitle('Server error');
-        setDialogMessage('Please try again later');
-        setVisible(true);
+        showDialog('Server error', 'Please try again later');
       }
     } else {
       /* Food not in cart, hence add the food into the cart */
@@ -87,9 +78,7 @@ FoodDetailPageProps) {
         selectedQuantity > (variantMap.get(selectedSize)?.quantity ?? Infinity);
 
       if (exceededQuantity) {
-        setDialogTitle('Invalid option');
-        setDialogMessage('You have exceeded the maximum quantity');
-        setVisible(true);
+        showDialog('Invalid option', 'You have exceeded the maximum quantity');
         return;
       }
 
@@ -99,13 +88,9 @@ FoodDetailPageProps) {
           selectedQuantity: selectedQuantity,
           selectedVariant: variantMap.get(selectedSize) as Variant,
         });
-        setDialogTitle('Success');
-        setDialogMessage('Food added to cart');
-        setVisible(true);
+        showDialog('Success', 'Food added to cart');
       } catch (error) {
-        setDialogTitle('Server error');
-        setDialogMessage('Please try again later');
-        setVisible(true);
+        showDialog('Server error', 'Please try again later');
       }
     }
   };
@@ -122,13 +107,6 @@ FoodDetailPageProps) {
 
   return (
     <ScrollView contentContainerStyle={{paddingBottom: 25}}>
-      {/* Dialog to show that user has selected over the max quantity */}
-      <CustomDialog
-        title={dialogTitle}
-        message={dialogMessage}
-        visible={visible}
-        setVisible={setVisible}
-      />
       {/* Food image */}
       <Image
         source={require('../../assets/img/friedchicken.jpeg')}
@@ -180,7 +158,7 @@ FoodDetailPageProps) {
                   styles.variantText,
                   selectedSize === variant.sizeId && styles.selectedVariantText,
                 ]}>
-                $: RM{variant.price}
+                RM{variant.price}
               </Text>
             </TouchableOpacity>
           ))}
@@ -246,8 +224,7 @@ const styles = StyleSheet.create({
     ...ShadowStyle.shadowBox,
     padding: 10,
     borderRadius: 10,
-    flex: 1,
-    minWidth: 100,
+    minWidth: 110,
   },
   selectedVariant: {
     backgroundColor: 'rgb(238,167,52)',

@@ -6,12 +6,14 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import CartPage from '../components/cart-component/CartPage';
 import OrderPage from '../components/OrderPage';
 import FoodStackLayout from './FoodStack';
+import TransactionPage from '../components/transaction-component/TransactionPage';
 
 export type BottomTabParamList = {
   HomePage: undefined;
   FoodPage: undefined;
   CartPage: undefined;
   OrderPage: undefined;
+  TransactionPage: undefined;
 };
 
 const Tab = createBottomTabNavigator<BottomTabParamList, 'BottomTab'>();
@@ -29,12 +31,11 @@ export default function BottomTabLayout() {
           height: WindowHeight * 0.08,
           backgroundColor: 'rgb(238,167,52)',
           borderTopWidth: 1,
-          borderTopColor: '#E2E8F0',
           borderTopLeftRadius: 10,
           borderTopRightRadius: 10,
         },
         tabBarLabelStyle: {
-          fontSize: 16,
+          fontSize: 12,
         },
         headerStyle: {
           backgroundColor: 'white',
@@ -74,6 +75,16 @@ export default function BottomTabLayout() {
           title: 'Cart',
           tabBarIcon: ({color, size}) => (
             <MaterialCommunityIcons name="cart" color={color} size={size} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="TransactionPage"
+        component={TransactionPage}
+        options={{
+          title: 'Transaction',
+          tabBarIcon: ({color, size}) => (
+            <MaterialCommunityIcons name="receipt" color={color} size={size} />
           ),
         }}
       />

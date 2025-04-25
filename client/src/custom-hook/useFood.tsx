@@ -1,4 +1,4 @@
-import {useQuery} from '@tanstack/react-query';
+import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
 import axios from 'axios';
 import Config from 'react-native-config';
 
@@ -20,7 +20,9 @@ export type Food = {
   categoryName: string;
 };
 
-export default function useFood(searchCriteria = '') {
+export default function useFood(query = '') {
+  const queryClient = useQueryClient();
+
   const {
     data: allFoods,
     isLoading,
@@ -30,7 +32,7 @@ export default function useFood(searchCriteria = '') {
     queryFn: async () => {
       try {
         const response = await axios.get(
-          `http://${Config.BACKEND_URL}/inventorys?searchCriteria=${searchCriteria}`,
+          `http://${Config.BACKEND_URL}/inventorys?searchCriteria=${query}`,
         );
 
         if (response.data.code === 1 && response.data.msg === 'success') {
@@ -40,14 +42,35 @@ export default function useFood(searchCriteria = '') {
         }
       } catch (err) {
         console.log('Error fetching foods, ' + err);
-        throw err;
       }
     },
   });
 
-  const handleSearchFood = (query: string) => {
-    /* To be completed... */
-  };
+  const handleSearchFood = useMutation({
+    mutationFn: async (searchQuery: string) => {
+      try {
+        const response = await axios.get(
+          `http://${Config.BACKEND_URL}/inventorys?searchCriteria=${searchQuery}`,
+        );
+
+        if (response.data.code === 1 && response.data.msg === 'success') {
+          queryClient.setQueryData(['foods'], response.data.data);
+        } else if (
+          (response.data.msg as String).toString().match('.*No items found.*')
+        ) {
+          throw new Error('Not found');
+        } else {
+          throw new Error('Failed to fetch foods');
+        }
+      } catch (err) {
+        throw err;
+      }
+    },
+    onError: err => {
+      queryClient.setQueryData(['foods'], []);
+      console.log(err.message);
+    },
+  });
 
   return {allFoods, isLoading, error, handleSearchFood};
 }

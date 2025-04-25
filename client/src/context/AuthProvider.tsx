@@ -39,7 +39,6 @@ export function AuthProvider({children}: {children: React.ReactNode}) {
         await AsyncStorage.removeItem('userId');
         setIsSignedIn(false);
       }
-
       if (initializing) {
         setInitializing(false);
       }
