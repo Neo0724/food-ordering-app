@@ -1,7 +1,8 @@
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import FoodPage, {Food} from '../components/FoodMenuPage';
+import FoodPage from '../components/FoodMenuPage';
 import EachFoodPage from '../components/EachFoodPage';
 import SearchFoodPage from '../components/SearchFoodPage';
+import {Food} from '../custom-hook/useFood';
 
 export type FoodStackParamList = {
   FoodListPage: undefined;

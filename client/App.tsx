@@ -20,7 +20,7 @@ export default function App() {
       ...DefaultTheme.colors,
       primary: 'rgb(238,167,52)',
       secondary: 'white',
-      background: 'rgb(238,200,52)',
+      background: 'rgb(255,120,50)',
     },
   };
 

@@ -16,9 +16,11 @@ export type Food = {
   itemDescription: string;
   ingredient: string;
   list: Variant[];
+  categoryId: number;
+  categoryName: string;
 };
 
-export default function useFood() {
+export default function useFood(searchCriteria = '') {
   const {
     data: allFoods,
     isLoading,
@@ -28,7 +30,7 @@ export default function useFood() {
     queryFn: async () => {
       try {
         const response = await axios.get(
-          `http://${Config.BACKEND_URL}/inventorys`,
+          `http://${Config.BACKEND_URL}/inventorys?searchCriteria=${searchCriteria}`,
         );
 
         if (response.data.code === 1 && response.data.msg === 'success') {

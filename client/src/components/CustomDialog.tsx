@@ -21,7 +21,7 @@ export default function CustomDialog({
     <Portal>
       <Dialog
         theme={{
-          colors: {elevation: {level3: theme.colors.primary}},
+          colors: {elevation: {level3: theme.colors.background}},
         }}
         visible={visible}
         onDismiss={() => setVisible(false)}>

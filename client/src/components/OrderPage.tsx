@@ -19,7 +19,7 @@ export default function OrderPage() {
         </View>
       )}
       {error && <Text className="my-auto">Error: {error.message}</Text>}
-      {allOrders?.length === 0 && <Text>No orders found</Text>}
+      {allOrders?.length === 0 && <Text className="mt-3">No orders found</Text>}
       {!isLoading && !error && allOrders?.length !== 0 && (
         <>
           <ScrollView

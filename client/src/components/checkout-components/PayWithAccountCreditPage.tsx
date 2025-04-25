@@ -128,7 +128,7 @@ const PayWithAccountCreditPage = ({
 
   const handleProceedPayment = async () => {
     /* Double check for foods that user wanted to checkout */
-    const filteredFood = foodsInCart
+    const foodToCheckout = foodsInCart
       ?.filter(food => food.isChecked)
       .map(
         ({
@@ -143,7 +143,7 @@ const PayWithAccountCreditPage = ({
           ...food
         }) => food,
       );
-    if (!filteredFood) {
+    if (!foodToCheckout) {
       setDialogTitle('Error');
       setDialogMessage('Something went wrong');
       setVisible(true);
@@ -151,7 +151,7 @@ const PayWithAccountCreditPage = ({
     }
     try {
       await addOrderMutation.mutateAsync({
-        ordersToAdd: filteredFood,
+        ordersToAdd: foodToCheckout,
         totalPrice,
         paymentMethod: 'CREDIT',
       });
@@ -167,8 +167,8 @@ const PayWithAccountCreditPage = ({
 
   return (
     <ScrollView
-      className="p-4 flex-1"
-      contentContainerStyle={{paddingBottom: 35}}>
+      className="p-4"
+      contentContainerStyle={{paddingBottom: 35, flexGrow: 1}}>
       <CustomDialog
         title={dialogTitle}
         message={dialogMessage}
@@ -233,7 +233,7 @@ const PayWithAccountCreditPage = ({
         </View>
       </View>
 
-      <View className="mt-2">
+      <View>
         {/* Insufficient fund message */}
         {!sufficientCredit && (
           <View>
@@ -259,7 +259,7 @@ const PayWithAccountCreditPage = ({
 
       {/* Button to top up and proceed with the payment */}
       {!sufficientCredit && (
-        <View className="mt-8">
+        <View>
           <TouchableOpacity
             style={ButtonStyle.generalButton}
             onPress={handleSubmit(handleTopUpAndProceedPayment)}
@@ -273,7 +273,7 @@ const PayWithAccountCreditPage = ({
 
       {/* Button to proceed with the payment */}
       {sufficientCredit && (
-        <View className="mt-[3rem]">
+        <View className="mt-auto">
           <TouchableOpacity
             disabled={addOrderMutation.isPending}
             style={[
@@ -304,6 +304,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     borderWidth: 2,
     borderColor: '#004a99',
+    elevation: 15,
   },
   eachPaymentDetailContainer: {
     flexDirection: 'row',

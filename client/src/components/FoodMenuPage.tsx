@@ -27,14 +27,6 @@ export type Variant = {
   quantity: number;
 };
 
-export type Food = {
-  itemId: number;
-  itemName: string;
-  itemDescription: string;
-  ingredient: string;
-  list: Variant[];
-};
-
 export default function FoodPage() {
   const navigation =
     useNavigation<NativeStackNavigationProp<FoodStackParamList>>();

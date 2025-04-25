@@ -5,7 +5,14 @@ import {Variant} from './FoodMenuPage';
 import {ShadowStyle} from '../../styles/ShadowStyle';
 import {ButtonStyle} from '../../styles/ButtonStyles';
 import {FoodStackParamList} from '../navigation/FoodStack';
-import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {
+  Image,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import CustomDialog from './CustomDialog';
 
 type FoodDetailPageProps = NativeStackScreenProps<
@@ -23,6 +30,7 @@ FoodDetailPageProps) {
   const {addToCartMutation, updateCartQuantityMutation, foodsInCart} =
     useCartContext();
   const [exceedQuantity, setExceedQuantity] = useState<boolean>(false);
+
   /* State for dialog */
   const [visible, setVisible] = useState<boolean>(false);
   const [dialogTitle, setDialogTitle] = useState<string>('');
@@ -113,7 +121,7 @@ FoodDetailPageProps) {
   }, [exceedQuantity]);
 
   return (
-    <View>
+    <ScrollView contentContainerStyle={{paddingBottom: 25}}>
       {/* Dialog to show that user has selected over the max quantity */}
       <CustomDialog
         title={dialogTitle}
@@ -129,8 +137,15 @@ FoodDetailPageProps) {
       {/* Food details container */}
       <View className="m-5 gap-3">
         <Text className="text-4xl">{food.itemName}</Text>
-        <Text>{food.itemDescription}</Text>
-        <Text>In: {food.ingredient}</Text>
+        <Text style={styles.description}>{food.itemDescription}</Text>
+        <Text style={styles.ingredients}>Ingredients: {food.ingredient}</Text>
+        <Text style={styles.category}>
+          Category:{' '}
+          {food.categoryName
+            .substring(0, 1)
+            .toLocaleUpperCase()
+            .concat(food.categoryName.substring(1).toLowerCase())}
+        </Text>
 
         {/* Container to show all variants */}
         <View className="justify-between gap-3 flex-row flex-wrap">
@@ -222,7 +237,7 @@ FoodDetailPageProps) {
           </Text>
         )}
       </View>
-    </View>
+    </ScrollView>
   );
 }
 
@@ -232,6 +247,7 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 10,
     flex: 1,
+    minWidth: 100,
   },
   selectedVariant: {
     backgroundColor: 'rgb(238,167,52)',
@@ -242,5 +258,18 @@ const styles = StyleSheet.create({
   variantText: {
     fontWeight: 'bold',
     color: 'black',
+  },
+  description: {
+    fontSize: 16,
+    color: '#333',
+    fontWeight: '500',
+  },
+  ingredients: {
+    fontSize: 14,
+  },
+  category: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#e65c00',
   },
 });

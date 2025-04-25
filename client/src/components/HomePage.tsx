@@ -1,6 +1,13 @@
 /* eslint-disable react-native/no-inline-styles */
-import React, {useState} from 'react';
-import {ActivityIndicator, Image, StyleSheet, Text, View} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {
+  ActivityIndicator,
+  Alert,
+  Image,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import PagerView from 'react-native-pager-view';
 import useFood from '../custom-hook/useFood';
 
