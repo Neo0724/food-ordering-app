@@ -23,6 +23,7 @@ import com.example.canteen.food.model.dto.CartDTO;
 import com.example.canteen.food.model.entity.Cart;
 import com.example.canteen.food.repository.CartRepository;
 import com.example.canteen.food.service.CartService;
+import org.springframework.beans.BeanUtils;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -51,14 +52,10 @@ public class CartServiceImpl implements CartService {
 
         Cart cart = new Cart();
 
-        cart.setItemId(cartDTO.getItemId());
-        cart.setSizeId(cartDTO.getSizeId());
-        cart.setUserId(cartDTO.getUserId());
-        cart.setQuantity(cartDTO.getQuantity());
         cart.setStatus(CartStatus.ACTIVE);
         cart.setCreateTime(LocalDateTime.now());
         cart.setUpdateTime(LocalDateTime.now());
-
+        BeanUtils.copyProperties(cartDTO, cart);
         cartRepository.save(cart);
     }
 
@@ -82,25 +79,34 @@ public class CartServiceImpl implements CartService {
 
     public void placeOrder(List<CartDTO> cartDTOs) {
         String uuid = UUID.randomUUID().toString();
-        cartDTOs.forEach(x -> x.setOrderId(uuid));
+        cartDTOs.forEach(x ->  x.setOrderId(uuid));
 
-        List<Order> orders = cartDTOs.stream().map(dto -> {
+        cartDTOs.forEach(cartDTO -> {
             Order order = new Order();
-    
-          order.setItemId(dto.getItemId());
-          order.setSizeId(dto.getSizeId());
-          order.setCartId(dto.getCartId());
-            order.setOrderId(dto.getOrderId()); 
-            order.setUserId(dto.getUserId());
-            order.setStatus(CartStatus.ORDERED);
-            order.setQuantity(dto.getQuantity());
-            order.setCreateTime(LocalDateTime.now());
-            order.setUpdateTime(LocalDateTime.now());
+            BeanUtils.copyProperties(cartDTO, order);
+            orderRepository.save(order);
+        });
 
-            return order;
-        }).collect(Collectors.toList());
+//
+//        List<Order> orders = cartDTOs.stream().map(dto -> {
+//
+//
+//          order.setItemId(dto.getItemId());
+//          order.setSizeId(dto.getSizeId());
+//          order.setCartId(dto.getCartId());
+//            order.setOrderId(dto.getOrderId());
+//            order.setUserId(dto.getUserId());
+//            order.setStatus(CartStatus.ORDERED);
+//            order.setQuantity(dto.getQuantity());
+//            order.setCreateTime(LocalDateTime.now());
+//            order.setUpdateTime(LocalDateTime.now());
+//
+//            return order;
+//        }).collect(Collectors.toList());
 
-        orderRepository.saveAll(orders);
+
+
+//        orderRepository.saveAll(orders);
     }
     
 
