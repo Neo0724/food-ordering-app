@@ -1,0 +1,18 @@
+{
+  "name": "web-socket",
+  "module": "index.ts",
+  "private": true,
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "scripts": {
+    "dev": "nodemon server.js"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "express": "^5.1.0",
+    "ws": "^8.18.2"
+  }
+}
