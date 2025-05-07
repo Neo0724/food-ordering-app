@@ -39,7 +39,7 @@ import reactor.core.publisher.Mono;
 @Service
 @Slf4j
 public class OrderServiceImpl implements OrderService {
-    private final WebClient webClient
+    private final WebClient webClient;
     @Autowired
     private OrderRepository orderRepository;
 
