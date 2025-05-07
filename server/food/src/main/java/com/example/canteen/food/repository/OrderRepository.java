@@ -41,4 +41,11 @@ public interface OrderRepository extends JpaRepository<Order, OrderId> {
     @Modifying
     @Query("UPDATE Order o SET o.status = 'CANCELLED' WHERE o.orderId = :orderId")
     void updateCancelStatus(@Param("orderId") String orderId);
+
+    @Modifying
+    @Query("UPDATE Order o SET o.status = 'COMPLETED' WHERE o.orderId = :orderId")
+    void updateCompleteStatus(@Param("orderId") String orderId);
+
+    @Query("SELECT o.userId FROM Order o WHERE o.orderId = :orderId")
+    List<String> getUserIdsByOrderId(@Param("orderId") String orderId);
 }

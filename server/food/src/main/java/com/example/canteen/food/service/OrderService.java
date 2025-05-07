@@ -12,4 +12,8 @@ public interface OrderService {
 
     void deleteOrder(String orderId);
 
+    void updateOrder(String orderId);
+
+    void testSocket();
+
 }

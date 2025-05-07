@@ -4,10 +4,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.example.canteen.food.common.ResultCode;
 import com.example.canteen.food.model.dto.CartDTO;
@@ -18,10 +15,6 @@ import com.example.canteen.food.service.CreditService;
 import com.example.canteen.food.service.OrderService;
 
 import lombok.extern.slf4j.Slf4j;
-
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 
 @RestController
@@ -44,20 +37,25 @@ public class OrderController {
         List<OrderVO> orderVO = orderService.getOrderList(userId);
         return ResultCode.success(orderVO);
     }
-    
-        @PostMapping
-        public ResultCode placeOrder(@RequestParam BigDecimal totalPrice, @RequestParam Boolean isPoint, @RequestBody List<CartDTO> cartDTOs ) {
-            String userId = cartDTOs.get(0).getUserId();
-            if(isPoint == true) {
-                creditService.payWithPoint(totalPrice, userId);
-            } else if(totalPrice != null) {
-                creditService.payWithCredit(totalPrice, userId);
-            }
-            
-            cartDTOs.forEach((cartDTO -> cartDTO.setStatus(CartStatus.ORDERED)));
-            cartService.placeOrder(cartDTOs);
-            return ResultCode.success();
+
+    @PostMapping
+    public ResultCode placeOrder(@RequestParam BigDecimal totalPrice, @RequestParam Boolean isPoint, @RequestBody List<CartDTO> cartDTOs) {
+        String userId = cartDTOs.get(0).getUserId();
+        if (isPoint == true) {
+            creditService.payWithPoint(totalPrice, userId);
+        } else if (totalPrice != null) {
+            creditService.payWithCredit(totalPrice, userId);
         }
+
+        cartDTOs.forEach((cartDTO -> cartDTO.setStatus(CartStatus.ORDERED)));
+        cartService.placeOrder(cartDTOs);
+        return ResultCode.success();
+    }
+
+    @PutMapping
+    public void updateOrder(@RequestParam String orderId) {
+        orderService.updateOrder(orderId);
+    }
 
     @DeleteMapping
     public ResultCode deleteOrder(@RequestParam String orderId) {
