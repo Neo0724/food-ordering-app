@@ -3,6 +3,7 @@ package com.example.canteen.food.repository;
 import com.example.canteen.food.model.entity.Cart;
 import com.example.canteen.food.model.vo.CartVO;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -31,4 +32,8 @@ public interface CartRepository extends JpaRepository<Cart, Integer> {
             "WHERE c.userId = :userId AND c.status = com.example.canteen.food.model.dto.enums.CartStatus.ACTIVE " +
             "ORDER BY c.createTime DESC")
     List<CartVO> findCartsByUserId(@Param("userId") String userId);
+
+    @Modifying
+    @Query("UPDATE Cart c SET c.status = 'CANCELLED' WHERE c.cartId = :cartId")
+    void updateCancelStatus(@Param("cartId") Integer cartId);
 }

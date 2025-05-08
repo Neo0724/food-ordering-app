@@ -15,6 +15,7 @@ import com.example.canteen.food.model.vo.CartVO;
 import com.example.canteen.food.repository.ItemRepository;
 import com.example.canteen.food.repository.OrderRepository;
 import com.example.canteen.food.repository.VariantRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +29,7 @@ import org.springframework.beans.BeanUtils;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Transactional
 @Slf4j
 public class CartServiceImpl implements CartService {
 
@@ -76,7 +78,7 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public void deleteCart(Integer cartId) {
-        cartRepository.deleteById(cartId);
+        cartRepository.updateCancelStatus(cartId);
     }
 
     public void placeOrder(List<CartDTO> cartDTOs) {

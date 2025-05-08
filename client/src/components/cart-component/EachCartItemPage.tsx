@@ -25,7 +25,7 @@ export default function EachCartItemPage({food}: EachCartItemProp) {
     food.quantity,
   );
   const [checked, setChecked] = useState<boolean>(food.isChecked);
-  const debounceQuantityUpdate = useMemo(
+   const debounceQuantityUpdate = useMemo(
     () =>
       debounce((params: {cartId: number; newQuantity: number}) => {
         updateCartQuantityMutation.mutate(params);
@@ -128,6 +128,7 @@ export default function EachCartItemPage({food}: EachCartItemProp) {
             onPress={handleIncreaseQuantity}>
             <Text style={ButtonStyle.plusMinusText}>+</Text>
           </TouchableOpacity>
+        <Text className='text-sm italic text-red-500 mt-1'>Stock left : {food.availableQuantity}</Text>
         </View>
         <TouchableOpacity
           style={styles.removeButton}
@@ -136,12 +137,13 @@ export default function EachCartItemPage({food}: EachCartItemProp) {
               setTotalPrice(prev =>
                 Math.abs(prev - food.price * food.quantity),
               );
-            removeFromCartMutation.mutate({
-              cartId: food.cartId,
-              unitPrice: food.price,
-              prevQuantity: food.quantity,
-              isChecked: checked,
-            });
+          
+                removeFromCartMutation.mutate({
+                  cartId: food.cartId,
+                  unitPrice: food.price,
+                  prevQuantity: food.quantity,
+                  isChecked: checked,
+                });
           }}>
           <Text style={styles.removeButtonText}>Remove</Text>
         </TouchableOpacity>
