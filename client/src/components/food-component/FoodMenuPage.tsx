@@ -1,6 +1,6 @@
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import React, {useState} from 'react';
+import React from 'react';
 import {
   ActivityIndicator,
   FlatList,
@@ -10,13 +10,12 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import useFood, {Food} from '../custom-hook/useFood';
-import {ShadowStyle} from '../../styles/ShadowStyle';
-import {FoodStackParamList} from '../navigation/FoodStack';
 import {Searchbar} from 'react-native-paper';
-import {SearchBarStyles} from '../../styles/SearchBarStyles';
-import {useSearchFoodContext} from '../context/SearchFoodProvider';
-// import debounce from '../../utils/debounce';
+import {SearchBarStyles} from '../../../styles/SearchBarStyles';
+import {ShadowStyle} from '../../../styles/ShadowStyle';
+import {useSearchFoodContext} from '../../context/SearchFoodProvider';
+import useFood, {Food} from '../../custom-hook/useFood';
+import {FoodStackParamList} from '../../navigation/FoodStack';
 
 export type Variant = {
   sizeId: number;
@@ -31,22 +30,6 @@ export default function FoodPage() {
     useNavigation<NativeStackNavigationProp<FoodStackParamList>>();
 
   const {searchFoodName, setSearchFoodName} = useSearchFoodContext();
-
-  // const debounceSearchFoodName = useMemo(
-  //   () =>
-  //     debounce((newFoodName: string) => {
-  //       queryClient.setQueryData(['foods'], (old: any)
-  // => {
-  //         return old.filter((food: any) =>
-  //           food.itemName.toLowerCase().includes
-  // (newFoodName.toLowerCase()),
-  //         );
-  //       });
-  //     }, 500),
-  //   // eslint-disable-next-line react-hooks/
-  // exhaustive-deps
-  //   [],
-  // );
 
   /* Custom hook to fetch all foods */
   const {allFoods, isLoading, error} = useFood();
@@ -103,7 +86,7 @@ export default function FoodPage() {
                 <View style={styles.innerContent}>
                   {/* Food image */}
                   <Image
-                    source={require('../../assets/img/friedchicken.jpeg')}
+                    source={require('../../../assets/img/friedchicken.jpeg')}
                     style={styles.foodImage}
                   />
                   {/* Food name and description */}

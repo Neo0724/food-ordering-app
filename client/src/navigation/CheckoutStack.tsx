@@ -4,7 +4,6 @@ import PayAtCounterPage from '../components/checkout-components/PayAtCounterPage
 import PayWithAccountCreditPage from '../components/checkout-components/PayWithAccountCreditPage';
 import PayWithEWalletPage from '../components/checkout-components/PayWithEWalletPage';
 import PayWithPointPage from '../components/checkout-components/PayWithPointPage';
-import TopUpPage from '../components/checkout-components/TopUpPage';
 
 export type CheckoutStackParamList = {
   CheckoutPage: {totalPrice: number};
@@ -12,7 +11,6 @@ export type CheckoutStackParamList = {
   PayWithEWalletPage: {totalPrice: number};
   PayWithAccountCreditPage: {totalPrice: number};
   PayWithPointPage: {totalPrice: number};
-  TopUpPage: undefined;
 };
 
 const CheckoutStack = createNativeStackNavigator<CheckoutStackParamList>();
@@ -47,13 +45,6 @@ export default function CheckoutStackLayout() {
           title: 'Pay with E-Wallet',
         }}
         component={PayWithEWalletPage}
-      />
-      <CheckoutStack.Screen
-        name="TopUpPage"
-        options={{
-          title: 'Top up',
-        }}
-        component={TopUpPage}
       />
       <CheckoutStack.Screen
         name="PayWithAccountCreditPage"

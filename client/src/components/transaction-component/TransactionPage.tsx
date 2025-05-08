@@ -1,4 +1,4 @@
-import {View, Text, StyleSheet} from 'react-native';
+import {View, Text, StyleSheet, ScrollView} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {
   getTransactionHistory,
@@ -27,9 +27,11 @@ const TransactionPage = () => {
   return (
     <View style={styles.pageContainer}>
       <Text style={styles.title}>Transaction History</Text>
-      {transactionHistory.map((transaction, index) => (
-        <EachTransactionItem key={index} transactionHistory={transaction} />
-      ))}
+      <ScrollView>
+        {transactionHistory.map((transaction, index) => (
+          <EachTransactionItem key={index} transactionHistory={transaction} />
+        ))}
+      </ScrollView>
     </View>
   );
 };

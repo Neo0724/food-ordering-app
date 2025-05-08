@@ -5,6 +5,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 type AuthContextType = {
   user: FirebaseAuthTypes.User | null;
   isSignedIn: boolean;
+  userId: string | null;
 };
 
 const AuthContext = createContext<AuthContextType>({} as AuthContextType);
@@ -14,12 +15,13 @@ export function AuthProvider({children}: {children: React.ReactNode}) {
   const [initializing, setInitializing] = useState(true);
   const [user, setUser] = useState<FirebaseAuthTypes.User | null>(null);
   const [isSignedIn, setIsSignedIn] = useState<boolean>(false);
+  const [userId, setUserId] = useState<string | null>(null);
 
   useEffect(() => {
     const checkUserSignInStatus = async () => {
       try {
-        const userId = await AsyncStorage.getItem('userId');
-        if (userId !== null) {
+        const storageUserId = await AsyncStorage.getItem('userId');
+        if (storageUserId !== null) {
           setIsSignedIn(true);
         }
       } catch (error) {
@@ -34,9 +36,11 @@ export function AuthProvider({children}: {children: React.ReactNode}) {
       setUser(newUser);
       if (newUser) {
         await AsyncStorage.setItem('userId', newUser.uid);
+        setUserId(newUser.uid);
         setIsSignedIn(true);
       } else {
         await AsyncStorage.removeItem('userId');
+        setUserId(null);
         setIsSignedIn(false);
       }
       if (initializing) {
@@ -47,7 +51,7 @@ export function AuthProvider({children}: {children: React.ReactNode}) {
   }, [initializing]);
 
   return (
-    <AuthContext.Provider value={{user, isSignedIn}}>
+    <AuthContext.Provider value={{user, isSignedIn, userId}}>
       {children}
     </AuthContext.Provider>
   );

@@ -16,6 +16,8 @@ import auth from '@react-native-firebase/auth';
 import {ShadowStyle} from '../../../styles/ShadowStyle';
 import {ButtonStyle} from '../../../styles/ButtonStyles';
 import {useCustomDialog} from '../../context/CustomDialogContext';
+import {DrawerNavigationProp} from '@react-navigation/drawer';
+import {DrawerParamList} from '../../navigation/Drawer';
 
 const PayWithPointPage = ({
   route,
@@ -23,19 +25,18 @@ const PayWithPointPage = ({
   const totalPrice = route.params.totalPrice;
   const {pointBalance} = usePointAndCredit();
   const {addOrderMutation} = useOrderContext();
-  const {foodsInCart} = useCartContext();
+  const {foodsInCart, checkedCart} = useCartContext();
   /* Custom dialog function */
   const {showDialog} = useCustomDialog();
-  const navigation =
-    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const navigation = useNavigation<DrawerNavigationProp<DrawerParamList>>();
 
   const pointRequired = totalPrice * 10;
   const sufficientPoint = pointBalance >= pointRequired;
   const username = auth().currentUser?.displayName;
 
   const handleProceedPayment = async () => {
-    const filteredFood = foodsInCart
-      ?.filter(food => food.isChecked)
+    const foodToCheckout = foodsInCart
+      ?.filter(food => checkedCart.has(food.cartId))
       .map(
         ({
           createTime,
@@ -50,14 +51,14 @@ const PayWithPointPage = ({
         }) => food,
       );
 
-    if (!filteredFood) {
+    if (!foodToCheckout) {
       showDialog('Error', 'Something went wrong');
       return;
     }
 
     try {
       await addOrderMutation.mutateAsync({
-        ordersToAdd: filteredFood,
+        ordersToAdd: foodToCheckout,
         totalPrice,
         paymentMethod: 'POINT',
       });

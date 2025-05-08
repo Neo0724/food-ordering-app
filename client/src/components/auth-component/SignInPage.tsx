@@ -3,13 +3,13 @@ import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import React, {useEffect, useState} from 'react';
 import {Image, Text, TouchableOpacity, View} from 'react-native';
-import {RootStackParamList} from '../navigation/RootLayout';
 import {Controller, useForm} from 'react-hook-form';
-import {signInSchema, UserSignInType} from './userSchema';
 import {zodResolver} from '@hookform/resolvers/zod';
-import {AuthStyles} from '../../styles/AuthStyles';
-import {ButtonStyle} from '../../styles/ButtonStyles';
-import CustomTextInput from './CustomTextInput';
+import {AuthStyles} from '../../../styles/AuthStyles';
+import {ButtonStyle} from '../../../styles/ButtonStyles';
+import {RootStackParamList} from '../../navigation/RootLayout';
+import CustomTextInput from '../CustomTextInput';
+import {signInSchema, UserSignInType} from './schemas/user-schema';
 
 export default function SignInPage() {
   const stackNavigation =
@@ -108,8 +108,8 @@ export default function SignInPage() {
                 <Image
                   source={
                     showPassword
-                      ? require('../../assets/img/unhide.png')
-                      : require('../../assets/img/hide.png')
+                      ? require('../../../assets/img/unhide.png')
+                      : require('../../../assets/img/hide.png')
                   }
                   className="w-7 h-7"
                 />

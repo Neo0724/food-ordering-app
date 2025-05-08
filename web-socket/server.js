@@ -32,7 +32,7 @@ wss.on("connection", (ws, req) => {
   clients.add(ws);
 });
 
-app.post("/hello", (req, res) => {
+app.post("/update-order", (req, res) => {
   const userId = req.body.userId;
   const orderId = req.body.orderId;
   const payload = {
@@ -46,11 +46,9 @@ app.post("/hello", (req, res) => {
       console.log("User ID: " + userId + " is listening");
       if (client.userId == userId) {
         console.log(
-          "New order for: " + client.userId + ", OrderID: " + orderId
+          "Order completed for: " + client.userId + ", OrderID: " + orderId
         );
         client.send(JSON.stringify(payload));
-      } else {
-        console.log("The order is not for you");
       }
     }
   }

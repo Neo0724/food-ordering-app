@@ -1,8 +1,8 @@
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import FoodPage from '../components/FoodMenuPage';
-import EachFoodPage from '../components/EachFoodPage';
-import SearchFoodPage from '../components/SearchFoodPage';
 import {Food} from '../custom-hook/useFood';
+import FoodPage from '../components/food-component/FoodMenuPage';
+import EachFoodPage from '../components/food-component/EachFoodPage';
+import SearchFoodPage from '../components/food-component/SearchFoodPage';
 
 export type FoodStackParamList = {
   FoodListPage: undefined;
@@ -16,7 +16,10 @@ const FoodStack = createNativeStackNavigator<FoodStackParamList, 'FoodStack'>();
 
 export default function FoodStackLayout() {
   return (
-    <FoodStack.Navigator id="FoodStack" initialRouteName="FoodListPage">
+    <FoodStack.Navigator
+      id="FoodStack"
+      initialRouteName="FoodListPage"
+      screenOptions={{headerShown: false}}>
       <FoodStack.Screen
         name="FoodListPage"
         options={{
@@ -27,7 +30,9 @@ export default function FoodStackLayout() {
       <FoodStack.Screen
         name="EachFoodPage"
         options={{
-          title: 'Food details',
+          title: '',
+          headerShown: true,
+          headerTransparent: true,
         }}
         component={EachFoodPage}
       />

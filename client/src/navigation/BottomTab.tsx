@@ -4,25 +4,26 @@ import {Dimensions} from 'react-native';
 import HomePage from '../components/HomePage';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import CartPage from '../components/cart-component/CartPage';
-import OrderPage from '../components/OrderPage';
-import FoodStackLayout from './FoodStack';
+import OrderPage from '../components/order-component/OrderPage';
+import FoodStackLayout, {FoodStackParamList} from './FoodStack';
 import TransactionPage from '../components/transaction-component/TransactionPage';
+import {NavigatorScreenParams} from '@react-navigation/native';
+import OrderStackLayout, {OrderStackParamList} from './OrderStack';
 
 export type BottomTabParamList = {
   HomePage: undefined;
-  FoodPage: undefined;
+  FoodPage: NavigatorScreenParams<FoodStackParamList>;
   CartPage: undefined;
-  OrderPage: undefined;
+  OrderStack: NavigatorScreenParams<OrderStackParamList>;
   TransactionPage: undefined;
 };
 
-const Tab = createBottomTabNavigator<BottomTabParamList, 'BottomTab'>();
+const Tab = createBottomTabNavigator<BottomTabParamList>();
 const WindowHeight = Dimensions.get('window').height;
 
 export default function BottomTabLayout() {
   return (
     <Tab.Navigator
-      id="BottomTab"
       initialRouteName="HomePage"
       screenOptions={({route}) => ({
         tabBarActiveTintColor: 'white',
@@ -34,17 +35,7 @@ export default function BottomTabLayout() {
           borderTopLeftRadius: 10,
           borderTopRightRadius: 10,
         },
-        tabBarLabelStyle: {
-          fontSize: 12,
-        },
-        headerStyle: {
-          backgroundColor: 'white',
-          elevation: 5,
-        },
-        headerTitleStyle: {
-          fontSize: 18,
-          fontWeight: 'bold',
-        },
+        headerShown: false,
       })}>
       <Tab.Screen
         name="HomePage"
@@ -62,7 +53,6 @@ export default function BottomTabLayout() {
         component={FoodStackLayout}
         options={{
           title: 'Menu',
-          headerShown: false,
           tabBarIcon: ({color, size}) => (
             <MaterialCommunityIcons name="food" color={color} size={size} />
           ),
@@ -89,8 +79,8 @@ export default function BottomTabLayout() {
         }}
       />
       <Tab.Screen
-        name="OrderPage"
-        component={OrderPage}
+        name="OrderStack"
+        component={OrderStackLayout}
         options={{
           title: 'Orders',
           tabBarIcon: ({color, size}) => (

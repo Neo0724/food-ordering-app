@@ -25,7 +25,7 @@ export default function EachCartItemPage({food}: EachCartItemProp) {
     food.quantity,
   );
   const [checked, setChecked] = useState<boolean>(food.isChecked);
-   const debounceQuantityUpdate = useMemo(
+  const debounceQuantityUpdate = useMemo(
     () =>
       debounce((params: {cartId: number; newQuantity: number}) => {
         updateCartQuantityMutation.mutate(params);
@@ -43,14 +43,17 @@ export default function EachCartItemPage({food}: EachCartItemProp) {
       setExceedQuantity(true);
       return;
     }
-    checked && setTotalPrice(prev => Math.abs(prev - food.price));
+    if (checked) {
+      setTotalPrice(prev => Math.abs(prev - food.price));
+    }
     setSelectedQuantity(prev => {
+      const newQuantity = prev - 1;
       debounceQuantityUpdate({
         cartId: food.cartId,
-        newQuantity: prev - 1,
+        newQuantity,
       });
 
-      return prev - 1;
+      return newQuantity;
     });
   };
 
@@ -62,14 +65,17 @@ export default function EachCartItemPage({food}: EachCartItemProp) {
       setExceedQuantity(true);
       return;
     }
-    checked && setTotalPrice(prev => prev + food.price);
+    if (checked) {
+      setTotalPrice(prev => prev + food.price);
+    }
     setSelectedQuantity(prev => {
+      const newQuantity = prev + 1;
       debounceQuantityUpdate({
         cartId: food.cartId,
-        newQuantity: prev + 1,
+        newQuantity,
       });
 
-      return prev + 1;
+      return newQuantity;
     });
   };
 
@@ -128,22 +134,28 @@ export default function EachCartItemPage({food}: EachCartItemProp) {
             onPress={handleIncreaseQuantity}>
             <Text style={ButtonStyle.plusMinusText}>+</Text>
           </TouchableOpacity>
-        <Text className='text-sm italic text-red-500 mt-1'>Stock left : {food.availableQuantity}</Text>
+          <Text className="text-sm italic text-red-500 mt-1">
+            Stock left : {food.availableQuantity}
+          </Text>
         </View>
         <TouchableOpacity
           style={styles.removeButton}
-          onPress={() => {
-            checked &&
+          onPress={async () => {
+            if (checked) {
               setTotalPrice(prev =>
                 Math.abs(prev - food.price * food.quantity),
               );
-          
-                removeFromCartMutation.mutate({
-                  cartId: food.cartId,
-                  unitPrice: food.price,
-                  prevQuantity: food.quantity,
-                  isChecked: checked,
-                });
+            }
+
+            try {
+              await removeFromCartMutation.mutateAsync(food.cartId);
+            } catch (error) {
+              if (checked) {
+                setTotalPrice(prev =>
+                  Math.abs(prev + food.price * food.quantity),
+                );
+              }
+            }
           }}>
           <Text style={styles.removeButtonText}>Remove</Text>
         </TouchableOpacity>

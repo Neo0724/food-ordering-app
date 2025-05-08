@@ -108,7 +108,7 @@ public class OrderServiceImpl implements OrderService {
 
 
         webClient.post()
-                .uri("/hello")
+                .uri("/update-order")
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(orderSocketMessageMono, OrderSocketMessage.class)
                 .retrieve()

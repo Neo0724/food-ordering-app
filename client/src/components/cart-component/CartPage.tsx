@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   ScrollView,
   StyleSheet,
@@ -11,14 +10,14 @@ import EachCartItemPage from './EachCartItemPage';
 import {ButtonStyle} from '../../../styles/ButtonStyles';
 import {ShadowStyle} from '../../../styles/ShadowStyle';
 import {useNavigation} from '@react-navigation/native';
+import {useEffect} from 'react';
+import {useCustomDialog} from '../../context/CustomDialogContext';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../../navigation/RootLayout';
-import {useState} from 'react';
-import CustomDialog from '../CustomDialog';
-import {useCustomDialog} from '../../context/CustomDialogContext';
 
 export default function CartPage() {
-  const {foodsInCart, totalPrice, setTotalPrice} = useCartContext();
+  const {foodsInCart, totalPrice, checkedCart, setTotalPrice, setCheckedCart} =
+    useCartContext();
 
   /* Custom dialog function */
   const {showDialog} = useCustomDialog();
@@ -26,32 +25,40 @@ export default function CartPage() {
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
   const handleCheckout = () => {
-    const filteredFood = foodsInCart
-      ?.filter(food => food.isChecked)
-      .map(
-        ({
-          createTime,
-          updateTime,
-          availableQuantity,
-          itemName,
-          price,
-          size,
-          status,
-          isChecked,
-          ...food
-        }) => food,
-      );
-
-    if (filteredFood?.length === 0 || !filteredFood) {
+    if (checkedCart.size === 0) {
       showDialog('None is selected', 'Please select some foods to checkout');
       return;
     }
+    // const filteredFood = foodsInCart
+    //   ?.filter(food => food.isChecked)
+    //   .map(
+    //     ({
+    //       createTime,
+    //       updateTime,
+    //       availableQuantity,
+    //       itemName,
+    //       price,
+    //       size,
+    //       status,
+    //       isChecked,
+    //       ...food
+    //     }) => food,
+    //   );
+
+    // if (filteredFood?.length === 0 || !filteredFood) {
+    // }
 
     navigation.navigate('CheckoutStack', {
       screen: 'CheckoutPage',
       params: {totalPrice},
     });
   };
+
+  useEffect(() => {
+    setTotalPrice(0);
+    setCheckedCart(new Set());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <View className="m-3 p-2 flex-col mb-10">

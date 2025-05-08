@@ -1,7 +1,7 @@
 import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
-import {EachOrderItemType} from '../context/OrderProvider';
-import {ShadowStyle} from '../../styles/ShadowStyle';
+import {EachOrderItemType} from '../../context/OrderProvider';
+import {ShadowStyle} from '../../../styles/ShadowStyle';
 export default function EachOrderItem({food}: {food: EachOrderItemType}) {
   return (
     <View>

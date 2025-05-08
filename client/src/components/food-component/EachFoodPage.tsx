@@ -1,10 +1,9 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {useEffect, useState} from 'react';
-import {useCartContext} from '../context/CartProvider';
-import {Variant} from './FoodMenuPage';
-import {ShadowStyle} from '../../styles/ShadowStyle';
-import {ButtonStyle} from '../../styles/ButtonStyles';
-import {FoodStackParamList} from '../navigation/FoodStack';
+import {useCartContext} from '../../context/CartProvider';
+import {ShadowStyle} from '../../../styles/ShadowStyle';
+import {ButtonStyle} from '../../../styles/ButtonStyles';
+import {FoodStackParamList} from '../../navigation/FoodStack';
 import {
   Image,
   ScrollView,
@@ -13,8 +12,8 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import CustomDialog from './CustomDialog';
-import {useCustomDialog} from '../context/CustomDialogContext';
+import {useCustomDialog} from '../../context/CustomDialogContext';
+import {Variant} from './FoodMenuPage';
 
 type FoodDetailPageProps = NativeStackScreenProps<
   FoodStackParamList,
@@ -109,7 +108,7 @@ export default function FoodDetailsPage({
     <ScrollView contentContainerStyle={{paddingBottom: 25}}>
       {/* Food image */}
       <Image
-        source={require('../../assets/img/friedchicken.jpeg')}
+        source={require('../../../assets/img/friedchicken.jpeg')}
         className="w-full h-[20em]"
       />
       {/* Food details container */}

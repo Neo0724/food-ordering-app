@@ -1,16 +1,16 @@
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {FoodStackParamList} from '../navigation/FoodStack';
 import {Searchbar} from 'react-native-paper';
-import {ShadowStyle} from '../../styles/ShadowStyle';
-import {SearchBarStyles} from '../../styles/SearchBarStyles';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import {useSearchFoodContext} from '../context/SearchFoodProvider';
 import {ScrollView} from 'react-native';
-import useFood from '../custom-hook/useFood';
 import {useEffect, useState} from 'react';
-import {getSearchHistory, saveSearchHistory} from '../../utils/file-system';
-import {useCustomDialog} from '../context/CustomDialogContext';
+import { SearchBarStyles } from '../../../styles/SearchBarStyles';
+import { ShadowStyle } from '../../../styles/ShadowStyle';
+import { saveSearchHistory, getSearchHistory } from '../../../utils/file-system';
+import { useCustomDialog } from '../../context/CustomDialogContext';
+import { useSearchFoodContext } from '../../context/SearchFoodProvider';
+import useFood from '../../custom-hook/useFood';
+import { FoodStackParamList } from '../../navigation/FoodStack';
 
 const SearchFoodPage = ({
   route,

@@ -14,6 +14,9 @@ import {
   createSearchHistoryFile,
   createTransactionHistoryFile,
 } from './utils/file-system';
+import WebSocketProvider from './src/context/WebSocketProvider';
+import {NotifierWrapper} from 'react-native-notifier';
+import {GestureHandlerRootView} from 'react-native-gesture-handler';
 
 export default function App() {
   const queryClient = new QueryClient();
@@ -34,24 +37,30 @@ export default function App() {
   }, []);
 
   return (
-    <AuthProvider>
-      <QueryClientProvider client={queryClient}>
-        <SearchFoodNameProvider>
-          <PointAndCreditProvider>
-            <OrderProvider>
-              <CartProvider>
-                <PaperProvider theme={theme}>
-                  <CustomDialogProvider>
-                    <NavigationContainer>
-                      <RootLayout />
-                    </NavigationContainer>
-                  </CustomDialogProvider>
-                </PaperProvider>
-              </CartProvider>
-            </OrderProvider>
-          </PointAndCreditProvider>
-        </SearchFoodNameProvider>
-      </QueryClientProvider>
-    </AuthProvider>
+    <GestureHandlerRootView style={{flex: 1}}>
+      <AuthProvider>
+        <NotifierWrapper>
+          <QueryClientProvider client={queryClient}>
+            <SearchFoodNameProvider>
+              <PointAndCreditProvider>
+                <OrderProvider>
+                  <CartProvider>
+                    <PaperProvider theme={theme}>
+                      <CustomDialogProvider>
+                        <NavigationContainer>
+                          <WebSocketProvider>
+                            <RootLayout />
+                          </WebSocketProvider>
+                        </NavigationContainer>
+                      </CustomDialogProvider>
+                    </PaperProvider>
+                  </CartProvider>
+                </OrderProvider>
+              </PointAndCreditProvider>
+            </SearchFoodNameProvider>
+          </QueryClientProvider>
+        </NotifierWrapper>
+      </AuthProvider>
+    </GestureHandlerRootView>
   );
 }

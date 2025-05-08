@@ -52,7 +52,7 @@ const OrderContext = createContext<OrderContextType>({} as OrderContextType);
 
 export function OrderProvider({children}: {children: React.ReactNode}) {
   /* Firebase logged in user */
-  const {user} = useAuthContext();
+  const {userId} = useAuthContext();
 
   /* React query for user order */
   const {
@@ -60,7 +60,7 @@ export function OrderProvider({children}: {children: React.ReactNode}) {
     isLoading,
     error,
   } = useQuery<RetrievedOrdersType[]>({
-    queryKey: ['orders', user?.uid],
+    queryKey: ['orders', userId],
     queryFn: async ({queryKey}) => {
       try {
         const response = await axios.get(
@@ -74,7 +74,7 @@ export function OrderProvider({children}: {children: React.ReactNode}) {
         throw err;
       }
     },
-    enabled: !!user?.uid,
+    enabled: !!userId,
   });
 
   const queryClient = useQueryClient();
@@ -94,9 +94,11 @@ export function OrderProvider({children}: {children: React.ReactNode}) {
           }`,
           ordersToAdd,
         );
-        if (response.data.code !== 1 || response.data.msg !== 'success') {
-          throw new Error('Failed to place order');
+        if (response.data.code === 1 && response.data.msg === 'success') {
+          queryClient.invalidateQueries({queryKey: ['cart-items', userId]});
+          return;
         }
+        throw new Error('Failed to place order');
       } catch (err) {
         throw err;
       }
@@ -105,9 +107,9 @@ export function OrderProvider({children}: {children: React.ReactNode}) {
       console.log('Error from order provider: ' + err);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({queryKey: ['orders', user?.uid]});
+      queryClient.invalidateQueries({queryKey: ['orders', userId]});
       queryClient.invalidateQueries({
-        queryKey: ['pointAndCreditBalance', user?.uid],
+        queryKey: ['pointAndCreditBalance', userId],
       });
     },
   });
@@ -126,12 +128,12 @@ export function OrderProvider({children}: {children: React.ReactNode}) {
       console.log('Error from delete order: ' + err);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({queryKey: ['orders', user?.uid]});
+      queryClient.invalidateQueries({queryKey: ['orders', userId]});
       queryClient.invalidateQueries({
-        queryKey: ['pointAndCreditBalance', user?.uid],
+        queryKey: ['pointAndCreditBalance', userId],
       });
       queryClient.invalidateQueries({
-        queryKey: ['cart-items', user?.uid],
+        queryKey: ['cart-items', userId],
       });
     },
   });

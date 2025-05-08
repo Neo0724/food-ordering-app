@@ -42,6 +42,7 @@ export default function useFood(query = '') {
         }
       } catch (err) {
         console.log('Error fetching foods, ' + err);
+        throw err;
       }
     },
   });

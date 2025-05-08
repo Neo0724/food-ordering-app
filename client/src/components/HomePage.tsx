@@ -1,19 +1,32 @@
 /* eslint-disable react-native/no-inline-styles */
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {
   ActivityIndicator,
-  Alert,
   Image,
   StyleSheet,
   Text,
+  TouchableOpacity,
   View,
 } from 'react-native';
 import PagerView from 'react-native-pager-view';
-import useFood from '../custom-hook/useFood';
+import useFood, {Food} from '../custom-hook/useFood';
+import {useNavigation} from '@react-navigation/native';
+import {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
+import {BottomTabParamList} from '../navigation/BottomTab';
 
 export default function HomePage() {
   const [currentPage, setCurrentPage] = useState(0);
   const {allFoods, isLoading, error} = useFood();
+  const navigation =
+    useNavigation<BottomTabNavigationProp<BottomTabParamList>>();
+
+  const handleNavigateFood = (food: Food) => {
+    navigation.navigate('FoodPage', {
+      screen: 'EachFoodPage',
+      params: {food},
+      initial: false,
+    });
+  };
 
   return (
     <View style={styles.parentContainer}>
@@ -39,11 +52,15 @@ export default function HomePage() {
             onPageSelected={e => setCurrentPage(e.nativeEvent.position)}>
             {allFoods?.map(food => (
               <View key={food.itemId} style={styles.eachPagerPage}>
-                <Image
-                  source={require('../../assets/img/friedchicken.jpeg')}
-                  style={styles.foodImage}
-                  resizeMode="cover"
-                />
+                <TouchableOpacity
+                  style={styles.foodImageContainer}
+                  onPress={() => handleNavigateFood(food)}>
+                  <Image
+                    source={require('../../assets/img/friedchicken.jpeg')}
+                    style={styles.foodImage}
+                    resizeMode="cover"
+                  />
+                </TouchableOpacity>
                 <View style={styles.foodDetailsContainer}>
                   <Text style={styles.foodName}>{food.itemName}</Text>
                   <Text style={styles.foodDescription} numberOfLines={2}>
@@ -83,11 +100,11 @@ const styles = StyleSheet.create({
   eachPagerPage: {
     justifyContent: 'center',
     alignItems: 'center',
-    height: 600,
+    height: 570,
   },
   foodImage: {
     width: '100%',
-    height: '85%',
+    height: '100%',
   },
   foodDetailsContainer: {
     width: '100%',
@@ -107,12 +124,17 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    paddingVertical: 20,
+    paddingVertical: 40,
   },
   dot: {
     width: 8,
     height: 8,
     borderRadius: 4,
     marginHorizontal: 4,
+  },
+  foodImageContainer: {
+    marginTop: -70,
+    width: '100%',
+    height: '70%',
   },
 });

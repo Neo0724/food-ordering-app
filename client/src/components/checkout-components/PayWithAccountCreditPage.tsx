@@ -5,9 +5,8 @@ import {
   StyleSheet,
   TouchableOpacity,
   ScrollView,
-  TextInput,
 } from 'react-native';
-import React, {useState} from 'react';
+import React from 'react';
 import {
   NativeStackNavigationProp,
   NativeStackScreenProps,
@@ -19,9 +18,7 @@ import {ShadowStyle} from '../../../styles/ShadowStyle';
 import {ButtonStyle} from '../../../styles/ButtonStyles';
 import {useOrderContext} from '../../context/OrderProvider';
 import {useCartContext} from '../../context/CartProvider';
-import CustomDialog from '../CustomDialog';
 import {useNavigation} from '@react-navigation/native';
-import {RootStackParamList} from '../../navigation/RootLayout';
 import DebitCartInputPage from './DebitCartInputPage';
 import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
@@ -29,6 +26,8 @@ import {z} from 'zod';
 import {debitCardSchemaWithTopUp} from './schemas/debit-cart-schema';
 import {useCustomDialog} from '../../context/CustomDialogContext';
 import {saveTransactionHistory} from '../../../utils/file-system';
+import CanteedCard from '../own-card-component/CanteedCard';
+import {RootStackParamList} from '../../navigation/RootLayout';
 
 const PayWithAccountCreditPage = ({
   route,
@@ -38,10 +37,10 @@ const PayWithAccountCreditPage = ({
 >) => {
   const totalPrice = route.params.totalPrice;
   const {creditBalance, topUpCredit} = usePointAndCredit();
-  const sufficientCredit = creditBalance >= totalPrice;
+  let sufficientCredit = creditBalance >= totalPrice;
   const accountHolderName = auth().currentUser?.displayName;
   const {addOrderMutation} = useOrderContext();
-  const {foodsInCart} = useCartContext();
+  const {foodsInCart, checkedCart} = useCartContext();
   /* Custom dialog function  */
   const {showDialog} = useCustomDialog();
   const navigation =
@@ -88,15 +87,21 @@ const PayWithAccountCreditPage = ({
       showDialog(
         'Error',
         'Error proceeding with the top up. Please try again later',
-        () => navigation.navigate('BottomTabLayout', {screen: 'HomePage'}),
+        () =>
+          navigation.navigate('DrawerLayout', {
+            screen: 'BottomTabLayout',
+            params: {
+              screen: 'HomePage',
+            },
+          }),
       );
       return;
     }
 
     /* Proceed with the payment */
     try {
-      const filteredFood = foodsInCart
-        ?.filter(food => food.isChecked)
+      const foodToCheckout = foodsInCart
+        ?.filter(food => checkedCart.has(food.cartId))
         .map(
           ({
             createTime,
@@ -110,22 +115,32 @@ const PayWithAccountCreditPage = ({
             ...food
           }) => food,
         );
-      if (!filteredFood) {
+      if (!foodToCheckout || foodToCheckout.length === 0) {
         showDialog('Error', 'Something went wrong');
         return;
       }
 
       await addOrderMutation.mutateAsync({
-        ordersToAdd: filteredFood,
+        ordersToAdd: foodToCheckout,
         totalPrice,
         paymentMethod: 'CREDIT',
       });
       showDialog('Success', 'Order placed successfully', () =>
-        navigation.navigate('BottomTabLayout', {screen: 'OrderPage'}),
+        navigation.navigate('DrawerLayout', {
+          screen: 'BottomTabLayout',
+          params: {
+            screen: 'OrderPage',
+          },
+        }),
       );
     } catch (error) {
       showDialog('Error', 'Server error. Please try again later.', () =>
-        navigation.navigate('BottomTabLayout', {screen: 'HomePage'}),
+        navigation.navigate('DrawerLayout', {
+          screen: 'BottomTabLayout',
+          params: {
+            screen: 'HomePage',
+          },
+        }),
       );
       console.log('Error proceeding with the payment ', error);
     }
@@ -134,7 +149,7 @@ const PayWithAccountCreditPage = ({
   const handleProceedPayment = async () => {
     /* Double check for foods that user wanted to checkout */
     const foodToCheckout = foodsInCart
-      ?.filter(food => food.isChecked)
+      ?.filter(food => checkedCart.has(food.cartId))
       .map(
         ({
           createTime,
@@ -159,7 +174,12 @@ const PayWithAccountCreditPage = ({
         paymentMethod: 'CREDIT',
       });
       showDialog('Success', 'Order placed successfully', () =>
-        navigation.navigate('BottomTabLayout', {screen: 'OrderPage'}),
+        navigation.navigate('DrawerLayout', {
+          screen: 'BottomTabLayout',
+          params: {
+            screen: 'OrderPage',
+          },
+        }),
       );
       await saveTransactionHistory({
         amount: totalPrice,
@@ -169,7 +189,12 @@ const PayWithAccountCreditPage = ({
       });
     } catch (error) {
       showDialog('Error', 'Server error. Please try again later.', () =>
-        navigation.navigate('BottomTabLayout', {screen: 'HomePage'}),
+        navigation.navigate('DrawerLayout', {
+          screen: 'BottomTabLayout',
+          params: {
+            screen: 'HomePage',
+          },
+        }),
       );
     }
   };
@@ -179,19 +204,7 @@ const PayWithAccountCreditPage = ({
       className="p-4"
       contentContainerStyle={{paddingBottom: 35, flexGrow: 1}}>
       {/* Credit Card Display */}
-      <View style={[ShadowStyle.shadowBox, styles.creditCardContainer]}>
-        <View>
-          <Text className="text-white text-lg">
-            {accountHolderName}'s credit balance
-          </Text>
-          <Text className="text-white text-2xl font-bold mt-2">
-            RM {creditBalance.toFixed(2)}
-          </Text>
-        </View>
-        <View>
-          <Text className="text-white opacity-70">Canteen card</Text>
-        </View>
-      </View>
+      <CanteedCard />
 
       {/* Payment Details */}
       <View className="mt-8">
@@ -218,7 +231,9 @@ const PayWithAccountCreditPage = ({
           </Text>
           <Text
             className={`font-bold text-lg ${
-              !sufficientCredit ? 'text-red-500' : 'text-green-600'
+              !sufficientCredit && !addOrderMutation.isSuccess
+                ? 'text-red-500'
+                : 'text-green-600'
             }`}>
             RM {Math.abs(creditBalance - totalPrice).toFixed(2)}
           </Text>
@@ -227,7 +242,7 @@ const PayWithAccountCreditPage = ({
 
       <View>
         {/* Insufficient fund message */}
-        {!sufficientCredit && (
+        {!sufficientCredit && !addOrderMutation.isSuccess && (
           <View>
             <View className="bg-red-100 p-3 rounded-lg">
               <Text className="text-red-600 text-center">
@@ -286,18 +301,6 @@ const PayWithAccountCreditPage = ({
 };
 
 const styles = StyleSheet.create({
-  creditCardContainer: {
-    backgroundColor: '#007bff',
-    shadowColor: '#0056b3',
-    padding: 16,
-    borderRadius: 10,
-    height: 200,
-    justifyContent: 'space-between',
-    marginBottom: 16,
-    borderWidth: 2,
-    borderColor: '#004a99',
-    elevation: 15,
-  },
   eachPaymentDetailContainer: {
     flexDirection: 'row',
     width: '100%',

@@ -1,7 +1,7 @@
 import axios from 'axios';
 import {useMutation, UseMutationResult, useQuery} from '@tanstack/react-query';
 import {useQueryClient} from '@tanstack/react-query';
-import React, {createContext, useContext, useEffect} from 'react';
+import React, {createContext, useContext} from 'react';
 import Config from 'react-native-config';
 import {useAuthContext} from './AuthProvider';
 

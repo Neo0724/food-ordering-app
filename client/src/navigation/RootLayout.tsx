@@ -1,11 +1,11 @@
 import {useAuthContext} from '../context/AuthProvider';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import LandingPage from '../components/LandingPage';
-import SignInPage from '../components/SignInPage';
-import SignUpPage from '../components/SignUpPage';
-import BottomTabLayout, {BottomTabParamList} from './BottomTab';
-import CheckoutStackLayout, {CheckoutStackParamList} from './CheckoutStack';
+import SignInPage from '../components/auth-component/SignInPage';
+import SignUpPage from '../components/auth-component/SignUpPage';
 import {NavigatorScreenParams} from '@react-navigation/native';
+import Drawer, {DrawerParamList} from './Drawer';
+import CheckoutStackLayout, {CheckoutStackParamList} from './CheckoutStack';
 
 const RootStack = createNativeStackNavigator<RootStackParamList>();
 
@@ -13,7 +13,7 @@ export type RootStackParamList = {
   LandingPage: undefined;
   SignInPage: undefined;
   SignUpPage: undefined;
-  BottomTabLayout: NavigatorScreenParams<BottomTabParamList>;
+  DrawerLayout: NavigatorScreenParams<DrawerParamList>;
   CheckoutStack: NavigatorScreenParams<CheckoutStackParamList>;
 };
 
@@ -22,7 +22,7 @@ export default function RootLayout() {
 
   return (
     <RootStack.Navigator
-      initialRouteName={isSignedIn ? 'BottomTabLayout' : 'LandingPage'}>
+      initialRouteName={isSignedIn ? 'DrawerLayout' : 'LandingPage'}>
       {!isSignedIn ? (
         /* For not signed in user */
         <RootStack.Group>
@@ -46,8 +46,8 @@ export default function RootLayout() {
         /* For signed in user */
         <RootStack.Group>
           <RootStack.Screen
-            name="BottomTabLayout"
-            component={BottomTabLayout}
+            name="DrawerLayout"
+            component={Drawer}
             options={{headerShown: false}}
           />
           <RootStack.Screen

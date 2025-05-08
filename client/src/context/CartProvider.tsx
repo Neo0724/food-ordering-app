@@ -22,27 +22,17 @@ type CardContextType = {
     UpdateCartQuantityType,
     unknown
   >;
-  removeFromCartMutation: UseMutationResult<
-    void,
-    Error,
-    RemoveFromCartType,
-    unknown
-  >;
+  removeFromCartMutation: UseMutationResult<void, Error, number, unknown>;
   checkFoodInCart: (cartId: number) => void;
   totalPrice: number;
   setTotalPrice: React.Dispatch<SetStateAction<number>>;
+  checkedCart: Set<number>;
+  setCheckedCart: React.Dispatch<SetStateAction<Set<number>>>;
 };
 
 type UpdateCartQuantityType = {
   cartId: number;
   newQuantity: number;
-};
-
-type RemoveFromCartType = {
-  cartId: number;
-  unitPrice: number;
-  prevQuantity: number;
-  isChecked: boolean;
 };
 
 export type RetrievedFoodCartType = {
@@ -73,8 +63,9 @@ const CartContext = createContext<CardContextType>({} as CardContextType);
 
 export function CartProvider({children}: {children: React.ReactNode}) {
   /* Firebase logged in user */
-  const {user} = useAuthContext();
+  const {userId} = useAuthContext();
   const [totalPrice, setTotalPrice] = useState<number>(0);
+  const [checkedCart, setCheckedCart] = useState<Set<number>>(new Set());
 
   const queryClient = useQueryClient();
 
@@ -84,7 +75,7 @@ export function CartProvider({children}: {children: React.ReactNode}) {
     isLoading,
     error,
   } = useQuery<RetrievedFoodCartType[]>({
-    queryKey: ['cart-items', user?.uid],
+    queryKey: ['cart-items', userId],
     queryFn: async ({queryKey}): Promise<RetrievedFoodCartType[]> => {
       try {
         const response = await axios.get(
@@ -93,11 +84,7 @@ export function CartProvider({children}: {children: React.ReactNode}) {
         if (response.data.code === 1 && response.data.msg === 'success') {
           const retrievedFoodInCart = response.data
             .data as RetrievedFoodCartType[];
-          return retrievedFoodInCart.map(food => ({
-            ...food,
-            /* Add the isChecked attribute as it is not stored in database */
-            isChecked: false,
-          }));
+          return retrievedFoodInCart;
         } else {
           return [];
         }
@@ -106,7 +93,7 @@ export function CartProvider({children}: {children: React.ReactNode}) {
         throw err;
       }
     },
-    enabled: !!user?.uid,
+    enabled: !!userId,
   });
 
   const addToCartMutation = useMutation({
@@ -118,7 +105,7 @@ export function CartProvider({children}: {children: React.ReactNode}) {
       try {
         await axios.post(`http://${Config.BACKEND_URL}/products`, {
           itemId: itemId,
-          userId: user?.uid,
+          userId: userId,
           sizeId: selectedVariant.sizeId,
           quantity: selectedQuantity,
         });
@@ -130,7 +117,7 @@ export function CartProvider({children}: {children: React.ReactNode}) {
       console.log('Error adding to cart, ' + err);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({queryKey: ['cart-items', user?.uid]});
+      queryClient.invalidateQueries({queryKey: ['cart-items', userId]});
     },
   });
 
@@ -149,12 +136,12 @@ export function CartProvider({children}: {children: React.ReactNode}) {
       console.log('Error upating cart quantity, ' + err);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({queryKey: ['cart-items', user?.uid]});
+      queryClient.invalidateQueries({queryKey: ['cart-items', userId]});
     },
   });
 
   const removeFromCartMutation = useMutation({
-    mutationFn: async ({cartId}: RemoveFromCartType) => {
+    mutationFn: async cartId => {
       try {
         await axios.delete(
           `http://${Config.BACKEND_URL}/products?cartId=${cartId}`,
@@ -163,32 +150,25 @@ export function CartProvider({children}: {children: React.ReactNode}) {
         throw err;
       }
     },
-    onError: (err, {isChecked, unitPrice, prevQuantity}) => {
+    onError: err => {
       console.log('Error removing food from cart, ' + err);
-      /* Decrease the total cart price if the removed cart food is selected by the user */
-      isChecked && setTotalPrice(prev => prev + unitPrice * prevQuantity);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({queryKey: ['cart-items', user?.uid]});
+      queryClient.invalidateQueries({queryKey: ['cart-items', userId]});
     },
   });
 
   const checkFoodInCart = (cartId: number) => {
-    queryClient.setQueryData<RetrievedFoodCartType[]>(
-      ['cart-items', user?.uid],
-      (prevCartItem: RetrievedFoodCartType[] | undefined) => {
-        return prevCartItem?.map(cartItem => {
-          if (cartItem.cartId === cartId) {
-            return {
-              ...cartItem,
-              isChecked: !cartItem.isChecked,
-            };
-          } else {
-            return cartItem;
-          }
-        });
-      },
-    );
+    setCheckedCart(prev => {
+      let newCheckedCart = prev;
+      if (prev.has(cartId)) {
+        newCheckedCart.delete(cartId);
+      } else {
+        newCheckedCart.add(cartId);
+      }
+
+      return newCheckedCart;
+    });
   };
 
   return (
@@ -203,6 +183,8 @@ export function CartProvider({children}: {children: React.ReactNode}) {
         checkFoodInCart,
         totalPrice,
         setTotalPrice,
+        checkedCart,
+        setCheckedCart,
       }}>
       {children}
     </CartContext.Provider>

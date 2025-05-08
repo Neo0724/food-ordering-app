@@ -2,14 +2,14 @@ import React, {useEffect, useState} from 'react';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {Controller, useForm} from 'react-hook-form';
 import {Image, Text, TouchableOpacity, View} from 'react-native';
-import {signUpSchema, UserSignUpType} from './userSchema';
-import {ButtonStyle} from '../../styles/ButtonStyles';
+import {ButtonStyle} from '../../../styles/ButtonStyles';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {RootStackParamList} from '../navigation/RootLayout';
-import {AuthStyles} from '../../styles/AuthStyles';
+import {RootStackParamList} from '../../navigation/RootLayout';
+import {AuthStyles} from '../../../styles/AuthStyles';
 import auth from '@react-native-firebase/auth';
-import CustomTextInput from './CustomTextInput';
+import CustomTextInput from '../CustomTextInput';
+import {signUpSchema, UserSignUpType} from './schemas/user-schema';
 export default function SignUpPage() {
   const navigation =
     useNavigation<
@@ -133,8 +133,8 @@ export default function SignUpPage() {
                 <Image
                   source={
                     showPassword
-                      ? require('../../assets/img/unhide.png')
-                      : require('../../assets/img/hide.png')
+                      ? require('../../../assets/img/unhide.png')
+                      : require('../../../assets/img/hide.png')
                   }
                   className="w-7 h-7"
                 />

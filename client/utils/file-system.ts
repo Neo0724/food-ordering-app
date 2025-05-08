@@ -77,7 +77,6 @@ export async function getTransactionHistory() {
     let transactionHistory = await RNFS.readFile(transactionHistoryFilePath);
     const parsedTransactionHistory = await JSON.parse(transactionHistory);
     console.log(parsedTransactionHistory);
-
     return (parsedTransactionHistory as TransactionHistoryJsonType)
       .transactionHistory;
   } catch (error) {
@@ -91,7 +90,7 @@ export async function saveTransactionHistory(
   try {
     const prevTransactionHistory = await getTransactionHistory();
     if (prevTransactionHistory) {
-      prevTransactionHistory.push(transactionHistory);
+      prevTransactionHistory.unshift(transactionHistory);
       await RNFS.writeFile(
         transactionHistoryFilePath,
         JSON.stringify({transactionHistory: prevTransactionHistory}),

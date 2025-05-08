@@ -33,7 +33,9 @@ export const CustomDialogProvider = ({children}: {children: ReactNode}) => {
     setVisible(true);
     setTitle(displayTitle);
     setMessage(displayMessage);
-    closeFunction && setOnCloseFunction(() => closeFunction);
+    setOnCloseFunction(() =>
+      closeFunction === undefined ? () => {} : closeFunction,
+    );
   };
 
   return (

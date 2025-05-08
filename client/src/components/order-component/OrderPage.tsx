@@ -1,12 +1,13 @@
 import React from 'react';
 import {ActivityIndicator, StyleSheet, Text, View} from 'react-native';
 import EachOrderItem from './EachOrderItem';
-import {useOrderContext} from '../context/OrderProvider';
+import {useOrderContext} from '../../context/OrderProvider';
 import {ScrollView} from 'react-native';
-import {ShadowStyle} from '../../styles/ShadowStyle';
+import {ShadowStyle} from '../../../styles/ShadowStyle';
 
 export default function OrderPage() {
   const {allOrders, isLoading, error} = useOrderContext();
+
   return (
     <View className="mx-2 flex-1">
       {isLoading && (
