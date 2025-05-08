@@ -4,6 +4,6 @@ import org.apache.catalina.User;
 
 public class UserException extends RuntimeException {
     public UserException(String message) {
-        super(message);
+        super("User Service Error " + message);
     }
 }

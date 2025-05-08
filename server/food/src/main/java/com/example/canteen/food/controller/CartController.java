@@ -29,26 +29,34 @@ public class CartController {
         @Autowired
         private CartService cartService;
 
+        //Get cart list
         @GetMapping
         public ResultCode getCartList(@RequestParam String userId) {
+                log.info("Get cart list !");
                 List<CartVO> cartVO = cartService.getCartList(userId);
                 return ResultCode.success(cartVO);
         }
 
+        //Add food into cart
         @PostMapping
         public ResultCode addToCart(@RequestBody CartDTO cartDTO) {
+                log.info("Add food into cart !");
                 cartService.addToCart(cartDTO);
                 return ResultCode.success();
         }
 
+        //Modify cart food quantity
         @PutMapping
         public ResultCode modifyQuantity(@RequestBody ModifyQuantityDTO modifyQuantityDTO) {
+                log.info("Modify cart food quantity !");
                 cartService.modifyQuantity(modifyQuantityDTO);
                 return ResultCode.success();
         }
 
+        //Delete cart
         @DeleteMapping
         public ResultCode deleteCart(@RequestParam Integer cartId) {
+                log.info("Delete cart !");
                 cartService.deleteCart(cartId);
                 return ResultCode.success();
         }

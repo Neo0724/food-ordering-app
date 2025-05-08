@@ -1,5 +1,6 @@
 package com.example.canteen.food.service.Impl;
 
+import com.example.canteen.food.common.exceptions.FoodException;
 import com.example.canteen.food.common.exceptions.OrderException;
 import com.example.canteen.food.model.dto.ItemDTO;
 import com.example.canteen.food.model.dto.VariantDTO;
@@ -46,7 +47,7 @@ public class InventoryServiceImpl implements InventoryService {
     // Retrieve all Items from the database
     List<Item> items = itemRepository.findAllWithVariants(searchCriteria);
     if(items.isEmpty()) {
-        throw new OrderException("No items found ");
+        throw new FoodException("No items found ");
     }
     
     // Convert each Item to ItemVO and return the list
@@ -82,13 +83,13 @@ public class InventoryServiceImpl implements InventoryService {
         item.setIngredient(itemDTO.getIngredient());
 
         Category category = new Category();
-        CategoryVO categoryExists = categoryRepository.checkIfCategoryAlreadyExists(itemDTO.getCategoryName().trim());
+        CategoryVO categoryExists = categoryRepository.checkIfCategoryAlreadyExists(itemDTO.getCategoryName());
         if(categoryExists == null) {
-            category.setCategoryName(itemDTO.getCategoryName().trim().toLowerCase());
+            category.setCategoryName(itemDTO.getCategoryName().toLowerCase());
             categoryRepository.save(category);
         } else {
             category.setCategoryId(categoryExists.getCategoryId());
-            category.setCategoryName(categoryExists.getCategoryName().trim().toLowerCase());
+            category.setCategoryName(categoryExists.getCategoryName().toLowerCase());
         }
 
         item.setCategory(category);
@@ -113,13 +114,11 @@ public class InventoryServiceImpl implements InventoryService {
 public void modifyItem(ItemDTO itemDTO) {
     //return exisitng item with id
     Item item = itemRepository.findById(itemDTO.getItemId())
-            .orElseThrow(() -> new OrderException("Item not found with ID: " + itemDTO.getItemId()));
-
+            .orElseThrow(() -> new FoodException("Item not found with ID: " + itemDTO.getItemId()));
 
     item.setItemName(itemDTO.getItemName());
     item.setItemDescription(itemDTO.getItemDescription());
     item.setIngredient(itemDTO.getIngredient());
-
 
     Map<Integer, Variant> existingVariantsMap = item.getList().stream()
             .collect(Collectors.toMap(Variant::getSizeId, variant -> variant));
@@ -153,13 +152,11 @@ public void modifyItem(ItemDTO itemDTO) {
     itemRepository.save(item);
 }
 
-    
-
 @Override
 public void deleteItem(Integer sizeId) {
     // Check if the Variant exists before trying to delete it
     Variant variant = variantRepository.findById(sizeId)
-            .orElseThrow(() -> new NoSuchElementException("Variant not found with sizeId: " + sizeId));
+            .orElseThrow(() -> new FoodException("Variant not found with sizeId: " + sizeId));
     
     variantRepository.delete(variant);
     variantRepository.flush();  
@@ -168,12 +165,7 @@ public void deleteItem(Integer sizeId) {
 
     @Override
     public List<CategoryVO> getAllCategory() {
-        return categoryRepository.findAll().stream().map(category -> {
-            CategoryVO categoryVO = new CategoryVO();
-            categoryVO.setCategoryName(category.getCategoryName());
-            categoryVO.setCategoryId(category.getCategoryId());
-            return  categoryVO;
-        }).collect(Collectors.toList());
+        return categoryRepository.findAllCategory();
     }
 }
 

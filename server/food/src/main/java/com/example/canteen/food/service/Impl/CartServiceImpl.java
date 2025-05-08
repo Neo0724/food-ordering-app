@@ -6,6 +6,7 @@ import java.util.NoSuchElementException;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import com.example.canteen.food.common.exceptions.CartException;
 import com.example.canteen.food.model.dto.ModifyQuantityDTO;
 import com.example.canteen.food.model.dto.enums.CartStatus;
 import com.example.canteen.food.model.entity.Item;
@@ -51,7 +52,6 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public void addToCart(CartDTO cartDTO) {
-
         Cart cart = new Cart();
         cart.setItemId(cartDTO.getItemId());
         cart.setSizeId(cartDTO.getSizeId());
@@ -68,11 +68,10 @@ public class CartServiceImpl implements CartService {
 
         Cart cart = cartRepository.findById(modifyQuantityDTO.getCartId())
                 .orElseThrow(
-                        () -> new OrderException("Cart not found with id: " + modifyQuantityDTO.getCartId()));
+                        () -> new CartException("Cart not found with id: " + modifyQuantityDTO.getCartId()));
 
         cart.setQuantity(modifyQuantityDTO.getItemQuantity());
         log.info("Current cart quantity: " + modifyQuantityDTO.getItemQuantity().toString());
-
         cartRepository.save(cart);
     }
 
@@ -96,7 +95,6 @@ public class CartServiceImpl implements CartService {
             order.setQuantity(dto.getQuantity());
             order.setCreateTime(LocalDateTime.now());
             order.setUpdateTime(LocalDateTime.now());
-
             return order;
         }).collect(Collectors.toList());
         orderRepository.saveAll(orders);

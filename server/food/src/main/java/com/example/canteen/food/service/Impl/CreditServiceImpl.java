@@ -3,6 +3,7 @@ package com.example.canteen.food.service.Impl;
 import java.math.BigDecimal;
 import java.util.Optional;
 
+import com.example.canteen.food.common.exceptions.CreditException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,60 +26,39 @@ public class CreditServiceImpl implements CreditService {
 
     @Override
     public void payWithCredit(BigDecimal totalPrice, String userId) {
-
-        
-        
         Integer awardedPoints = totalPrice.compareTo(BigDecimal.TEN) > 0  
         ? totalPrice.divide(BigDecimal.TEN).intValue()  
         : 1;
 
-        Optional<Credit> optionalCredit = creditRepository.findById(userId);
-
-     if(optionalCredit.isPresent()){
-        Credit credit = optionalCredit.get();
+        Credit credit = creditRepository.findById(userId)
+                .orElseThrow(() -> new CreditException("User not Found"));
 
         credit.setBalance(credit.getBalance().subtract(totalPrice));
         if(credit.getBalance().compareTo(BigDecimal.ZERO) <= 0) {
-            throw new OrderException("Not enough balance ! ");
-            
+            throw new CreditException("Not enough balance ! ");
         }
         credit.setPoint(credit.getPoint() + awardedPoints);
-
         creditRepository.save(credit);
-     }else {
-        log.info("User not found");
-        throw new OrderException("User not found! ");
-     }
     }
 
     @Override
     public void payWithPoint(BigDecimal totalPrice, String userId) {
-        Optional<Credit> optionalCredit = creditRepository.findById(userId);
-        if (optionalCredit.isPresent()) {
-            Credit credit = optionalCredit.get();
-            credit.setPoint(credit.getPoint() - totalPrice.multiply(BigDecimal.valueOf(BigDecimal.TEN.intValue())).intValue());
+        Credit credit = creditRepository.findById(userId)
+                .orElseThrow(() -> new CreditException("User not Found"));
+
+        credit.setPoint(credit.getPoint() - totalPrice.multiply(BigDecimal.valueOf(BigDecimal.TEN.intValue())).intValue());
 
             if(credit.getPoint() < 0 ) {
-                throw new OrderException("Credit not enough");
+                throw new CreditException("Credit not enough");
             }
-            
             creditRepository.save(credit);
-
-        } else {
-            throw new OrderException("User not found !");
-        }
-
-        
     }
 
     @Override
     public Credit getCreditList(String userId) {
-        Optional<Credit> credit = creditRepository.findById(userId);
-        if (credit.isPresent()) {
-            return credit.get();  
-        } else {
-            throw new UserException("User not found");
-        }
+        Credit credit = creditRepository.findById(userId)
+                .orElseThrow(() -> new UserException("User not Found"));
+        return credit;
     }
 
     @Override
@@ -91,17 +71,12 @@ public class CreditServiceImpl implements CreditService {
 
     @Override
     public void addBalance(String userId, BigDecimal balance) {
-        Optional<Credit> credit = creditRepository.findById(userId);
+        Credit userCredit = creditRepository.findById(userId)
+                .orElseThrow(() -> new UserException("User not Found"));
 
-        if(credit.isPresent()) {
-            Credit userCredit = credit.get();
             userCredit.setBalance(userCredit.getBalance().add(balance));
             creditRepository.save(userCredit);
-
-        } else {
-            throw new UserException("User not found");
         }
-
         
     }
 
@@ -111,4 +86,4 @@ public class CreditServiceImpl implements CreditService {
 
     
     
-}
+

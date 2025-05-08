@@ -27,19 +27,23 @@ public class CreditController {
     @Autowired
     private CreditService creditService;
 
+    //Initialize user into database
     @GetMapping
     public ResultCode intializeUser(@RequestParam String userId) {
+        log.info("Initialize user into database");
         creditService.intializeUser(userId);
         return ResultCode.success();
     }
 
+    //Get credit
     @GetMapping("/{userId}")
     public ResultCode getCreditList(@PathVariable String userId) {
         log.info("Query credit for {}" , userId);
          Credit user = creditService.getCreditList(userId);
         return ResultCode.success(user);
-
     }
+
+    //Add Balance
     @GetMapping("/{userId}/add")
     public ResultCode  addBalance(@PathVariable String userId, @RequestParam Double balance) {
         BigDecimal newBalance = BigDecimal.valueOf(balance);

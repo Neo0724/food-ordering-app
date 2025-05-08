@@ -1,4 +1,5 @@
 package com.example.canteen.food.common.aop;
+import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
@@ -10,25 +11,26 @@ import org.springframework.stereotype.Component;
 
 @Aspect
 @Component
+@Slf4j
 public class ApiSuccessAspect {
 
-    private static final Logger logger = LoggerFactory.getLogger(ApiSuccessAspect.class);
+   String controllerName, methodName;
 
     @Pointcut("within(@org.springframework.web.bind.annotation.RestController *)")
     public void restControllerMethods() {}
 
         @Before("restControllerMethods()")
     public void logBeforeExecution(JoinPoint joinPoint) {
-        String controllerName = joinPoint.getTarget().getClass().getSimpleName();
-        String methodName = joinPoint.getSignature().getName();
-        logger.info("🔄 Executing API [{}] in Controller [{}]", methodName, controllerName);
+         controllerName = joinPoint.getTarget().getClass().getSimpleName();
+         methodName = joinPoint.getSignature().getName();
+        log.info("Executing API [{}] in Controller [{}]", methodName, controllerName);
     }
 
     @AfterReturning(pointcut = "restControllerMethods()")
     public void logApiSuccess(JoinPoint joinPoint) {
-        String controllerName = joinPoint.getTarget().getClass().getSimpleName();
-        String methodName = joinPoint.getSignature().getName();
-        logger.info("✅ API [{}] executed successfully in Controller [{}].", methodName, controllerName);
+         controllerName = joinPoint.getTarget().getClass().getSimpleName();
+         methodName = joinPoint.getSignature().getName();
+        log.info("API [{}] executed successfully in Controller [{}].", methodName, controllerName);
     }
 
     

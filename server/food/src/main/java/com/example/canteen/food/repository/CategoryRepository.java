@@ -18,4 +18,8 @@ public interface CategoryRepository extends JpaRepository<Category, Integer > {
     LIMIT 1
     """, nativeQuery = true)
     CategoryVO checkIfCategoryAlreadyExists(String categoryName);
+
+    @Query("SELECT new com.example.canteen.food.model.vo.CategoryVO(c.categoryId, c.categoryName)" +
+            " FROM Category c")
+    List<CategoryVO> findAllCategory();
 }
