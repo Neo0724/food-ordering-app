@@ -81,6 +81,16 @@ public class CartServiceImpl implements CartService {
     }
 
     public void placeOrder(List<CartDTO> cartDTOs) {
+        List<Integer> allCartIds = cartDTOs.stream()
+                .map(cart -> cart.getCartId())
+                .collect(Collectors.toList());
+
+        List<Cart> cartList = cartRepository.findAllById(allCartIds);
+
+        cartList.forEach(cart -> cart.setStatus(CartStatus.ORDERED));
+
+        cartRepository.saveAll(cartList);
+
         String uuid = UUID.randomUUID().toString();
         cartDTOs.forEach(x -> x.setOrderId(uuid));
 
