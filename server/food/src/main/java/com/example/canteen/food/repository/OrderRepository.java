@@ -31,7 +31,8 @@ public interface OrderRepository extends JpaRepository<Order, OrderId> {
             "FROM Order o " +
             "JOIN Item i ON o.itemId = i.itemId " +
             "JOIN Variant v ON o.sizeId = v.sizeId " +
-            "WHERE o.userId = :userId")
+            "WHERE o.userId = :userId " +
+            "ORDER BY o.createTime DESC")
     List<ItemPerOrder> findOrderItem(@Param("userId") String userId);
 
     @Modifying
