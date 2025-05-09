@@ -129,7 +129,10 @@ const PayWithAccountCreditPage = ({
         navigation.navigate('DrawerLayout', {
           screen: 'BottomTabLayout',
           params: {
-            screen: 'OrderPage',
+            screen: 'OrderStack',
+            params: {
+              screen: 'AllOrderPage',
+            },
           },
         }),
       );
@@ -177,7 +180,10 @@ const PayWithAccountCreditPage = ({
         navigation.navigate('DrawerLayout', {
           screen: 'BottomTabLayout',
           params: {
-            screen: 'OrderPage',
+            screen: 'OrderStack',
+            params: {
+              screen: 'AllOrderPage',
+            },
           },
         }),
       );

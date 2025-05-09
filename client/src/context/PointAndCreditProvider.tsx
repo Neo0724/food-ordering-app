@@ -29,25 +29,27 @@ export function PointAndCreditProvider({
 }) {
   const queryClient = useQueryClient();
 
-  const {user} = useAuthContext();
+  const {userId} = useAuthContext();
 
   const {
     data: pointAndCreditBalance,
     isLoading,
     error,
   } = useQuery<PointAndCreditBalanceReturnType>({
-    queryKey: ['pointAndCreditBalance', user?.uid],
+    queryKey: ['pointAndCreditBalance', userId],
     queryFn: async () => {
       /* Try to get the credit balance */
-      const response = await axios.get(
-        `http://${Config.BACKEND_URL}/credits/${user?.uid}`,
-      );
-      if (response.data.code === 1 && response.data.msg === 'success') {
-        return response.data.data;
-      } else {
+      try {
+        const response = await axios.get(
+          `http://${Config.BACKEND_URL}/credits/${userId}`,
+        );
+        if (response.data.code === 1 && response.data.msg === 'success') {
+          return response.data.data;
+        }
+      } catch (err) {
         /* User is new, therefore initialize the credit balance */
         const initResponse = await axios.get(
-          `http://${Config.BACKEND_URL}/credits?userId=${user?.uid}`,
+          `http://${Config.BACKEND_URL}/credits?userId=${userId}`,
         );
         if (
           initResponse.data.code === 1 &&
@@ -57,15 +59,13 @@ export function PointAndCreditProvider({
         }
       }
     },
-    enabled: !!user?.uid,
+    enabled: !!userId,
   });
 
   const topUpCredit = useMutation({
     mutationFn: async (topUpAmount: number) => {
       const response = await axios.get(
-        `http://${Config.BACKEND_URL}/credits/${user?.uid}/add?balance=${
-          topUpAmount + (pointAndCreditBalance?.balance ?? 0)
-        }`,
+        `http://${Config.BACKEND_URL}/credits/${userId}/add?balance=${topUpAmount}`,
       );
       if (response.data.code !== 1) {
         throw new Error(response.data.msg);
@@ -76,7 +76,7 @@ export function PointAndCreditProvider({
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ['pointAndCreditBalance', user?.uid],
+        queryKey: ['pointAndCreditBalance', userId],
       });
     },
   });

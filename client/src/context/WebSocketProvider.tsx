@@ -5,6 +5,7 @@ import {Notifier} from 'react-native-notifier';
 import {useNavigation} from '@react-navigation/native';
 import {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
 import {BottomTabParamList} from '../navigation/BottomTab';
+import {useQueryClient} from '@tanstack/react-query';
 
 type WebSocketContextType = {};
 
@@ -18,6 +19,7 @@ export default function WebSocketProvider({
   children: React.ReactNode;
 }) {
   const {userId} = useAuthContext();
+  const queryClient = useQueryClient();
   const navigation =
     useNavigation<BottomTabNavigationProp<BottomTabParamList>>();
   useEffect(() => {
@@ -31,6 +33,7 @@ export default function WebSocketProvider({
     socket.onmessage = event => {
       const data = JSON.parse(event.data);
       const orderId = data.orderId;
+      queryClient.invalidateQueries({queryKey: ['orders', userId]});
       Notifier.showNotification({
         title: 'Order Completed!',
         description: `Order with ID: ${orderId} has completed!`,

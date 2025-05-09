@@ -4,7 +4,6 @@ import {Dimensions} from 'react-native';
 import HomePage from '../components/HomePage';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import CartPage from '../components/cart-component/CartPage';
-import OrderPage from '../components/order-component/OrderPage';
 import FoodStackLayout, {FoodStackParamList} from './FoodStack';
 import TransactionPage from '../components/transaction-component/TransactionPage';
 import {NavigatorScreenParams} from '@react-navigation/native';

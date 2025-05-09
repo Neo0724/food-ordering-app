@@ -1,6 +1,6 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {zodResolver} from '@hookform/resolvers/zod';
-import {Controller, useForm} from 'react-hook-form';
+import {Controller, FieldError, useForm} from 'react-hook-form';
 import {Image, Text, TouchableOpacity, View} from 'react-native';
 import {ButtonStyle} from '../../../styles/ButtonStyles';
 import {useNavigation} from '@react-navigation/native';
@@ -10,15 +10,13 @@ import {AuthStyles} from '../../../styles/AuthStyles';
 import auth from '@react-native-firebase/auth';
 import CustomTextInput from '../CustomTextInput';
 import {signUpSchema, UserSignUpType} from './schemas/user-schema';
+import {useCustomDialog} from '../../context/CustomDialogContext';
 export default function SignUpPage() {
+  const {showDialog} = useCustomDialog();
   const navigation =
     useNavigation<
       NativeStackNavigationProp<RootStackParamList, 'SignUpPage'>
     >();
-  // Set sign up eror message and error
-  const [signUpErrMsg, setSignUpErrMsg] = useState<string>('');
-  const [signUpErr, setSignUpErr] = useState<boolean>(false);
-
   // Hide or unhide password
   const [showPassword, setShowPassword] = useState<boolean>(false);
 
@@ -45,28 +43,25 @@ export default function SignUpPage() {
 
       navigation.navigate('SignInPage');
     } catch (error: any) {
-      setSignUpErr(true);
       if (error.code === 'auth/email-already-in-use') {
-        setSignUpErrMsg(
+        showDialog(
+          'Duplicate email',
           'Email has already been used. Please try another email',
         );
       } else {
-        setSignUpErrMsg(error.message);
+        showDialog('Duplicate email', error.message);
       }
     }
   };
 
-  // timeout for err msg
-  useEffect(() => {
-    if (signUpErr) {
-      const errTimeout = setTimeout(() => {
-        setSignUpErr(false);
-        setSignUpErrMsg('');
-      }, 3000);
+  const handleInvalidField = (fieldError: FieldError) => {
+    const allErrorMsg = Object.values(fieldError).map(
+      (error: any) => error.message,
+    );
 
-      return () => clearTimeout(errTimeout);
-    }
-  }, [signUpErr]);
+    showDialog('Invalid input', allErrorMsg.join('\n'));
+  };
+
   return (
     <View>
       <Text className="text-4xl px-4 py-3">Welcome to XXX Canteen App</Text>
@@ -147,17 +142,12 @@ export default function SignUpPage() {
         )}
 
         <TouchableOpacity
-          onPress={handleSubmit(submitSignUp)}
+          onPress={handleSubmit(submitSignUp, handleInvalidField)}
           style={ButtonStyle.generalButton}
           className="mt-14">
           <Text style={ButtonStyle.generalButtonText}>Submit</Text>
         </TouchableOpacity>
 
-        {signUpErr && (
-          <Text className="self-center color-red-500 font-bold text-center text-lg">
-            {signUpErrMsg}
-          </Text>
-        )}
         <View>
           <Text className="self-center">Already have an account? </Text>
           <TouchableOpacity

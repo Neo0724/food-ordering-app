@@ -27,6 +27,7 @@ export default function OrderPage() {
             contentContainerStyle={{
               rowGap: 10,
               marginVertical: 10,
+              paddingBottom: 30,
             }}>
             {allOrders?.map(order => (
               <View

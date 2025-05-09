@@ -7,7 +7,6 @@ import {
   NativeStackNavigationProp,
   NativeStackScreenProps,
 } from '@react-navigation/native-stack';
-import CustomDialog from '../CustomDialog';
 import {RootStackParamList} from '../../navigation/RootLayout';
 import {useCartContext} from '../../context/CartProvider';
 import {useOrderContext} from '../../context/OrderProvider';
@@ -16,8 +15,6 @@ import auth from '@react-native-firebase/auth';
 import {ShadowStyle} from '../../../styles/ShadowStyle';
 import {ButtonStyle} from '../../../styles/ButtonStyles';
 import {useCustomDialog} from '../../context/CustomDialogContext';
-import {DrawerNavigationProp} from '@react-navigation/drawer';
-import {DrawerParamList} from '../../navigation/Drawer';
 
 const PayWithPointPage = ({
   route,
@@ -28,7 +25,8 @@ const PayWithPointPage = ({
   const {foodsInCart, checkedCart} = useCartContext();
   /* Custom dialog function */
   const {showDialog} = useCustomDialog();
-  const navigation = useNavigation<DrawerNavigationProp<DrawerParamList>>();
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
   const pointRequired = totalPrice * 10;
   const sufficientPoint = pointBalance >= pointRequired;
@@ -63,11 +61,24 @@ const PayWithPointPage = ({
         paymentMethod: 'POINT',
       });
       showDialog('Success', 'Order placed successfully', () =>
-        navigation.navigate('BottomTabLayout', {screen: 'OrderPage'}),
+        navigation.navigate('DrawerLayout', {
+          screen: 'BottomTabLayout',
+          params: {
+            screen: 'OrderStack',
+            params: {
+              screen: 'AllOrderPage',
+            },
+          },
+        }),
       );
     } catch (error) {
       showDialog('Error', 'Server error. Please try again later.', () =>
-        navigation.navigate('BottomTabLayout', {screen: 'HomePage'}),
+        navigation.navigate('DrawerLayout', {
+          screen: 'BottomTabLayout',
+          params: {
+            screen: 'HomePage',
+          },
+        }),
       );
     }
   };
@@ -113,16 +124,6 @@ const PayWithPointPage = ({
           </Text>
         </View>
       </View>
-
-      {/* Insufficient point balance */}
-      {/* {!sufficientPoint && (
-        <View className="bg-red-100 p-4 rounded-lg">
-          <Text className="text-red-600 text-center">
-            Insufficient points. Please earn more points or use another payment
-            method.
-          </Text>
-        </View>
-      )} */}
 
       {/* Sufficient point balance */}
       {sufficientPoint && (

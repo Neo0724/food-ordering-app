@@ -18,7 +18,7 @@ export default function CustomDrawerComponent(props: any) {
             backgroundColor: theme.colors.primary,
           },
         ]}>
-        <MaterialCommunityIcons name="account" size={40} color="#fff" />
+        <MaterialCommunityIcons name="account" size={40} color="white" />
         <Text style={styles.headerText}>{auth().currentUser?.displayName}</Text>
       </View>
 

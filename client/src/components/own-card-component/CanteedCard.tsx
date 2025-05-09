@@ -6,7 +6,7 @@ import {usePointAndCredit} from '../../context/PointAndCreditProvider';
 
 const CanteedCard = () => {
   const {user} = useAuthContext();
-  const {creditBalance} = usePointAndCredit();
+  const {creditBalance, pointBalance} = usePointAndCredit();
   return (
     <View style={[ShadowStyle.shadowBox, styles.creditCardContainer]}>
       <View>
@@ -15,6 +15,9 @@ const CanteedCard = () => {
         </Text>
         <Text className="text-white text-2xl font-bold mt-2">
           RM {creditBalance.toFixed(2)}
+        </Text>
+        <Text className="text-white text-xl font-semibold mt-2">
+          Points: {pointBalance}
         </Text>
       </View>
       <View>
