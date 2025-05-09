@@ -17,7 +17,7 @@ export async function getSearchHistory(userId: string) {
     const parsedAllHistory = await JSON.parse(allHistory);
     return parsedAllHistory[userId];
   } catch (error) {
-    console.log('Error writing file:', error);
+    console.log('Error getting file:', error);
   }
 }
 
