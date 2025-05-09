@@ -2,12 +2,8 @@ package com.example.canteen.food.service.Impl;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
+
 import org.springframework.boot.autoconfigure.web.reactive.function.client.WebClientAutoConfiguration;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.aspectj.weaver.ast.Or;
@@ -50,7 +46,7 @@ public class OrderServiceImpl implements OrderService {
     public List<OrderVO> getOrderList(String userId) {
         
         // Map to group items by orderId
-        Map<String, List<ItemPerOrder>> map = new HashMap<String, List<ItemPerOrder>>();
+        Map<String, List<ItemPerOrder>> map = new LinkedHashMap<>();
 
 
         // Fetch all items related to the user from the repository
