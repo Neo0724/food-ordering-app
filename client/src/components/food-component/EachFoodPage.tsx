@@ -108,7 +108,9 @@ export default function FoodDetailsPage({
     <ScrollView contentContainerStyle={{paddingBottom: 25}}>
       {/* Food image */}
       <Image
-        source={require('../../../assets/img/friedchicken.jpeg')}
+        source={{
+          uri: `https://res.cloudinary.com/dnhcz4fi7/image/upload/v1746775641/${food.itemName}`,
+        }}
         className="w-full h-[20em]"
       />
       {/* Food details container */}

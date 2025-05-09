@@ -1,6 +1,10 @@
 import auth, {FirebaseAuthTypes} from '@react-native-firebase/auth';
 import React, {createContext, useContext, useEffect, useState} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {
+  createSearchHistoryFile,
+  createTransactionHistoryFile,
+} from '../../utils/file-system';
 
 type AuthContextType = {
   user: FirebaseAuthTypes.User | null;
@@ -16,6 +20,13 @@ export function AuthProvider({children}: {children: React.ReactNode}) {
   const [user, setUser] = useState<FirebaseAuthTypes.User | null>(null);
   const [isSignedIn, setIsSignedIn] = useState<boolean>(false);
   const [userId, setUserId] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (userId) {
+      createTransactionHistoryFile(userId);
+      createSearchHistoryFile(userId);
+    }
+  }, [userId]);
 
   useEffect(() => {
     const checkUserSignInStatus = async () => {

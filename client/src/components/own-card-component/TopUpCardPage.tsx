@@ -18,6 +18,7 @@ import {OwnCardStackParamList} from '../../navigation/OwnCardStack';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {useCustomDialog} from '../../context/CustomDialogContext';
 import {saveTransactionHistory} from '../../../utils/file-system';
+import {useAuthContext} from '../../context/AuthProvider';
 
 type TopUpCardPageProp = NativeStackScreenProps<
   OwnCardStackParamList,
@@ -25,6 +26,7 @@ type TopUpCardPageProp = NativeStackScreenProps<
 >;
 
 const TopUpCardPage = ({route, navigation}: TopUpCardPageProp) => {
+  const {userId} = useAuthContext();
   const topUpCredit = route.params.topUpCredit;
   const {showDialog} = useCustomDialog();
   const {
@@ -38,12 +40,15 @@ const TopUpCardPage = ({route, navigation}: TopUpCardPageProp) => {
   const handleTopUp = async (formData: DebitCardWithTopUpType) => {
     try {
       await topUpCredit.mutateAsync(Number(formData.topUpAmount));
-      await saveTransactionHistory({
-        amount: Number(formData.topUpAmount),
-        createTime: Date.now().toString(),
-        type: 'INCREASE',
-        description: 'Topped up with bank card',
-      });
+      await saveTransactionHistory(
+        {
+          amount: Number(formData.topUpAmount),
+          createTime: Date.now().toString(),
+          type: 'INCREASE',
+          description: 'Topped up with bank card',
+        },
+        userId,
+      );
       showDialog('Success!', 'Top up successful!', () =>
         navigation.navigate('OwnCardPage'),
       );

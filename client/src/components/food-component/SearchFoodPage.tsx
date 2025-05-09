@@ -4,18 +4,20 @@ import {Searchbar} from 'react-native-paper';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {ScrollView} from 'react-native';
 import {useEffect, useState} from 'react';
-import { SearchBarStyles } from '../../../styles/SearchBarStyles';
-import { ShadowStyle } from '../../../styles/ShadowStyle';
-import { saveSearchHistory, getSearchHistory } from '../../../utils/file-system';
-import { useCustomDialog } from '../../context/CustomDialogContext';
-import { useSearchFoodContext } from '../../context/SearchFoodProvider';
+import {SearchBarStyles} from '../../../styles/SearchBarStyles';
+import {ShadowStyle} from '../../../styles/ShadowStyle';
+import {saveSearchHistory, getSearchHistory} from '../../../utils/file-system';
+import {useCustomDialog} from '../../context/CustomDialogContext';
+import {useSearchFoodContext} from '../../context/SearchFoodProvider';
 import useFood from '../../custom-hook/useFood';
-import { FoodStackParamList } from '../../navigation/FoodStack';
+import {FoodStackParamList} from '../../navigation/FoodStack';
+import {useAuthContext} from '../../context/AuthProvider';
 
 const SearchFoodPage = ({
   route,
   navigation,
 }: NativeStackScreenProps<FoodStackParamList, 'SearchFoodScreen'>) => {
+  const {userId} = useAuthContext();
   const [history, setHistory] = useState<string[]>([]);
   const {searchFoodName, setSearchFoodName} = useSearchFoodContext();
   const {handleSearchFood} = useFood();
@@ -62,7 +64,7 @@ const SearchFoodPage = ({
     }
 
     /* Save the new search history to file system */
-    saveSearchHistory(newHistory);
+    saveSearchHistory(newHistory, userId as string);
     /* Query for new food data */
     try {
       await handleSearchFood.mutateAsync(foodToSearch);
@@ -79,17 +81,17 @@ const SearchFoodPage = ({
       prevFoodName => prevFoodName !== foodNameToDelete,
     );
     setHistory(filteredFoodToDelete);
-    saveSearchHistory(filteredFoodToDelete);
+    saveSearchHistory(filteredFoodToDelete, userId as string);
   };
 
   /* Get all the search history from android file system */
   useEffect(() => {
     const fetchHistory = async () => {
-      const returnedHistory = await getSearchHistory();
+      const returnedHistory = await getSearchHistory(userId as string);
       setHistory(returnedHistory ?? []);
     };
     fetchHistory();
-  }, []);
+  }, [userId]);
 
   return (
     <View style={styles.parentContainer}>

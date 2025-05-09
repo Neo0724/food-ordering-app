@@ -28,6 +28,7 @@ import {useCustomDialog} from '../../context/CustomDialogContext';
 import {saveTransactionHistory} from '../../../utils/file-system';
 import CanteedCard from '../own-card-component/CanteedCard';
 import {RootStackParamList} from '../../navigation/RootLayout';
+import {useAuthContext} from '../../context/AuthProvider';
 
 const PayWithAccountCreditPage = ({
   route,
@@ -41,6 +42,7 @@ const PayWithAccountCreditPage = ({
   const accountHolderName = auth().currentUser?.displayName;
   const {addOrderMutation} = useOrderContext();
   const {foodsInCart, checkedCart} = useCartContext();
+  const {userId} = useAuthContext();
   /* Custom dialog function  */
   const {showDialog} = useCustomDialog();
   const navigation =
@@ -76,12 +78,15 @@ const PayWithAccountCreditPage = ({
     /* Top up the account credit first */
     try {
       await topUpCredit.mutateAsync(Number(formData.topUpAmount));
-      await saveTransactionHistory({
-        amount: Number(formData.topUpAmount),
-        createTime: Date.now().toString(),
-        type: 'INCREASE',
-        description: 'Topped up with bank card',
-      });
+      await saveTransactionHistory(
+        {
+          amount: Number(formData.topUpAmount),
+          createTime: Date.now().toString(),
+          type: 'INCREASE',
+          description: 'Topped up with bank card',
+        },
+        userId as string,
+      );
     } catch (error) {
       console.log('Error top up to current balance ', error);
       showDialog(
@@ -187,12 +192,15 @@ const PayWithAccountCreditPage = ({
           },
         }),
       );
-      await saveTransactionHistory({
-        amount: totalPrice,
-        type: 'DECREASE',
-        createTime: Date.now().toString(),
-        description: 'Placed foods order',
-      });
+      await saveTransactionHistory(
+        {
+          amount: totalPrice,
+          type: 'DECREASE',
+          createTime: Date.now().toString(),
+          description: 'Placed foods order',
+        },
+        userId as string,
+      );
     } catch (error) {
       showDialog('Error', 'Server error. Please try again later.', () =>
         navigation.navigate('DrawerLayout', {

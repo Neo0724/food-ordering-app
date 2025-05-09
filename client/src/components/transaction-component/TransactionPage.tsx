@@ -5,8 +5,10 @@ import {
   TransactionHistory,
 } from '../../../utils/file-system';
 import EachTransactionItem from './EachTransactionItem';
+import {useAuthContext} from '../../context/AuthProvider';
 
 const TransactionPage = () => {
+  const {userId} = useAuthContext();
   const [transactionHistory, setTransactionHistory] = useState<
     TransactionHistory[]
   >([]);
@@ -14,7 +16,7 @@ const TransactionPage = () => {
   useEffect(() => {
     const fetchTransactionHistory = async () => {
       try {
-        const fetchedHistory = await getTransactionHistory();
+        const fetchedHistory = await getTransactionHistory(userId as string);
         fetchedHistory && setTransactionHistory(fetchedHistory);
       } catch (error) {
         console.log('Error fetching transaction history');
@@ -22,7 +24,7 @@ const TransactionPage = () => {
     };
 
     fetchTransactionHistory();
-  }, []);
+  }, [userId]);
 
   return (
     <View style={styles.pageContainer}>

@@ -31,10 +31,6 @@ export default function App() {
     },
   };
 
-  useEffect(() => {
-    createTransactionHistoryFile();
-    createSearchHistoryFile();
-  }, []);
 
   return (
     <GestureHandlerRootView style={{flex: 1}}>

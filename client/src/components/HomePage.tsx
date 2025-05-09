@@ -56,7 +56,9 @@ export default function HomePage() {
                   style={styles.foodImageContainer}
                   onPress={() => handleNavigateFood(food)}>
                   <Image
-                    source={require('../../assets/img/friedchicken.jpeg')}
+                    source={{
+                      uri: `https://res.cloudinary.com/dnhcz4fi7/image/upload/v1746775641/${food.itemName}`,
+                    }}
                     style={styles.foodImage}
                     resizeMode="cover"
                   />
