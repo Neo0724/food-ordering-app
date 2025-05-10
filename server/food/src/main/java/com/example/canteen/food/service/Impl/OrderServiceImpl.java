@@ -8,6 +8,7 @@ import org.springframework.boot.autoconfigure.web.reactive.function.client.WebCl
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.aspectj.weaver.ast.Or;
 import org.springframework.http.MediaType;
+
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,10 +26,16 @@ import com.example.canteen.food.service.OrderService;
 import jakarta.persistence.IdClass;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.web.reactive.function.client.WebClient;
+
 import reactor.core.publisher.Mono;
+
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
+
+import com.example.canteen.food.common.exceptions.OrderException;
+
 import reactor.core.publisher.Mono;
 
 @Transactional
@@ -92,7 +99,7 @@ public class OrderServiceImpl implements OrderService {
         List<String> userIds = orderRepository.getUserIdsByOrderId(orderId);
 
         if(userIds.isEmpty()) {
-            throw new RuntimeException("Order ID is not associated with any users");
+            throw new OrderException("Order ID is not associated with any users");
         }
 
         String userId = userIds.get(0);
