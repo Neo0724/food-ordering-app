@@ -3,6 +3,7 @@ import {StyleSheet} from 'react-native';
 export const AuthStyles = StyleSheet.create({
   container: {
     padding: 25,
+    marginTop: -10,
     gap: 5,
   },
   input: {

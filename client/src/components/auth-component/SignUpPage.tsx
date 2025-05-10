@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {zodResolver} from '@hookform/resolvers/zod';
-import {Controller, FieldError, useForm} from 'react-hook-form';
+import {Controller, FieldError, FieldErrors, useForm} from 'react-hook-form';
 import {Image, Text, TouchableOpacity, View} from 'react-native';
 import {ButtonStyle} from '../../../styles/ButtonStyles';
 import {useNavigation} from '@react-navigation/native';
@@ -54,7 +54,7 @@ export default function SignUpPage() {
     }
   };
 
-  const handleInvalidField = (fieldError: FieldError) => {
+  const handleInvalidField = (fieldError: FieldErrors) => {
     const allErrorMsg = Object.values(fieldError).map(
       (error: any) => error.message,
     );
@@ -64,10 +64,14 @@ export default function SignUpPage() {
 
   return (
     <View>
-      <Text className="text-4xl px-4 py-3">Welcome to XXX Canteen App</Text>
-      <Text className="text-lg px-4">
-        Enter your Email address and Password to sign up.
-      </Text>
+      <View className="px-4 py-6 gap-5">
+        <Text className="text-3xl font-bold text-center text-gray-800">
+          Create Your Account
+        </Text>
+        <Text className="text-base text-center text-gray-600 mt-2">
+          Sign up with your email address and start using the Canteen App today.
+        </Text>
+      </View>
       <View style={AuthStyles.container}>
         <Text>Username</Text>
         <Controller

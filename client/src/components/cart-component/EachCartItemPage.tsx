@@ -61,7 +61,7 @@ export default function EachCartItemPage({food}: EachCartItemProp) {
     /* Reset error message when user start changing quantity */
     setExceedQuantity(false);
     /* Quantity exceed the available quantity */
-    if (selectedQuantity + 1 > food.availableQuantity) {
+    if (selectedQuantity >= food.availableQuantity) {
       setExceedQuantity(true);
       return;
     }

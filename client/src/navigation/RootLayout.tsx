@@ -4,7 +4,7 @@ import LandingPage from '../components/LandingPage';
 import SignInPage from '../components/auth-component/SignInPage';
 import SignUpPage from '../components/auth-component/SignUpPage';
 import {NavigatorScreenParams} from '@react-navigation/native';
-import Drawer, {DrawerParamList} from './Drawer';
+import DrawerLayout, {DrawerParamList} from './Drawer';
 import CheckoutStackLayout, {CheckoutStackParamList} from './CheckoutStack';
 
 const RootStack = createNativeStackNavigator<RootStackParamList>();
@@ -25,7 +25,7 @@ export default function RootLayout() {
       initialRouteName={isSignedIn ? 'DrawerLayout' : 'LandingPage'}>
       {!isSignedIn ? (
         /* For not signed in user */
-        <RootStack.Group>
+        <RootStack.Group key="SignedOutGroup">
           <RootStack.Screen
             name="LandingPage"
             component={LandingPage}
@@ -44,10 +44,10 @@ export default function RootLayout() {
         </RootStack.Group>
       ) : (
         /* For signed in user */
-        <RootStack.Group>
+        <RootStack.Group key="SignedInGroup">
           <RootStack.Screen
             name="DrawerLayout"
-            component={Drawer}
+            component={DrawerLayout}
             options={{headerShown: false}}
           />
           <RootStack.Screen

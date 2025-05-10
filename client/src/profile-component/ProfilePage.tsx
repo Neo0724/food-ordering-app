@@ -26,15 +26,6 @@ const ProfilePage = () => {
 
       if (!result.success) {
         result.error.issues;
-        /* [
-          {
-            "code": "invalid_type",
-            "expected": "string",
-            "received": "number",
-            "path": [ "name" ],
-            "message": "Expected string, received number"
-          }
-      ] */
         showDialog('Input error', result.error.issues[0].message);
         throw Error('Username input is invalid ');
       }
@@ -57,15 +48,6 @@ const ProfilePage = () => {
 
       if (!result.success) {
         result.error.issues;
-        /* [
-          {
-            "code": "invalid_type",
-            "expected": "string",
-            "received": "number",
-            "path": [ "name" ],
-            "message": "Expected string, received number"
-          }
-      ] */
         showDialog('Input error', result.error.issues[0].message);
         throw Error('Password input is invalid ');
       }

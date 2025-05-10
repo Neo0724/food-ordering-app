@@ -15,7 +15,7 @@ export type DrawerParamList = {
 
 const DrawerNav = createDrawerNavigator<DrawerParamList>();
 
-export default function Drawer() {
+export default function DrawerLayout() {
   const theme = useTheme();
   const {user} = useAuthContext();
   return (

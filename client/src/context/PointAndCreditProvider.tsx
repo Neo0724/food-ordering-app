@@ -64,11 +64,18 @@ export function PointAndCreditProvider({
 
   const topUpCredit = useMutation({
     mutationFn: async (topUpAmount: number) => {
-      const response = await axios.get(
-        `http://${Config.BACKEND_URL}/credits/${userId}/add?balance=${topUpAmount}`,
-      );
-      if (response.data.code !== 1) {
-        throw new Error(response.data.msg);
+      try {
+        if (topUpAmount === 0) {
+          throw Error('Top up amount must be greater than 0');
+        }
+        const response = await axios.get(
+          `http://${Config.BACKEND_URL}/credits/${userId}/add?balance=${topUpAmount}`,
+        );
+        if (response.data.code !== 1) {
+          throw new Error(response.data.msg);
+        }
+      } catch (err) {
+        throw err;
       }
     },
     onError: error => {

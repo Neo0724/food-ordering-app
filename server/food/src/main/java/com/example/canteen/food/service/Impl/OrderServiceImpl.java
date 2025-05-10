@@ -48,7 +48,6 @@ public class OrderServiceImpl implements OrderService {
         // Map to group items by orderId
         Map<String, List<ItemPerOrder>> map = new LinkedHashMap<>();
 
-
         // Fetch all items related to the user from the repository
         orderRepository.findOrderItem(userId).forEach(order -> {
             log.info("order: {} " , order);

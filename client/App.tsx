@@ -7,13 +7,8 @@ import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
 import {OrderProvider} from './src/context/OrderProvider';
 import {DefaultTheme, PaperProvider} from 'react-native-paper';
 import {PointAndCreditProvider} from './src/context/PointAndCreditProvider';
-import {useEffect} from 'react';
 import SearchFoodNameProvider from './src/context/SearchFoodProvider';
 import {CustomDialogProvider} from './src/context/CustomDialogContext';
-import {
-  createSearchHistoryFile,
-  createTransactionHistoryFile,
-} from './utils/file-system';
 import WebSocketProvider from './src/context/WebSocketProvider';
 import {NotifierWrapper} from 'react-native-notifier';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
@@ -30,7 +25,6 @@ export default function App() {
       background: 'rgb(255,120,50)',
     },
   };
-
 
   return (
     <GestureHandlerRootView style={{flex: 1}}>

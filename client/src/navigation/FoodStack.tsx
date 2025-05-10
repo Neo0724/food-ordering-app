@@ -1,6 +1,6 @@
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {Food} from '../custom-hook/useFood';
-import FoodPage from '../components/food-component/FoodMenuPage';
+import FoodMenuPage from '../components/food-component/FoodMenuPage';
 import EachFoodPage from '../components/food-component/EachFoodPage';
 import SearchFoodPage from '../components/food-component/SearchFoodPage';
 
@@ -25,7 +25,7 @@ export default function FoodStackLayout() {
         options={{
           title: 'Menu',
         }}
-        component={FoodPage}
+        component={FoodMenuPage}
       />
       <FoodStack.Screen
         name="EachFoodPage"

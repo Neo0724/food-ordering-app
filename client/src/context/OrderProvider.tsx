@@ -45,7 +45,6 @@ type OrderContextType = {
   isLoading: boolean;
   error: any;
   addOrderMutation: UseMutationResult<void, Error, AddToOrderType, unknown>;
-  deleteOrderMutation: UseMutationResult<void, Error, string, unknown>;
 };
 
 const OrderContext = createContext<OrderContextType>({} as OrderContextType);
@@ -86,6 +85,14 @@ export function OrderProvider({children}: {children: React.ReactNode}) {
       paymentMethod,
     }: AddToOrderType) => {
       try {
+        if (ordersToAdd.length === 0) {
+          throw Error('Please select food to checkout');
+        }
+
+        if (!paymentMethod) {
+          throw Error('Please select a payment method to checkout');
+        }
+
         const response = await axios.post(
           `http://${
             Config.BACKEND_URL
@@ -114,30 +121,6 @@ export function OrderProvider({children}: {children: React.ReactNode}) {
     },
   });
 
-  const deleteOrderMutation = useMutation({
-    mutationFn: async (orderId: string) => {
-      try {
-        await axios.delete(
-          `http://${Config.BACKEND_URL}/orders?orderId=${orderId}`,
-        );
-      } catch (err) {
-        throw err;
-      }
-    },
-    onError: err => {
-      console.log('Error from delete order: ' + err);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({queryKey: ['orders', userId]});
-      queryClient.invalidateQueries({
-        queryKey: ['pointAndCreditBalance', userId],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ['cart-items', userId],
-      });
-    },
-  });
-
   return (
     <OrderContext.Provider
       value={{
@@ -145,7 +128,6 @@ export function OrderProvider({children}: {children: React.ReactNode}) {
         isLoading,
         error,
         addOrderMutation,
-        deleteOrderMutation,
       }}>
       {children}
     </OrderContext.Provider>

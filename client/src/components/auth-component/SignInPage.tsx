@@ -1,9 +1,9 @@
 import auth from '@react-native-firebase/auth';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {Image, Text, TouchableOpacity, View} from 'react-native';
-import {Controller, FieldError, useForm} from 'react-hook-form';
+import {Controller, FieldErrors, useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {AuthStyles} from '../../../styles/AuthStyles';
 import {ButtonStyle} from '../../../styles/ButtonStyles';
@@ -47,7 +47,7 @@ export default function SignInPage() {
     }
   };
 
-  const handleInvalidField = (fieldError: FieldError) => {
+  const handleInvalidField = (fieldError: FieldErrors) => {
     const allErrorMsg = Object.values(fieldError).map(
       (error: any) => error.message,
     );
@@ -57,10 +57,14 @@ export default function SignInPage() {
 
   return (
     <View>
-      <Text className="text-4xl px-4 py-3">Welcome to XXX Canteen App</Text>
-      <Text className="text-lg px-4">
-        Enter your Email address and Password to sign in.
-      </Text>
+      <View className="px-4 py-6 gap-5">
+        <Text className="text-3xl font-bold text-center text-gray-800">
+          Welcome Back
+        </Text>
+        <Text className="text-base text-center text-gray-600 mt-2">
+          Sign in to your Canteen App account using your email and password.
+        </Text>
+      </View>
       <View style={AuthStyles.container}>
         <Text>Email</Text>
         <Controller

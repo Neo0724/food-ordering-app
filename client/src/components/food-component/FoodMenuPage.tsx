@@ -16,6 +16,7 @@ import {ShadowStyle} from '../../../styles/ShadowStyle';
 import {useSearchFoodContext} from '../../context/SearchFoodProvider';
 import useFood, {Food} from '../../custom-hook/useFood';
 import {FoodStackParamList} from '../../navigation/FoodStack';
+import EachFoodMenuPage from './EachFoodMenuPage';
 
 export type Variant = {
   sizeId: number;
@@ -25,7 +26,7 @@ export type Variant = {
   quantity: number;
 };
 
-export default function FoodPage() {
+export default function FoodMenuPage() {
   const navigation =
     useNavigation<NativeStackNavigationProp<FoodStackParamList>>();
 
@@ -79,38 +80,7 @@ export default function FoodPage() {
             columnWrapperStyle={styles.columnWrapper}
             contentContainerStyle={styles.flatListContent}
             renderItem={({item: food}: {item: Food}) => (
-              <TouchableOpacity
-                style={styles.foodContainer}
-                onPress={() => navigation.navigate('EachFoodPage', {food})}
-                activeOpacity={0.7}>
-                <View style={styles.innerContent}>
-                  {/* Food image */}
-                  <Image
-                    source={{
-                      uri: `https://res.cloudinary.com/dnhcz4fi7/image/upload/v1746775641/${food.itemName}`,
-                    }}
-                    style={styles.foodImage}
-                  />
-                  {/* Food name and description */}
-                  <View className="p-3 flex-1">
-                    {/* Food name */}
-                    <Text className="font-bold text-[16px] text-gray-800">
-                      {food.itemName}
-                    </Text>
-                    {/* Food description */}
-                    <Text
-                      className="text-sm text-gray-500 mt-1"
-                      numberOfLines={2}>
-                      {food.itemDescription}
-                    </Text>
-                    {/* Food price */}
-                    <Text className="text-sm font-medium text-orange-500 mt-5">
-                      From RM{' '}
-                      {Math.min(...food.list.map(v => v.price)).toFixed(2)}
-                    </Text>
-                  </View>
-                </View>
-              </TouchableOpacity>
+              <EachFoodMenuPage food={food} />
             )}
           />
         </View>
@@ -120,23 +90,6 @@ export default function FoodPage() {
 }
 
 const styles = StyleSheet.create({
-  foodContainer: {
-    height: 300,
-    width: '50%',
-    padding: 8,
-  },
-  innerContent: {
-    ...ShadowStyle.shadowBox,
-    // boxShadow: '2px 2px 8px rgba(0,0,0,0.4)',
-    flex: 1,
-    borderRadius: 16,
-    overflow: 'hidden',
-  },
-  foodImage: {
-    width: '100%',
-    height: 160,
-    resizeMode: 'cover',
-  },
   columnWrapper: {
     justifyContent: 'space-between',
   },

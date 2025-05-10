@@ -1,5 +1,4 @@
 import {createContext, SetStateAction, useContext, useState} from 'react';
-import {Food, Variant} from '../components/FoodMenuPage';
 import Config from 'react-native-config';
 import axios from 'axios';
 import {useAuthContext} from './AuthProvider';
@@ -10,6 +9,7 @@ import {
   useQueryClient,
 } from '@tanstack/react-query';
 import {STATUS} from '../constant/constant';
+import {Food, Variant} from '../custom-hook/useFood';
 
 type CardContextType = {
   foodsInCart: RetrievedFoodCartType[] | undefined;
@@ -51,10 +51,8 @@ export type RetrievedFoodCartType = {
   isChecked: boolean;
 };
 
-export type NewFoodToAddType = Omit<
-  Food,
-  'itemDescription' | 'ingredient' | 'list' | 'itemName'
-> & {
+export type NewFoodToAddType = {
+  itemId: number;
   selectedVariant: Variant;
   selectedQuantity: number;
 };
@@ -103,6 +101,18 @@ export function CartProvider({children}: {children: React.ReactNode}) {
       selectedVariant,
     }: NewFoodToAddType) => {
       try {
+        if (!itemId) {
+          throw Error('Item ID is required');
+        }
+
+        if (selectedQuantity <= 0) {
+          throw Error('Selected quantity must be greater than 0');
+        }
+
+        if (!selectedVariant) {
+          throw Error('Size is required');
+        }
+
         await axios.post(`http://${Config.BACKEND_URL}/products`, {
           itemId: itemId,
           userId: userId,
@@ -124,6 +134,14 @@ export function CartProvider({children}: {children: React.ReactNode}) {
   const updateCartQuantityMutation = useMutation({
     mutationFn: async ({newQuantity, cartId}: UpdateCartQuantityType) => {
       try {
+        if (newQuantity === undefined) {
+          throw Error('Quantity is required');
+        }
+
+        if (!cartId) {
+          throw Error('Cart ID is required ');
+        }
+
         await axios.put(`http://${Config.BACKEND_URL}/products`, {
           itemQuantity: newQuantity,
           cartId: cartId,
@@ -141,8 +159,11 @@ export function CartProvider({children}: {children: React.ReactNode}) {
   });
 
   const removeFromCartMutation = useMutation({
-    mutationFn: async cartId => {
+    mutationFn: async (cartId: number) => {
       try {
+        if (!cartId) {
+          throw Error('Cart ID is required');
+        }
         await axios.delete(
           `http://${Config.BACKEND_URL}/products?cartId=${cartId}`,
         );
