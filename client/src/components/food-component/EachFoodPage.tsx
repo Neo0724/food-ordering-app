@@ -25,7 +25,7 @@ export default function FoodDetailsPage({
   navigation,
 }: FoodDetailPageProps) {
   const food = route.params.food;
-  const [selectedSize, setSelectedSize] = useState<number>(-1);
+  const [selectedSize, setSelectedSize] = useState<number>(food.list[0].sizeId);
   const [selectedQuantity, setSelectedQuantity] = useState<number>(1);
   const {addToCartMutation, updateCartQuantityMutation, foodsInCart} =
     useCartContext();

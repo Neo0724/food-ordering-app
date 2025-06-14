@@ -27,8 +27,6 @@ export default function CheckoutPage({
   const handlePayNow = () => {
     if (selectedPaymentMethod === 'COUNTER') {
       navigation.navigate('PayAtCounterPage', {totalPrice});
-    } else if (selectedPaymentMethod === 'EWALLET') {
-      navigation.navigate('PayWithEWalletPage', {totalPrice});
     } else if (selectedPaymentMethod === 'CREDIT') {
       navigation.navigate('PayWithAccountCreditPage', {totalPrice});
     } else if (selectedPaymentMethod === 'POINT') {
@@ -127,34 +125,6 @@ export default function CheckoutPage({
                 </Text>
               )}
               {selectedPaymentMethod === 'POINT' && (
-                <Text style={styles.selectedText}>Selected</Text>
-              )}
-            </View>
-          </View>
-        </TouchableOpacity>
-
-        {/* E-Wallet payment method */}
-        <TouchableOpacity
-          style={[
-            styles.paymentOption,
-            ShadowStyle.shadowBox,
-            selectedPaymentMethod === 'EWALLET' && styles.selectedPayment,
-          ]}
-          onPress={() => setSelectedPaymentMethod('EWALLET')}>
-          <View style={styles.paymentOptionContent}>
-            <RadioButton
-              value="ewallet"
-              status={
-                selectedPaymentMethod === 'EWALLET' ? 'checked' : 'unchecked'
-              }
-              onPress={() => setSelectedPaymentMethod('EWALLET')}
-            />
-            <View style={styles.paymentDetails}>
-              <Text style={styles.paymentTitle}>Pay with E-Wallet</Text>
-              <Text style={styles.paymentDescription}>
-                GrabPay, Touch n Go, etc
-              </Text>
-              {selectedPaymentMethod === 'EWALLET' && (
                 <Text style={styles.selectedText}>Selected</Text>
               )}
             </View>

@@ -183,7 +183,7 @@ const styles = StyleSheet.create({
   topUpAmountContainer: {
     padding: 15,
     borderRadius: 10,
-    marginTop: 10,
+    marginVertical: 10,
   },
 });
 

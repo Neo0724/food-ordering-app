@@ -9,7 +9,7 @@ import {DefaultTheme, PaperProvider} from 'react-native-paper';
 import {PointAndCreditProvider} from './src/context/PointAndCreditProvider';
 import SearchFoodNameProvider from './src/context/SearchFoodProvider';
 import {CustomDialogProvider} from './src/context/CustomDialogContext';
-import WebSocketProvider from './src/context/WebSocketProvider';
+import WebSocketConnection from './src/context/WebSocketProvider';
 import {NotifierWrapper} from 'react-native-notifier';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 
@@ -38,9 +38,9 @@ export default function App() {
                     <PaperProvider theme={theme}>
                       <CustomDialogProvider>
                         <NavigationContainer>
-                          <WebSocketProvider>
+                          <WebSocketConnection>
                             <RootLayout />
-                          </WebSocketProvider>
+                          </WebSocketConnection>
                         </NavigationContainer>
                       </CustomDialogProvider>
                     </PaperProvider>

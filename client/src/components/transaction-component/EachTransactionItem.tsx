@@ -15,7 +15,6 @@ const EachTransactionItem = ({
   return (
     <View
       style={[
-        ShadowStyle.shadowBox,
         styles.transactionContainer,
         type === 'INCREASE'
           ? styles.increaseContainer
@@ -45,19 +44,16 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 12,
     marginBottom: 16,
-    elevation: 12,
     marginVertical: 10,
   },
 
   increaseContainer: {
     borderWidth: 2,
     borderColor: 'rgb(144, 238, 144)',
-    shadowColor: 'green',
   },
   decreaseContainer: {
     borderWidth: 2,
     borderColor: 'rgb(255, 182, 200)',
-    shadowColor: 'red',
   },
 
   increase: {

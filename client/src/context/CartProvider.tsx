@@ -9,7 +9,7 @@ import {
   useQueryClient,
 } from '@tanstack/react-query';
 import {STATUS} from '../constant/constant';
-import {Food, Variant} from '../custom-hook/useFood';
+import {Variant} from '../custom-hook/useFood';
 
 type CardContextType = {
   foodsInCart: RetrievedFoodCartType[] | undefined;

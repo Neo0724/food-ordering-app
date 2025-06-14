@@ -1,4 +1,4 @@
-import React, {createContext, useEffect} from 'react';
+import React, {useEffect} from 'react';
 import {useAuthContext} from './AuthProvider';
 import {Easing} from 'react-native';
 import {Notifier} from 'react-native-notifier';
@@ -6,14 +6,9 @@ import {useNavigation} from '@react-navigation/native';
 import {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
 import {BottomTabParamList} from '../navigation/BottomTab';
 import {useQueryClient} from '@tanstack/react-query';
+import Config from 'react-native-config';
 
-type WebSocketContextType = {};
-
-const WebSocketContext = createContext<WebSocketContextType>(
-  {} as WebSocketContextType,
-);
-
-export default function WebSocketProvider({
+export default function WebSocketConnection({
   children,
 }: {
   children: React.ReactNode;
@@ -23,7 +18,7 @@ export default function WebSocketProvider({
   const navigation =
     useNavigation<BottomTabNavigationProp<BottomTabParamList>>();
   useEffect(() => {
-    const socket = new WebSocket('ws://10.0.2.2:3000');
+    const socket = new WebSocket(`${Config.WEBSOCKET_URL}`);
 
     socket.onopen = () => {
       console.log('Successfully connected to websocket server');
@@ -63,7 +58,5 @@ export default function WebSocketProvider({
       socket.close();
     };
   }, [userId]);
-  return (
-    <WebSocketContext.Provider value={{}}>{children}</WebSocketContext.Provider>
-  );
+  return <>{children}</>;
 }
