@@ -6,6 +6,24 @@ This project consists of:
 - **Spring Boot Backend Server**
 - **Node JS WebSocket Server**
 
+---
+
+## ✨ Features
+
+- **User Authentication** (Sign in/up, managed by Firebase Authentication)
+- **Profile Management** (View and update username and password).
+- **View Avaiable Foods**
+- **Cart Management** (Manage the foods that are added into the cart)
+- **Order Placement & History**
+- **Multiple Payment Methods**
+  - Pay with account credit (top up via debit card)
+  - Pay with earned points
+- **Points & Credit System** (Earn points by placing orders, view balances, and pay with points or credit)
+- **Transaction History** (View all top-ups and payments)
+- **Real-time Order Notifications** (Receive instant notifications when your order is completed)
+
+---
+
 ## 🛠️ Prerequisites
 
 Make sure the following are installed on your system:
@@ -38,6 +56,10 @@ Make sure the following are installed on your system:
    ```
 
 4. Fill in the required environment variables in the `.env` file according to your setup.
+
+5. Configure Fireabse Authentication
+   - Create an account in Firebase Console
+   - Download the `google-services.json` from Firebase Console and place it inside the `client/android/app` folder
 
 5. Run the app on your Android device/emulator:
 
