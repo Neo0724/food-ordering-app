@@ -114,5 +114,5 @@ project-root/
 ├── client/         # React Native Android App
 ├── server/
 │   └── food/       # Spring Boot Backend
-└── web-socket/     # Bun-based WebSocket Server
+└── web-socket/     # WebSocket Server
 ```
