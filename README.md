@@ -12,7 +12,7 @@ This project consists of:
 
 - **User Authentication** (Sign in/up, managed by Firebase Authentication)
 - **Profile Management** (View and update username and password).
-- **View Avaiable Foods**
+- **View Available Foods**
 - **Cart Management** (Manage the foods that are added into the cart)
 - **Order Placement & History**
 - **Multiple Payment Methods**
